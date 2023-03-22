@@ -1,10 +1,10 @@
-package com.example.certificatemanager;
+package com.example.certificateback;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CertificateManagerApplicationTests {
+class CertificateBackApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -9,12 +9,13 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>certificate-manager</artifactId>
+	<artifactId>certificate-back</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>certificate-manager</name>
-	<description>certificate-manager</description>
+	<packaging>war</packaging>
+	<name>certificate-back</name>
+	<description>certificate-back</description>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>8</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -30,6 +31,11 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
