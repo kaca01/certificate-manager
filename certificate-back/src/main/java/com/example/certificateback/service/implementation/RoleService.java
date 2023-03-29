@@ -1,8 +1,8 @@
-package com.example.certificateback.service;
+package com.example.certificateback.service.implementation;
 
 import com.example.certificateback.domain.Role;
 import com.example.certificateback.repository.IRoleRepository;
-import com.example.certificateback.service.IRoleService;
+import com.example.certificateback.service.interfaces.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.example.certificateback.service;
+package com.example.certificateback.service.interfaces;
 
 import com.example.certificateback.domain.Role;
 
