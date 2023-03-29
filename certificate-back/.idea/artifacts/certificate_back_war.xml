@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="certificate-back:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>certificate-back</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="certificate-back-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="certificate-back:war exploded" />
+    </root>
+  </artifact>
+</component>
