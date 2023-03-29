@@ -4,7 +4,6 @@ import com.example.certificateback.domain.Role;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.RegistrationDTO;
 import com.example.certificateback.repository.IUserRepository;
-import com.example.certificateback.service.RoleService;
 import com.example.certificateback.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
