@@ -1,4 +1,4 @@
-package com.example.certificateback.enumerations;
+package com.example.certificateback.enumeration;
 
 public enum RequestType {
     ACTIVE,

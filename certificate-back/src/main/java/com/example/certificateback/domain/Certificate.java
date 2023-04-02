@@ -1,8 +1,7 @@
 package com.example.certificateback.domain;
 
-import com.example.certificateback.enumerations.CertificateType;
+import com.example.certificateback.enumeration.CertificateType;
 import lombok.*;
-import org.hibernate.type.TrueFalseType;
 
 import javax.persistence.*;
 import java.util.Date;

@@ -1,7 +1,7 @@
 package com.example.certificateback.domain;
 
-import com.example.certificateback.enumerations.CertificateType;
-import com.example.certificateback.enumerations.RequestType;
+import com.example.certificateback.enumeration.CertificateType;
+import com.example.certificateback.enumeration.RequestType;
 import lombok.*;
 
 import javax.persistence.*;
