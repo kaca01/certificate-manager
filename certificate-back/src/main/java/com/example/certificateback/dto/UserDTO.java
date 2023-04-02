@@ -7,16 +7,17 @@ import lombok.NoArgsConstructor;
 // A DTO that retrieves data from a HTML registration form
 @NoArgsConstructor
 @Data
-public class RegistrationDTO {
+public class UserDTO {
 
     private String name;
     private String surname;
     private String phone;
     private String country;
+
     private String password;
     private String email;
 
-    public RegistrationDTO(User dto){
+    public UserDTO(User dto){
         this.country = dto.getCountry();
         this.phone = dto.getPhone();
         this.surname = dto.getSurname();

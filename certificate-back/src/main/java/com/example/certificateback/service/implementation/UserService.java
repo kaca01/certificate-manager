@@ -4,7 +4,7 @@ import com.example.certificateback.domain.Password;
 import com.example.certificateback.domain.Role;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.domain.UserActivation;
-import com.example.certificateback.dto.RegistrationDTO;
+import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.repository.IPasswordRepository;
 import com.example.certificateback.repository.IRoleRepository;
 import com.example.certificateback.repository.IUserActivationRepository;
@@ -15,15 +15,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -55,17 +50,17 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
-	public List<RegistrationDTO> findAll() throws AccessDeniedException {
+	public List<UserDTO> findAll() throws AccessDeniedException {
 		List<User> users = userRepository.findAll();
-		List<RegistrationDTO> usersDTO = new ArrayList<>();
+		List<UserDTO> usersDTO = new ArrayList<>();
 		for (User u : users){
-			usersDTO.add(new RegistrationDTO(u));
+			usersDTO.add(new UserDTO(u));
 		}
 		return usersDTO;
 	}
 
 	@Override
-	public User register(RegistrationDTO registrationDTO) {
+	public UserDTO register(UserDTO registrationDTO) {
 //		if (this.userRepository.findByEmail(registrationDTO.getEmail())) {
 //			throw new BadRequestException("User with that email already exists!");
 //		}
@@ -84,7 +79,7 @@ public class UserService implements IUserService, UserDetailsService {
 		UserActivation activation = userActivationRepository.save(new UserActivation(user));
 		//sendActivationEmail(activation);
 
-		return user;
+		return new UserDTO(user);
 	}
 
 	@Override

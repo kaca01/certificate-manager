@@ -1,6 +1,6 @@
 package com.example.certificateback.domain;
 
-import com.example.certificateback.dto.RegistrationDTO;
+import com.example.certificateback.dto.UserDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -58,7 +57,7 @@ public class User implements UserDetails {
         return this.roles;
     }
 
-    public User(RegistrationDTO dto){
+    public User(UserDTO dto){
         this.country = dto.getCountry();
         this.phone = dto.getPhone();
         this.surname = dto.getSurname();

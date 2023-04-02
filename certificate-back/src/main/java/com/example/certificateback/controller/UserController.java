@@ -1,8 +1,7 @@
 package com.example.certificateback.controller;
 
-import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
-import com.example.certificateback.dto.RegistrationDTO;
+import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,18 +21,19 @@ public class UserController {
     IUserService service;
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> register(@RequestBody RegistrationDTO userDTO) {
-        User user = service.register(userDTO);
-        return new ResponseEntity<User>(user, HttpStatus.OK);
+    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
+        UserDTO user = service.register(userDTO);
+        return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
 
+    // todo check if this works
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<AllDTO<RegistrationDTO>> getUsers()
+    public ResponseEntity<AllDTO<UserDTO>> getUsers()
     {
-        List<RegistrationDTO> usersDTO = service.findAll();
+        List<UserDTO> usersDTO = service.findAll();
 
-        AllDTO<RegistrationDTO> allUsers = new AllDTO<>(usersDTO.size(), usersDTO);
+        AllDTO<UserDTO> allUsers = new AllDTO<>(usersDTO.size(), usersDTO);
 
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
     }
