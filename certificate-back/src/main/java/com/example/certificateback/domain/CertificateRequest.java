@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class CertificateRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "status", nullable = false)
@@ -24,7 +24,7 @@ public class CertificateRequest {
     @OneToOne
     private Certificate issuer;
 
-    @Column(name = "certificate_type", nullable = false)
+    @Column(name = "type", nullable = false)
     private CertificateType certificateType;
 
     @OneToOne
