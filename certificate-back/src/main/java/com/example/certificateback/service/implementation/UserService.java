@@ -45,19 +45,14 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public User save(RegistrationDTO registrationDTO) {
-		User u = new User();
-		u.setEmail(registrationDTO.getEmail());
-		
+
 		// pre nego sto postavimo lozinku u atribut hesiramo je kako bi se u bazi nalazila hesirana lozinka
 		// treba voditi racuna da se koristi isi password encoder bean koji je postavljen u AUthenticationManager-u kako bi koristili isti algoritam
-		u.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
-
-		u.setEnabled(true);
-		u.setEmail(registrationDTO.getEmail());
+		//u.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
 
 		List<Role> roles = roleService.findByName("ROLE_USER");
-		u.setRoles(roles);
-		
+		//u.setRoles(roles);
+		User u = new User();
 		return this.userRepository.save(u);
 	}
 
