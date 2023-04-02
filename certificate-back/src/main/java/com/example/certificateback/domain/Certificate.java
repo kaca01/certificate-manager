@@ -18,7 +18,7 @@ public class Certificate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "certificate_type", nullable = false)
+    @Column(name = "type", nullable = false)
     private CertificateType certificateType;
 
     @Column(name = "valid_to", nullable = false)
@@ -27,8 +27,8 @@ public class Certificate {
     @Column(name = "valid_from", nullable = false)
     private Date validFrom;
 
-    @OneToOne
-    private User user;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private User subject;
 
     @Column(name = "is_withdrawn", nullable = false)
     private boolean isWithdrawn;

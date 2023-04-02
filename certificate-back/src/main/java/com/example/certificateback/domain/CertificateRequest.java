@@ -24,7 +24,7 @@ public class CertificateRequest {
     @OneToOne
     private Certificate issuer;
 
-    @Column(name = "certificate_type", nullable = false)
+    @Column(name = "type", nullable = false)
     private CertificateType certificateType;
 
     @OneToOne
