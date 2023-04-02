@@ -9,5 +9,5 @@ public interface IUserService {
     User findById(Long id);
     User findByEmail(String username);
     List<User> findAll ();
-    User save(RegistrationDTO registrationDTO);
+    User register(RegistrationDTO registrationDTO);
 }
