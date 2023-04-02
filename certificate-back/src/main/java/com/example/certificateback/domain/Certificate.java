@@ -15,7 +15,7 @@ import java.util.Date;
 public class Certificate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "certificate_type", nullable = false)
