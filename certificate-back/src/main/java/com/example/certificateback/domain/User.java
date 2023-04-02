@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,20 +18,30 @@ import java.util.List;
 @Entity
 @Data
 public class User implements UserDetails {
+
     @Id
     private Long id;
-
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password")
-    private String password;
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "surname")
+    private String surname;
+
+    @Column(name = "country")
+    private String country;
 
     @Column(name = "enabled")
     private boolean enabled;
 
-    @Column(name = "last_password_reset_date")
-    private Timestamp lastPasswordResetDate;
+    @Column(name = "phone")
+    private String phone;
+
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<Password> passwords = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
@@ -49,13 +60,28 @@ public class User implements UserDetails {
         return email;
     }
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
+    public Timestamp getLastPasswordResetDate(){
+        Timestamp lastResetDate = null;  //todo set something from distant past
+        for (Password p : this.passwords){
+            if (p.getLastPasswordResetDate().after(lastResetDate))
+            {
+                lastResetDate = p.getLastPasswordResetDate();
+            }
+        }
+        return lastResetDate;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public String getPassword(){
+        Timestamp lastResetDate = null;  //todo set something from distant past
+        String password = "";
+        for (Password p : this.passwords){
+            if (p.getLastPasswordResetDate().after(lastResetDate))
+            {
+                lastResetDate = p.getLastPasswordResetDate();
+                password = p.getPassword();
+            }
+        }
+        return password;
     }
 
     @JsonIgnore
