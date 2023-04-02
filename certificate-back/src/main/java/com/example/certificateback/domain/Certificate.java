@@ -25,9 +25,9 @@ public class Certificate {
     private Date validTo;
 
     @Column(name = "valid_from", nullable = false)
-    private String validFrom;
+    private Date validFrom;
 
-    @Column(name = "subject", nullable = false)
+    @OneToOne
     private User user;
 
     @Column(name = "is_withdrawn", nullable = false)
@@ -41,7 +41,6 @@ public class Certificate {
 
     public boolean isValid() {
         Date now = new Date();
-        if (validFrom.compareTo(now) <= 0 && validTo.compareTo(now) > 0) return True;
-        return False;
+        return validFrom.compareTo(now) <= 0 && validTo.compareTo(now) > 0;
     }
 }
