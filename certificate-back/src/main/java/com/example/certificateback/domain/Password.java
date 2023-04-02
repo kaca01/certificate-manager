@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +22,6 @@ public class Password {
     private String password;
 
     @Column(name = "last_password_reset_date", nullable=false)
-    private Timestamp lastPasswordResetDate;
+    private Date lastPasswordResetDate;
 
 }
