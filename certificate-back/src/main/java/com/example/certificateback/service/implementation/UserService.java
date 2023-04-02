@@ -55,8 +55,13 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
-	public List<User> findAll() throws AccessDeniedException {
-		return userRepository.findAll();
+	public List<RegistrationDTO> findAll() throws AccessDeniedException {
+		List<User> users = userRepository.findAll();
+		List<RegistrationDTO> usersDTO = new ArrayList<>();
+		for (User u : users){
+			usersDTO.add(new RegistrationDTO(u));
+		}
+		return usersDTO;
 	}
 
 	@Override

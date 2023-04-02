@@ -1,9 +1,9 @@
 package com.example.certificateback.controller;
 
 import com.example.certificateback.domain.User;
+import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.RegistrationDTO;
 import com.example.certificateback.service.interfaces.IUserService;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,11 +29,11 @@ public class UserController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<AllDTO<UserDTO>> getUsers()
+    public ResponseEntity<AllDTO<RegistrationDTO>> getUsers()
     {
-        List<UserDTO> passengersDTO = service.getAll(0, 0);
+        List<RegistrationDTO> usersDTO = service.findAll();
 
-        AllDTO<UserDTO> allUsers = new AllDTO<>(passengersDTO.size(), passengersDTO);
+        AllDTO<RegistrationDTO> allUsers = new AllDTO<>(usersDTO.size(), usersDTO);
 
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
     }

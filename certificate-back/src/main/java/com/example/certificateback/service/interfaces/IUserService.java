@@ -8,6 +8,6 @@ import java.util.List;
 public interface IUserService {
     User findById(Long id);
     User findByEmail(String username);
-    List<User> findAll ();
+    List<RegistrationDTO> findAll ();
     User register(RegistrationDTO registrationDTO);
 }

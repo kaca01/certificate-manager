@@ -65,7 +65,7 @@ public class WebSecurityConfig {
         // all unauthenticated requests uniformly process and send a 401 error
         http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
         http.authorizeRequests()
-//			.antMatchers("/auth/**").permitAll()	TODO dodati putanje kojima korisnik moze da pristupa bez autentifikacije (logovanje, registracija)
+			.antMatchers("/api/user/register").permitAll()	//TODO dodati putanje kojima korisnik moze da pristupa bez autentifikacije (logovanje, registracija)
 
                 // for every other request the user must be authenticated
                 .anyRequest().authenticated().and()
@@ -88,7 +88,7 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         // allowed POST method on route api/login, for any other type of HTTP method the error is 401 Unauthorized
-        return (web) -> web.ignoring().antMatchers(HttpMethod.POST, "api/login")
+        return (web) -> web.ignoring().antMatchers(HttpMethod.POST, "api/login", "api/user/register")
         // we allow access to resources to speed up the access process
         .antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
                 "/**/*.html", "/**/*.css", "/**/*.js");
