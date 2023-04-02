@@ -1,5 +1,6 @@
 package com.example.certificateback.domain;
 
+import com.example.certificateback.dto.RegistrationDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -55,13 +57,21 @@ public class User implements UserDetails {
         return this.roles;
     }
 
+    public User(RegistrationDTO dto){
+        this.country = dto.getCountry();
+        this.phone = dto.getPhone();
+        this.surname = dto.getSurname();
+        this.name = dto.getName();
+        this.email = dto.getEmail();
+    }
+
     @Override
     public String getUsername() {
         return email;
     }
 
-    public Timestamp getLastPasswordResetDate(){
-        Timestamp lastResetDate = null;  //todo set something from distant past
+    public Date getLastPasswordResetDate(){
+        Date lastResetDate = null;  //todo set something from distant past
         for (Password p : this.passwords){
             if (p.getLastPasswordResetDate().after(lastResetDate))
             {
@@ -72,7 +82,7 @@ public class User implements UserDetails {
     }
 
     public String getPassword(){
-        Timestamp lastResetDate = null;  //todo set something from distant past
+        Date lastResetDate = null;  //todo set something from distant past
         String password = "";
         for (Password p : this.passwords){
             if (p.getLastPasswordResetDate().after(lastResetDate))
