@@ -1,13 +1,13 @@
 package com.example.certificateback.service.interfaces;
 
 import com.example.certificateback.domain.User;
-import com.example.certificateback.dto.RegistrationDTO;
+import com.example.certificateback.dto.UserDTO;
 
 import java.util.List;
 
 public interface IUserService {
     User findById(Long id);
     User findByEmail(String username);
-    List<User> findAll ();
-    User save(RegistrationDTO registrationDTO);
+    List<UserDTO> findAll ();
+    UserDTO register(UserDTO registrationDTO);
 }

@@ -26,4 +26,8 @@ public class Password {
     @Column(name = "last_password_reset_date", nullable=false)
     private Date lastPasswordResetDate;
 
+    public Password(String password){
+        this.password = password;
+        this.lastPasswordResetDate = new Date();
+    }
 }

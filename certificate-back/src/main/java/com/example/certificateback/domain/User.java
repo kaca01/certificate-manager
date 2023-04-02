@@ -1,5 +1,6 @@
 package com.example.certificateback.domain;
 
+import com.example.certificateback.dto.UserDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -55,6 +55,14 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles;
+    }
+
+    public User(UserDTO dto){
+        this.country = dto.getCountry();
+        this.phone = dto.getPhone();
+        this.surname = dto.getSurname();
+        this.name = dto.getName();
+        this.email = dto.getEmail();
     }
 
     @Override

@@ -22,4 +22,9 @@ public class UserActivation {
     @Column(name = "life", nullable = false)
     private int life;
 
+    public UserActivation(User user){
+        this.user = user;
+        this.date = new Date();
+        this.life = 180;  //todo move to application.properties
+    }
 }
