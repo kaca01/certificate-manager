@@ -3,9 +3,11 @@ package com.example.certificateback.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,9 +20,10 @@ public class Password {
     private Long id;
 
     @Column(name = "password", nullable=false)
+    @Value("")
     private String password;
 
     @Column(name = "last_password_reset_date", nullable=false)
-    private Timestamp lastPasswordResetDate;
+    private Date lastPasswordResetDate;
 
 }
