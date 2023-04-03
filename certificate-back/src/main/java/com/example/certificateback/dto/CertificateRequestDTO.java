@@ -1,35 +1,31 @@
 package com.example.certificateback.dto;
 
 import com.example.certificateback.domain.CertificateRequest;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.example.certificateback.enumeration.CertificateType;
+import lombok.*;
 
 @Data
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CertificateRequestDTO {
-
-    private Long id;
 
     private String requestType;
 
-    private CertificateDTO issuer;
+    private long issuer;
 
     private String certificateType;
 
-    private UserDTO subject;
+    private long subject;
 
     private String refusalReason;
 
     public CertificateRequestDTO(CertificateRequest request) {
-        this.id = request.getId();
         this.requestType = request.getRequestType().toString();
-        this.issuer = new CertificateDTO(request.getIssuer());
+        if (request.getCertificateType() != CertificateType.ROOT)
+            this.issuer = request.getIssuer().getSerialNumber();
         this.certificateType = request.getCertificateType().toString();
-        this.subject = new UserDTO(request.getSubject());
         this.refusalReason = request.getRefusalReason();
     }
 }
