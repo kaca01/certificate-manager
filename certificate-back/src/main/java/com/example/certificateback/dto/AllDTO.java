@@ -12,8 +12,8 @@ public class AllDTO<T> {
 
     private List<T> results;
 
-    public AllDTO(int totalCount, List<T> results) {
-        this.totalCount = totalCount;
+    public AllDTO(List<T> results) {
+        this.totalCount = results.size();
         this.results = results;
     }
 }

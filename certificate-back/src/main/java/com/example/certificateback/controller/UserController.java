@@ -71,7 +71,7 @@ public class UserController {
     {
         List<UserDTO> usersDTO = service.findAll();
 
-        AllDTO<UserDTO> allUsers = new AllDTO<>(usersDTO.size(), usersDTO);
+        AllDTO<UserDTO> allUsers = new AllDTO<>(usersDTO);
 
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
     }
