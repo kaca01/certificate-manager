@@ -1,18 +1,14 @@
 package com.example.certificateback.dto;
 
 import com.example.certificateback.domain.Certificate;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CertificateDTO {
-
-    private Long id;
 
     private String certificateType;
 
