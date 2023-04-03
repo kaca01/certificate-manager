@@ -24,12 +24,12 @@ public class CertificateService implements ICertificateService {
     ICertificateRepository certificateRepository;
 
     @Override
-    public List<CertificateDTO> viewMyCertificates() {
+    public List<CertificateDTO> getAllCertificates() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loggedUser = userRepository.findByEmail(authentication.getName()).orElse(null);
 
         if(loggedUser != null) {
-            List<Certificate> certificates = certificateRepository.findBySubjectId(loggedUser.getId());
+            List<Certificate> certificates = certificateRepository.findAll();
             List<CertificateDTO> certificatesDTO = new ArrayList<>();
             for (Certificate c : certificates){
                 certificatesDTO.add(new CertificateDTO(c.getIssue_date(), c.getSubject(), c.getCertificateType()));

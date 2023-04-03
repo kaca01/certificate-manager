@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface ICertificateService {
 
-    List<CertificateDTO> viewMyCertificates();
+    List<CertificateDTO> getAllCertificates();
 }

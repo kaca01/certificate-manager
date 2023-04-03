@@ -30,9 +30,9 @@ public class CertificateController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<AllDTO<CertificateDTO>> getCertificateForLoggedUser()
+    public ResponseEntity<AllDTO<CertificateDTO>> getAllCertificate()
     {
-        List<CertificateDTO> certificatesDTO = certificateService.viewMyCertificates();
+        List<CertificateDTO> certificatesDTO = certificateService.getAllCertificates();
         AllDTO<CertificateDTO> allMyCertificates = new AllDTO<>(certificatesDTO);
         return new ResponseEntity<>(allMyCertificates, HttpStatus.OK);
     }
