@@ -1,5 +1,6 @@
 package com.example.certificateback.domain;
 
+import com.example.certificateback.dto.CertificateRequestDTO;
 import com.example.certificateback.enumeration.CertificateType;
 import com.example.certificateback.enumeration.RequestType;
 import lombok.*;
@@ -32,4 +33,10 @@ public class CertificateRequest {
 
     @Column(name = "refusal_reason", nullable = true)
     private String refusalReason;
+
+    public CertificateRequest(CertificateRequestDTO dto) {
+        this.requestType = RequestType.valueOf(dto.getRequestType());
+        this.certificateType = CertificateType.valueOf(dto.getCertificateType());
+        this.refusalReason = dto.getRefusalReason();
+    }
 }
