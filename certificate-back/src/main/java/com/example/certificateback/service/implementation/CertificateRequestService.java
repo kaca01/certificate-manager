@@ -63,14 +63,21 @@ public class CertificateRequestService implements ICertificateRequestService {
 
     private CertificateRequestDTO acceptCertificate(CertificateRequest request) {
         CertificateRequestDTO dto = new CertificateRequestDTO(request);
+        dto.setSubject(request.getSubject().getId());
         repository.save(request);
         // TODO : here needs to be called function that will create certificate
-        dto.setSubject(request.getSubject().getId());
         return dto;
     }
 
     private void checkForExceptions(CertificateRequest request) {
+        if (request.getCertificateType() != CertificateType.ROOT) {
+            if (request.getIssuer() == null) throw new NotFoundException("Issuer not found!");
 
+            if (request.getIssuer().isWithdrawn()) throw new BadRequestException("Issuer is withdrawn!");
+
+            if (request.getIssuer().getCertificateType() == CertificateType.END)
+                throw new BadRequestException("End certificate can't generate another certificate!");
+        }
     }
 
     @Override
@@ -81,25 +88,17 @@ public class CertificateRequestService implements ICertificateRequestService {
         Role role = user.getRoles().get(0);
         CertificateRequest request = new CertificateRequest(certificateRequestDTO);
         Certificate issuer = certificateRepository.findBySerialNumber(certificateRequestDTO.getIssuer());
-
-        if (issuer == null && request.getCertificateType() != CertificateType.ROOT)
-            throw new NotFoundException("Issuer not found!");
-
-        if (request.getCertificateType() != CertificateType.ROOT)
-            if (issuer.isWithdrawn()) throw new BadRequestException("Issuer is withdrawn!");
-
+        request.setIssuer(issuer);
         request.setSubject(user);
         certificateRequestDTO.setSubject(user.getId());
-        request.setIssuer(issuer);
 
-        if (request.getCertificateType() != CertificateType.ROOT) {
-            if (request.getIssuer().getCertificateType() == CertificateType.END)
-                throw new BadRequestException("End certificate can't generate another certificate!");
-        }
+        checkForExceptions(request);
+
         if (role.getName().equals("ROLE_ADMIN")) {
             request.setRequestType(RequestType.ACCEPTED);
             return acceptCertificate(request);
         }
+
         if (request.getCertificateType() == CertificateType.ROOT)
             throw new BadRequestException("User can't ask for the root certificate!");
 
