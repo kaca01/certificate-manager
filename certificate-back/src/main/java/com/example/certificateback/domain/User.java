@@ -71,9 +71,9 @@ public class User implements UserDetails {
     }
 
     public Date getLastPasswordResetDate(){
-        Date lastResetDate = null;  //todo set something from distant past
-        for (Password p : this.passwords){
-            if (p.getLastPasswordResetDate().after(lastResetDate))
+        Date lastResetDate = this.passwords.get(0).getLastPasswordResetDate();
+        for (Password p : this.passwords) {
+            if (!p.getLastPasswordResetDate().before(lastResetDate))
             {
                 lastResetDate = p.getLastPasswordResetDate();
             }
@@ -81,11 +81,11 @@ public class User implements UserDetails {
         return lastResetDate;
     }
 
-    public String getPassword(){
-        Date lastResetDate = null;  //todo set something from distant past
+    public String getPassword() {
+        Date lastResetDate = this.passwords.get(0).getLastPasswordResetDate();
         String password = "";
-        for (Password p : this.passwords){
-            if (p.getLastPasswordResetDate().after(lastResetDate))
+        for (Password p : this.passwords) {
+            if (!p.getLastPasswordResetDate().before(lastResetDate))
             {
                 lastResetDate = p.getLastPasswordResetDate();
                 password = p.getPassword();
