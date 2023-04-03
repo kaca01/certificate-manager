@@ -65,6 +65,7 @@ public class WebSecurityConfig {
         // all unauthenticated requests uniformly process and send a 401 error
         http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
         http.authorizeRequests()
+            .antMatchers("/api/user/login").permitAll()
 			.antMatchers("/api/user/register").permitAll()	//TODO dodati putanje kojima korisnik moze da pristupa bez autentifikacije (logovanje, registracija)
 
                 // for every other request the user must be authenticated
