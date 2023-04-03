@@ -47,13 +47,7 @@ public class Certificate {
     private long serialNumber;
 
     public boolean isValid() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
         Date now = new Date();
-        System.out.println("1.");
-        System.out.println(validTo);
-        System.out.println("2.");
-        System.out.println(now);
         return validFrom.compareTo(now) <= 0 && validTo.compareTo(now) > 0;
     }
 

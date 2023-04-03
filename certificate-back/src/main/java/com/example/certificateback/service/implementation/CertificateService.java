@@ -46,14 +46,8 @@ public class CertificateService implements ICertificateService {
         Certificate certificate = certificateRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
 
-        if(certificate != null) {
-            System.out.println("3.");
-            System.out.println(certificate.isValid());
-            System.out.println("4.");
-            System.out.println(!certificate.isWithdrawn());
+        if(certificate != null)
             return certificate.isValid() && !certificate.isWithdrawn();
-        }
-
 
         return false;
     }
