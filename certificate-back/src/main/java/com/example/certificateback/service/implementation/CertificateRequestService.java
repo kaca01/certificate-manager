@@ -55,7 +55,7 @@ public class CertificateRequestService implements ICertificateRequestService {
     @Transactional
     public AllDTO<CertificateRequestDTO> get() {
         User user = getLoggedUser();
-        List<CertificateRequest> certificateRequests = repository.findBySubjectId(user.getId());
+        List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
 
         List<CertificateRequestDTO> certificateRequestDTOS = new ArrayList<>();
         for (CertificateRequest certificate : certificateRequests)
@@ -78,7 +78,7 @@ public class CertificateRequestService implements ICertificateRequestService {
     private CertificateRequestDTO acceptCertificate(CertificateRequest request) {
         CertificateRequestDTO dto = new CertificateRequestDTO(request);
         dto.setSubject(request.getSubject().getId());
-        repository.save(request);
+        certificateRequestRepository.save(request);
         // TODO : here needs to be called function that will create certificate
         return dto;
     }
@@ -123,7 +123,7 @@ public class CertificateRequestService implements ICertificateRequestService {
         }
         else {
             // TODO : here also call a function that will create certificate
-            repository.save(request);
+            certificateRequestRepository.save(request);
         }
         return certificateRequestDTO;
     }
