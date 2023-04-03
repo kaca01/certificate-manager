@@ -3,6 +3,8 @@ package com.example.certificateback.service.implementation;
 import com.example.certificateback.domain.Certificate;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.CertificateDTO;
+import com.example.certificateback.exception.BadRequestException;
+import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.ICertificateService;
@@ -37,5 +39,22 @@ public class CertificateService implements ICertificateService {
             return certificatesDTO;
         }
         return null;
+    }
+
+    @Override
+    public Boolean checkingValidation(long serialNumber) {
+        Certificate certificate = certificateRepository.findBySerialNumber(serialNumber)
+                .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
+
+        if(certificate != null) {
+            System.out.println("3.");
+            System.out.println(certificate.isValid());
+            System.out.println("4.");
+            System.out.println(!certificate.isWithdrawn());
+            return certificate.isValid() && !certificate.isWithdrawn();
+        }
+
+
+        return false;
     }
 }

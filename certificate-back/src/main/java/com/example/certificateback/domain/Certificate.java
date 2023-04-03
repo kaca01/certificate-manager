@@ -4,6 +4,7 @@ import com.example.certificateback.enumeration.CertificateType;
 import lombok.*;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Getter
@@ -21,11 +22,11 @@ public class Certificate {
     @Column(name = "type", nullable = false)
     private CertificateType certificateType;
 
-    @Column(name = "valid_to", nullable = false)
-    private Date validTo;
-
     @Column(name = "valid_from", nullable = false)
     private Date validFrom;
+
+    @Column(name = "valid_to", nullable = false)
+    private Date validTo;
 
     @Column(name = "issue_date", nullable = false)
     private Date issue_date;
@@ -43,7 +44,13 @@ public class Certificate {
     private long serialNumber;
 
     public boolean isValid() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
         Date now = new Date();
+        System.out.println("1.");
+        System.out.println(validTo);
+        System.out.println("2.");
+        System.out.println(now);
         return validFrom.compareTo(now) <= 0 && validTo.compareTo(now) > 0;
     }
 }
