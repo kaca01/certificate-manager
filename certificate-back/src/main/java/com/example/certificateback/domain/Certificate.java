@@ -27,6 +27,9 @@ public class Certificate {
     @Column(name = "valid_from", nullable = false)
     private Date validFrom;
 
+    @Column(name = "issue_date", nullable = false)
+    private Date issue_date;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User subject;
 
