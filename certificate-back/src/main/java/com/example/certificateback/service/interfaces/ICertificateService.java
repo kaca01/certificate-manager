@@ -9,4 +9,6 @@ import java.util.List;
 public interface ICertificateService {
 
     List<CertificateDTO> getAllCertificates();
+
+    Boolean checkingValidation(long serialNumber);
 }

@@ -5,6 +5,7 @@ import com.example.certificateback.enumeration.CertificateType;
 import lombok.*;
 
 import javax.persistence.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,11 +25,11 @@ public class Certificate {
     @Column(name = "type", nullable = false)
     private CertificateType certificateType;
 
-    @Column(name = "valid_to", nullable = false)
-    private Date validTo;
-
     @Column(name = "valid_from", nullable = false)
     private Date validFrom;
+
+    @Column(name = "valid_to", nullable = false)
+    private Date validTo;
 
     @Column(name = "issue_date", nullable = false)
     private Date issue_date;

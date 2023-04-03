@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -87,7 +88,8 @@ public class CertificateRequestService implements ICertificateRequestService {
         User user = getLoggedUser();
         Role role = user.getRoles().get(0);
         CertificateRequest request = new CertificateRequest(certificateRequestDTO);
-        Certificate issuer = certificateRepository.findBySerialNumber(certificateRequestDTO.getIssuer());
+        Certificate issuer = certificateRepository.findBySerialNumber(certificateRequestDTO.getIssuer())
+                .orElseThrow(() -> new NotFoundException("Certificate not found!"));;
         request.setIssuer(issuer);
         request.setSubject(user);
         certificateRequestDTO.setSubject(user.getId());

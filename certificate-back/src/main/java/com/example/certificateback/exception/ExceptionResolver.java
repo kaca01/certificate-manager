@@ -1,7 +1,9 @@
 package com.example.certificateback.exception;
 
 import com.example.certificateback.dto.ErrorDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,8 +18,8 @@ public class ExceptionResolver {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> notFoundException(NotFoundException exception) {
-        return new ResponseEntity<>(new ErrorDTO(exception.getMessage()), HttpStatus.NOT_FOUND);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        return new ResponseEntity<String>(exception.getMessage(), headers, HttpStatus.NOT_FOUND);
     }
-
-
 }
