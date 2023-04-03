@@ -1,12 +1,10 @@
 package com.example.certificateback.dto;
 
 import com.example.certificateback.domain.Certificate;
+
 import com.example.certificateback.domain.User;
 import com.example.certificateback.enumeration.CertificateType;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 import java.util.Date;
 
@@ -14,9 +12,8 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CertificateDTO {
-
-    private Long id;
 
     private String certificateType;
 
