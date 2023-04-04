@@ -3,22 +3,28 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from '../infrastructure/app-routing.module';
 import { AppComponent } from './app.component';
-import { MaterialModule } from 'src/infrastructure/material.module';
 import { WelcomePageComponent } from './modules/welcome-page/welcome-page/welcome-page.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from 'src/infrastructure/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    WelcomePageComponent
+    WelcomePageComponent,
+    LoginComponent,
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
     MaterialModule,
-    BrowserAnimationsModule
+    ReactiveFormsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
+

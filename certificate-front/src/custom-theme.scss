@@ -12,8 +12,42 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$certificate-front-primary: mat.define-palette(mat.$indigo-palette);
-$certificate-front-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+$md-mcgpalette: (
+    50 : #ecf2f8,
+    100 : #cfdeee,
+    200 : #afc9e2,
+    300 : #8fb3d6,
+    400 : #77a2ce,
+    500 : #5f92c5,
+    600 : #578abf,
+    700 : #4d7fb8,
+    800 : #4375b0,
+    900 : #3263a3,
+    A100 : #ebf3ff,
+    A200 : #b8d5ff,
+    A400 : #85b7ff,
+    A700 : #6ca8ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$certificate-front-primary: mat.define-palette($md-mcgpalette, 500);
+$certificate-front-accent: mat.define-palette($md-mcgpalette, 500);
 
 // The warn palette is optional (defaults to red).
 $certificate-front-warn: mat.define-palette(mat.$red-palette);
@@ -31,5 +65,28 @@ $certificate-front-theme: mat.define-light-theme((
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include mat.all-component-themes($certificate-front-theme);
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: medium;
+}
 
+.mat-white {
+  background-color: white !important;
+}
+
+.mat-blue {
+  color: white !important;
+  background-color: #5F92C5 !important;
+} 
+
+.timepicker-overlay {
+  z-index: 10000000 !important;
+}
+
+.timepicker-backdrop-overlay {
+  z-index: 10000000 !important;
+}
+
+@include mat.all-component-themes($certificate-front-theme);
