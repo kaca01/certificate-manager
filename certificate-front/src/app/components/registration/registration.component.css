@@ -1,0 +1,171 @@
+.background {
+    min-height: 100%;
+    padding: 5px 1rem;
+    background: linear-gradient(90deg, #5F92C5 50%, #ffffff 50%);
+    display: block;
+  }
+  
+#bgCloseImg{
+    float: right;
+    width: 30px;
+    height: 30px;
+    margin-left: 0;
+    margin-top: 32px;
+    margin-right: 60px;
+    padding: 8px;
+    border-radius: 20px;
+}
+
+#cardCloseImg{
+    display: none;
+}
+
+.close:hover{
+    background-color: rgb(243, 237, 237);
+    cursor: pointer;
+}
+
+.column {
+float: left;
+}
+
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+mat-card { 
+    width: 30%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: 35%;
+    margin-right: auto;
+    border: 1px solid white;
+    border-radius: 20px;
+    -webkit-box-shadow: 2px 9px 50px -21px rgba(0,0,0,0.81);
+    -moz-box-shadow: 2px 9px 50px -21px rgba(0,0,0,0.81);
+    box-shadow: 2px 9px 50px -21px rgba(0,0,0,0.81);
+}
+
+mat-card-content {
+    margin-left: 5%;
+}
+
+#cardHeader{
+    margin-top: 5%;
+}
+
+form{
+    margin-right: 5%;
+}
+
+.advanced_width {
+    width: 100%;
+}
+
+.advanced_width {
+    width: 100%;
+}   
+
+#left {
+    width: 60%;
+    float: left;
+    align-content: center;
+}
+
+#sign-up-p {
+    font-size: 3em;
+    font-weight: 540;
+    margin-top: 10%;
+    margin-bottom: 0.8em;
+}
+
+#right {
+    margin-top: 4%;
+    width: 35%;
+    float: right;
+}
+
+#joined {
+    margin-bottom: 0.1em;
+    margin-right: 0.2em;
+    color: #9f9f9f;
+    font-size: small;
+}
+
+#login {
+    color : #5F92C5;
+    font-size: medium;
+}
+
+a:link {
+    text-decoration: none;
+  }
+  
+a:visited {
+text-decoration: none;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+#fields {
+    font-size: 18px;
+}
+
+mat-form-field {
+    width: 23em;
+    margin: 0px;
+}
+
+mat-label {
+    font-size: small;
+}
+
+#button {
+    width: fit-content;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.reg-btn {
+    width: 100%;
+    margin-bottom: 10%;
+}
+
+@media (max-width:1200px) {
+    #sign-up-p {
+        font-size: xx-large;
+    }
+}
+
+@media (max-width:960px) {
+    mat-card {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #sign-up-p {
+        font-size: xx-large;
+    }
+    #hide-image {
+        display: none;
+    }
+
+    #bgCloseImg{
+        display: none;
+    }
+
+    #cardCloseImg{
+        display: flow-root;
+        float: right;
+        width: 26px;
+        height: 26px;
+        margin: 0;
+        padding: 5px;
+        border-radius: 20px;
+    }
+}

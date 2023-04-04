@@ -28,6 +28,10 @@ export class LoginComponent implements OnInit {
     this.notification;
     this.submitted = true;
   } 
+
+  register() {
+    this.router.navigate(['registration']);
+  }
 }
 
 interface DisplayMessage {
