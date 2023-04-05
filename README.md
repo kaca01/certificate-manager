@@ -1,5 +1,5 @@
-# Certificate Manager Web application
-## Project for course Cyber Security (VI semester)
+# Certificate Manager Web Application
+## Project for Course Cyber Security (VI Semester)
 
 ## Team 16 members
 - [Anastasija Savić](https://github.com/savic-a) SV7/2020
