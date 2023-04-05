@@ -1,4 +1,4 @@
-# certificate-manager-web-app
+# Certificate Manager Web application
 ## Project for course Cyber Security (VI semester)
 
 ## Team 16 members
