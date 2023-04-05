@@ -62,7 +62,7 @@ form {
 
 table {
     width: 100%;
-    margin: 20px 0 10px 0;
+    margin: 8% 0 2% 0;
     overflow: scroll;
 }
 
@@ -94,14 +94,14 @@ td {
     cursor: pointer;
 }
 
-footer{
+footer {
     position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  padding: 15px 0;
-  background-color: white;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+    background-color: white;
 }
 
 button {
