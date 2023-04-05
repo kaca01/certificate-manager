@@ -92,12 +92,12 @@ export class RequestService {
 
   constructor() { 
     for (let req of REQUESTS) {
-      const request: Request = {
+      const request: any = {
         _id: req._id,
         issuer: req.issuer,
         type: req.type,
         status: req.status,
-        subject: req.subject,
+        subject: req.subject.name + " " + req.subject.surname,
         refusalReason: req.refusalReason,
       };
       this.requestsList.push(request);
@@ -106,5 +106,9 @@ export class RequestService {
   
     getAllRequests(): Request[] {
       return this.requestsList;
+    }
+
+    add(req: any): void {
+      this.requestsList.push(req);
     }
 }

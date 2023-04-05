@@ -6,7 +6,7 @@
 
     <P class="title">Requests</P>
     <form>
-        <input id="search" matInput (keyup)="applyFilter($event)" placeholder="Search..." #input>
+        <input id="search" (keyup)="applyFilter($event)" placeholder="Search..." #input>
         <img id="search-icon" src="../../../assets/images/search.png">
     </form>
 
@@ -18,7 +18,7 @@
         matSort
         >
         <ng-container matColumnDef="issuer">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header">ISSUER</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header">CERT ISSUER</th>
             <td mat-cell *matCellDef="let element" class="cell">{{ element.issuer }}</td>
         </ng-container>
 

@@ -42,6 +42,11 @@ export class RequestsComponent implements OnInit {
     //   this.dataSource.sort = this.sort;
     // });
   }
+  
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -49,8 +54,10 @@ export class RequestsComponent implements OnInit {
   }
 
   getRequest(request : Request) {
-    //this.selectedRowIndex=request.id;
+    this.selectedRowIndex=request._id;
     this.request = request;
+    const Menu = document.getElementById("menu-container");
+    if(Menu != null) Menu.style.display = 'none';
   }
 
   refuse(){
