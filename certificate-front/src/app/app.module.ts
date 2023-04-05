@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from '../infrastructure/app-routing.module';
 import { AppComponent } from './app.component';
+import { WelcomePageComponent } from './components/welcome-page/welcome-page.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from 'src/infrastructure/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -12,6 +13,7 @@ import { RegistrationComponent } from './components/registration/registration.co
 @NgModule({
   declarations: [
     AppComponent,
+    WelcomePageComponent,
     LoginComponent,
     RegistrationComponent,
   ],
