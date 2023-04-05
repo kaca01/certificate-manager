@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <span [routerLink]="['/home-page']" class="clickable logo">Certificate Manager</span>
+  <span [routerLink]="['/certificate']" class="clickable logo">CertificateManager</span>
   <div id="navigation">
     <ul>
       <li><a [routerLink]="['/certificate']" class="nav">Certificates</a></li>
@@ -7,7 +7,7 @@
       <!-- <li><a class="logout" (click)="logOut()">LogOut</a></li> -->
     </ul>
   </div>
-    <span class="clickable, logout" (click)="logOut()">LogOut
+    <span [routerLink]="['/home-page']" class="clickable, logout" (click)="logOut()">LogOut
         <img id="logout-img" src="../../../assets/images/logout.png" />
     </span>
 </mat-toolbar>
