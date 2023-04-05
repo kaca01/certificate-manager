@@ -2,17 +2,16 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { WelcomePageComponent } from '../app/components/welcome-page/welcome-page.component';
 import { LoginComponent } from 'src/app/components/login/login.component';
-import { NavigationComponent } from 'src/app/components/navigation/navigation.component';
+import { RegistrationComponent } from 'src/app/components/registration/registration.component';
+
 
 const routes: Routes = [
   { path: 'welcome-page', component: WelcomePageComponent},
   { path: 'login', component: LoginComponent},
-  // TODO : delete line below after PR is reviewed
-  { path: 'nav-bar', component: NavigationComponent},
+  { path: 'registration', component: RegistrationComponent},
   { path: '', redirectTo: '/welcome-page', pathMatch: 'full' },
   { path: '**', component: WelcomePageComponent },
 ]
-
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
