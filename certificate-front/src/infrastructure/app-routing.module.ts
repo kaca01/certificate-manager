@@ -7,7 +7,7 @@ import { RegistrationComponent } from 'src/app/components/registration/registrat
 const routes: Routes = [
   { path: 'welcome-page', component: WelcomePageComponent},
   { path: 'login', component: LoginComponent},
-  { path: 'registration', component: RegistrationComponent}
+  { path: 'registration', component: RegistrationComponent},
   { path: '', redirectTo: '/welcome-page', pathMatch: 'full' },
   { path: '**', component: WelcomePageComponent },
 ]
