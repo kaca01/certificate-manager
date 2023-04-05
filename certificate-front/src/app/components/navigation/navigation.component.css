@@ -32,6 +32,11 @@ mat-toolbar ul li a {
     color:#5F92C5;
 }
 
+.logo {
+    font-weight: bold;
+    font-size: large;
+}
+
 .logout {
     color:#5F92C5;
     cursor: pointer;
