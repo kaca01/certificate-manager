@@ -9,6 +9,7 @@ import { MaterialModule } from 'src/infrastructure/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './components/login/login.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { RequestsComponent } from './components/requests/requests.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { RegistrationComponent } from './components/registration/registration.co
     WelcomePageComponent,
     LoginComponent,
     RegistrationComponent,
+    RequestsComponent,
   ],
   imports: [
     FormsModule,
