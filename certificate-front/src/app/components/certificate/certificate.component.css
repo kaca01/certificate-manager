@@ -1,0 +1,150 @@
+#main-container {
+    margin: 50px 5% 65px 5%;
+}
+
+.title {
+    margin-top: 1.3em;
+    font-size: 3em;
+    font-weight: 600;
+}
+
+.tools {
+    display: flex;
+    float: right;
+}
+
+.add {
+    padding-top: 5px;
+}
+
+.add:hover {
+    cursor: pointer;
+}
+
+#plus-icon {
+    height: 13px;
+    width: 13px;
+    margin-right: 8px;
+}
+
+span {
+    margin-right: 37px;
+    font-size: 1em;
+    font-weight: 600;
+}
+
+form {
+    float: right;
+    position: relative;
+}
+
+#search {
+    border-radius: 30px;
+    height: 25px;
+    width: 17em;
+    padding: 5px 10px 5px 36px;
+    border: 1px solid rgba(116, 114, 114, 0.495);
+    /* border-color: rgba(116, 114, 114, 0.495) !important; */
+    margin-bottom: 10px;
+}
+
+#search:focus{
+    outline-color: #5F92C5;
+    color: rgba(63, 63, 63, 0.737);
+}
+
+#search-icon{
+    position: absolute;
+    left: 13px;
+    top: 9px;
+    width: 17px;
+    height: 17px;
+}
+
+table {
+    width: 100%;
+    margin: 20px 0 10px 0;
+    overflow: scroll;
+}
+
+.mat-mdc-table .mdc-data-table__row:hover {
+    background-color: #ebe9e956;
+    cursor: pointer;
+}
+
+.mdc-data-table__header-cell {
+    border-bottom-width: 1.5px;
+    border-bottom-color:rgba(44, 44, 44, 0.788)
+}
+
+.mdc-data-table__cell {
+    border-bottom-style: none;
+}
+
+.mat-mdc-table .mdc-data-table__row {
+    height: 60px;
+}
+
+td {
+    color: rgba(63, 63, 63, 0.737);
+}
+
+#download-icon {
+    height: 25px;
+    width: 20px;
+    cursor: pointer;
+}
+
+footer{
+    position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 15px 0;
+  background-color: white;
+}
+
+button {
+    padding: 0 1.8em;
+    margin: 0 2.7em;
+    font-size: 1.3em;
+    background-color: white;
+    border: none;
+    font-weight: 600;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+#validation {
+    color: #5F92C5;
+}
+
+#withdraw {
+    width: 100px;
+    color: rgba(252, 83, 83, 0.685);
+}
+
+
+
+#text-area {
+    width: 20em;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 2px;
+    color: gray;
+}
+
+#save {
+    vertical-align: top;
+    margin-top: 15px;
+    color: gray;
+    border-radius: 5px;
+}
+
+#save:hover {
+    background-color: rgba(233, 233, 233, 1);
+}
