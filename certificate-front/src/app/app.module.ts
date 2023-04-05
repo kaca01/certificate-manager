@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from 'src/infrastructure/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './components/login/login.component';
+import { NavigationComponent } from './components/navigation/navigation.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 
 @NgModule({
@@ -15,7 +16,9 @@ import { RegistrationComponent } from './components/registration/registration.co
     AppComponent,
     WelcomePageComponent,
     LoginComponent,
+    NavigationComponent,
     RegistrationComponent,
+
   ],
   imports: [
     FormsModule,
