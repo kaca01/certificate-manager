@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CertificateService } from 'src/app/service/certificate.service';
+import { CertificateRequestComponent } from '../certificate-request/certificate-request.component';
 
 @Component({
   selector: 'certificate',
@@ -18,7 +20,7 @@ export class CertificateComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private certificateService: CertificateService) {}
+  constructor(private certificateService: CertificateService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.certificate = this.certificateService.getAll();
@@ -33,6 +35,15 @@ export class CertificateComponent implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  openDialog() {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    
+    this.dialog.open(CertificateRequestComponent, dialogConfig);
   }
 }
 

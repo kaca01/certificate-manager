@@ -1,0 +1,54 @@
+.container {
+    width: 400px;
+}
+
+#title {
+    margin-top: 1%;
+    margin-left: 10%;
+    font-weight: bold;
+    font-size: x-large;
+    width: 350px;
+    padding: 2px;
+}
+
+mat-form-field {
+    margin-left: 18%;
+    width: 250px;
+}
+
+#first-field {
+    margin-top: 35px;
+}
+
+#close-dialog {
+    float: right;
+    width: 20px;
+    height: 20px;
+    /* margin-right: 10px; */
+  }
+  
+.close:hover{
+    background-color: rgb(243, 237, 237);
+    cursor: pointer;
+}
+
+/* #btn-container {
+    width: 100%;
+} */
+
+#save {
+    width: 50%;
+    vertical-align: top;
+    margin-top: 15px;
+    color: gray;
+    border-radius: 5px;
+    border: none;
+    font-size: larger;
+    margin-left: 22%;
+    margin-bottom: 4%;
+}
+
+#save:hover{
+    background-color: rgba(233, 233, 233, 1);
+    cursor: pointer;
+}
