@@ -39,4 +39,10 @@ public class CertificateController {
     public Boolean isCertificateValidate(@PathVariable String serialNumber) {
         return certificateService.checkingValidation(Long.parseLong(serialNumber));
     }
+
+    @GetMapping("/issuers")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<AllDTO<CertificateDTO>> getIssuers() {
+        return new ResponseEntity<>(certificateService.getIssuers(), HttpStatus.OK);
+    }
 }

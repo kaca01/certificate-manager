@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Certificate } from '../components/certificate/certificate.component';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 const CERTIFICATES = [
   {
@@ -106,7 +109,7 @@ const CERTIFICATES = [
 export class CertificateService {
   private certificateList: Certificate[] = [];
 
-  constructor() { 
+  constructor(private http: HttpClient) { 
     for (let certificateObj of CERTIFICATES) {
       const certificate: Certificate = {
         _id: certificateObj._id,
@@ -127,4 +130,9 @@ export class CertificateService {
   add(certificate: any): void {
     this.certificateList.push(certificate);
   }
+
+  getIssuers(): Observable<Certificate[]> {
+    return this.http.get<Certificate[]>(environment.apiHost + "api/certificate/issuers");
+  }
+
 }
