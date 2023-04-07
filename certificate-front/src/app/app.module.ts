@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './components/login/login.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { RequestsComponent } from './components/requests/requests.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { RegistrationComponent } from './components/registration/registration.co
     LoginComponent,
     NavigationComponent,
     RegistrationComponent,
-
+    RequestsComponent,
   ],
   imports: [
     FormsModule,
