@@ -15,3 +15,12 @@ export interface Request {
   subject: User;
   refusalReason: string;
 }
+
+export interface Certificate {
+  _id: number;
+  serialNum: string;
+  subject: string;
+  validFrom: string;
+  validTo: string;
+  type: string;
+}

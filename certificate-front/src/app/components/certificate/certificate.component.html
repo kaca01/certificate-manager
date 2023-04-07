@@ -1,0 +1,70 @@
+<app-navigation></app-navigation>
+
+<div id="main-container">
+
+    <P class="title">Certificates</P>
+    <div class="tools">
+        <div class="add">
+            <img id="plus-icon" src="../../assets/images/plus.png"/>
+            <span>Create Request</span>
+        </div>
+        <form>
+            <input id="search" matInput (keyup)="applyFilter($event)" placeholder="Search..." #input>
+            <img id="search-icon" src="../../assets/images/search.png"/>
+        </form>
+    </div>
+
+    <table
+        mat-table
+        [dataSource]="dataSource"
+        class="mat-elevation-z0 demo-table"
+        matSort>
+    
+        <ng-container matColumnDef="serial number">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header">SERIAL NUMBER</th>
+            <td mat-cell *matCellDef="let element" class="cell">{{ element.serialNum }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="subject">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header">SUBJECT</th>
+            <td mat-cell *matCellDef="let element" class="cell">{{ element.subject }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="valid from">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header">VALID FROM</th>
+            <td mat-cell *matCellDef="let element" class="cell">{{ element.validFrom }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="valid to">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header">VALID TO</th>
+            <td mat-cell *matCellDef="let element" class="cell">{{ element.validTo }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header">TYPE</th>
+            <td mat-cell *matCellDef="let element" class="cell">{{ element.type }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="download">
+            <th mat-header-cell *matHeaderCellDef class="header"></th>
+            <td mat-cell *matCellDef="let element" class="cell"> 
+                <img id="download-icon" src="../../assets/images/download.png"/>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row" (click)="getCertificate(row)" [ngClass]="{'highlightTableColor': selectedRowIndex == row._id}"></tr>
+    </table>
+
+    <mat-paginator
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        showFirstLastButtons>
+    </mat-paginator>
+</div>
+
+<p class="bottom-margin">test</p>
+
+<footer>
+    <button id="validation">CHECK VALIDITY</button>
+    <button id="withdraw">WITHDRAW</button>
+</footer>
