@@ -1,3 +1,7 @@
+.highlightTableColor{
+    background-color: #ebe9e9b7;
+}
+
 #main-container {
     margin: 50px 5% 65px 5%;
 }
@@ -22,14 +26,14 @@
 }
 
 #plus-icon {
-    height: 13px;
-    width: 13px;
+    height: 15px;
+    width: 15px;
     margin-right: 8px;
 }
 
 span {
-    margin-right: 37px;
-    font-size: 1em;
+    margin-right: 30px;
+    font-size: 1.15em;
     font-weight: 600;
 }
 
@@ -41,9 +45,9 @@ form {
 #search {
     border-radius: 30px;
     height: 25px;
-    width: 17em;
+    width: 18em;
     padding: 5px 10px 5px 36px;
-    border: 1px solid rgba(116, 114, 114, 0.495);
+    border: 2px solid rgba(116, 114, 114, 0.495);
     margin-bottom: 10px;
 }
 
@@ -66,21 +70,25 @@ table {
     overflow: scroll;
 }
 
-.mat-mdc-table .mdc-data-table__row:hover {
+.row:hover{
     background-color: #ebe9e956;
     cursor: pointer;
 }
 
-.mdc-data-table__header-cell {
+.header
+{
     border-bottom-width: 1.5px;
-    border-bottom-color:rgba(44, 44, 44, 0.788)
+    border-bottom-color: black;
+    color: black;
+    font-weight: 600;
 }
 
-.mdc-data-table__cell {
+.cell {
     border-bottom-style: none;
+    font-size: 17px;
 }
 
-.mat-mdc-table .mdc-data-table__row {
+.row {
     height: 60px;
 }
 
@@ -124,4 +132,8 @@ button:hover {
 #withdraw {
     width: 100px;
     color: rgba(252, 83, 83, 0.685);
+}
+
+.bottom-margin{
+    color: white;
 }

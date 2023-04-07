@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Certificate } from '../components/certificate/certificate.component';
+import { Certificate } from '../domains';
 
 const CERTIFICATES = [
   {
