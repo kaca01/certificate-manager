@@ -30,9 +30,6 @@ export class LoginComponent implements OnInit {
     this.notification;
     this.submitted = true;
 
-    this.notification;
-    this.submitted = true;
-
     this.userService.login(this.loginForm.value)
     .subscribe(data => {
         localStorage.setItem("jwt", data.accessToken);
@@ -42,7 +39,6 @@ export class LoginComponent implements OnInit {
         this.userService.getMyInfo().subscribe((res:any) => {
           if(this.userService.currentUser != null) {
             this.router.navigate(['/certificate']);
-            console.log("PROSLOOOO");
           }
           });
         },

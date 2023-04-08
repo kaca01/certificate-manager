@@ -49,9 +49,14 @@ export class CertificateComponent implements OnInit {
 
 export interface Certificate {
   _id: number;
-  serialNum: string;
+  serialNumber: string;
   subject: string;
   validFrom: string;
   validTo: string;
   type: string;
+}
+
+export interface AllCertificate {
+  totalCount: number;
+  results: Certificate[];
 }

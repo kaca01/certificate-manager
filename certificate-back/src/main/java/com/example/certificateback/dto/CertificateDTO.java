@@ -44,9 +44,10 @@ public class CertificateDTO {
     }
 
     // response
-    public CertificateDTO(Date issueDate, User user, CertificateType type) {
+    public CertificateDTO(Date issueDate, User user, CertificateType type, long serialNum) {
         this.issueDate =  issueDate.toString();
         this.subject = new UserDTO(user);
         this.certificateType = type.toString();
+        this.serialNumber = serialNum;
     }
 }

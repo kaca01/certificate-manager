@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Certificate } from '../components/certificate/certificate.component';
+import { AllCertificate, Certificate } from '../components/certificate/certificate.component';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 const CERTIFICATES = [
   {
     _id: 1,
-    serialNum: '32548732947932',
+    serialNumber: '32548732947932',
     subject: 'Marta Maric',
     validFrom: '2021-05-03',
     validTo: '2031-05-03',
@@ -15,7 +15,7 @@ const CERTIFICATES = [
   },
   {
     _id: 2,
-    serialNum: '345372897489032',
+    serialNumber: '345372897489032',
     subject: 'Marko Markovic',
     validFrom: '2022-05-03',
     validTo: '2023-12-12',
@@ -23,7 +23,7 @@ const CERTIFICATES = [
   },
   {
     _id: 3,
-    serialNum: '90573489598317',
+    serialNumber: '90573489598317',
     subject: 'Aleksandra Spasic',
     validFrom: '2022-05-03',
     validTo: '2023-12-12',
@@ -31,7 +31,7 @@ const CERTIFICATES = [
   },
   {
     _id: 4,
-    serialNum: '12345678909876543',
+    serialNumber: '12345678909876543',
     subject: 'Neda Nedimovic',
     validFrom: '2020-12-03',
     validTo: '2022-02-12',
@@ -39,7 +39,7 @@ const CERTIFICATES = [
   },
   {
     _id: 5,
-    serialNum: '12345678909876543',
+    serialNumber: '12345678909876543',
     subject: 'Nenad Nikolic',
     validFrom: '2022-05-03',
     validTo: '2023-12-12',
@@ -47,7 +47,7 @@ const CERTIFICATES = [
   },
   {
     _id: 6,
-    serialNum: '12345678909876543',
+    serialNumber: '12345678909876543',
     subject: 'Petar Nastasic',
     validFrom: '2022-11-10',
     validTo: '2023-12-12',
@@ -55,7 +55,7 @@ const CERTIFICATES = [
   },
   {
     _id: 7,
-    serialNum: '12345678909876543',
+    serialNumber: '12345678909876543',
     subject: 'Vanja Vasic',
     validFrom: '2022-05-03',
     validTo: '2023-12-12',
@@ -63,7 +63,7 @@ const CERTIFICATES = [
   },
   {
     _id: 8,
-    serialNum: '12345678909876543',
+    serialNumber: '12345678909876543',
     subject: 'Vanja Vasic',
     validFrom: '2022-05-03',
     validTo: '2023-12-12',
@@ -71,7 +71,7 @@ const CERTIFICATES = [
   },
   {
     _id: 9,
-    serialNum: '12345678909876543',
+    serialNumber: '12345678909876543',
     subject: 'Marija Stankov',
     validFrom: '2022-05-03',
     validTo: '2023-12-12',
@@ -79,7 +79,7 @@ const CERTIFICATES = [
   },
   {
     _id: 10,
-    serialNum: '12345678909876543',
+    serialNumber: '12345678909876543',
     subject: 'Mitar Mitrovic',
     validFrom: '2022-05-03',
     validTo: '2023-12-12',
@@ -87,7 +87,7 @@ const CERTIFICATES = [
   },
   {
     _id: 11,
-    serialNum: '12345678909876543',
+    serialNumber: '12345678909876543',
     subject: 'Bosko Kasic',
     validFrom: '2022-05-03',
     validTo: '2023-12-12',
@@ -95,7 +95,7 @@ const CERTIFICATES = [
   },
   {
     _id: 12,
-    serialNum: '12345678909876543',
+    serialNumber: '12345678909876543',
     subject: 'Aleksandra Spasic',
     validFrom: '2022-05-03',
     validTo: '2023-12-12',
@@ -113,7 +113,7 @@ export class CertificateService {
     for (let certificateObj of CERTIFICATES) {
       const certificate: Certificate = {
         _id: certificateObj._id,
-        serialNum: certificateObj.serialNum,
+        serialNumber: certificateObj.serialNumber,
         subject: certificateObj.subject,
         validFrom: certificateObj.validFrom,
         validTo: certificateObj.validTo,
@@ -131,8 +131,8 @@ export class CertificateService {
     this.certificateList.push(certificate);
   }
 
-  getIssuers(): Observable<Certificate[]> {
-    return this.http.get<Certificate[]>(environment.apiHost + "api/certificate/issuers");
+  getIssuers(): Observable<AllCertificate> {
+    return this.http.get<AllCertificate>(environment.apiHost + "api/certificate/issuers");
   }
 
 }

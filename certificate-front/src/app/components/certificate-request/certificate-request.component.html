@@ -8,11 +8,10 @@
     </mat-dialog-content>
     <!-- <div id="btn-container"> -->
         <mat-form-field appearance="fill" id="first-field">
-            <mat-label>Select issuer</mat-label>
+            <mat-label>Serial number of the issuer</mat-label>
             <mat-select>
-              <mat-option value="one">First option</mat-option>
-              <mat-option value="two">Second option</mat-option>
-              <mat-option value="three">Third option</mat-option>
+              <mat-option value=a
+              *ngFor="let a of issuers.results; index as i">{{ a.serialNumber }}</mat-option>
             </mat-select>
           </mat-form-field>
 

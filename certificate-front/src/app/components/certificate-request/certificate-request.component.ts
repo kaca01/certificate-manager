@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Certificate } from '../certificate/certificate.component';
+import { AllCertificate, Certificate } from '../certificate/certificate.component';
 import { CertificateService } from 'src/app/service/certificate.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { CertificateService } from 'src/app/service/certificate.service';
   styleUrls: ['./certificate-request.component.css']
 })
 export class CertificateRequestComponent implements OnInit {
-  issuers: Certificate[] = [];
+  issuers: AllCertificate = {} as AllCertificate;
 
   constructor(private dialogRef: MatDialogRef<CertificateRequestComponent>, private certificateService: CertificateService,
     @Inject(MAT_DIALOG_DATA) data: any) {
@@ -20,7 +20,7 @@ export class CertificateRequestComponent implements OnInit {
     this.certificateService.getIssuers().subscribe((res)=> {
       this.issuers = res;
       console.log("ISSUERS");
-      console.log(this.issuers);
+      console.log(this.issuers.results.at(0));
     });
   }
 
