@@ -12,6 +12,13 @@ import { CertificateComponent } from './components/certificate/certificate.compo
 import { CertificateRequestComponent } from './components/certificate-request/certificate-request.component';
 import { AuthService } from './service/auth.service';
 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './components/interceptor/TokenInterceptor';
+import { ApiService } from './service/api.service';
+import { UserService } from './service/user.service';
+import { ConfigService } from './service/config.service';
+import { CertificateService } from './service/certificate.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,7 +36,18 @@ import { AuthService } from './service/auth.service';
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [AuthService],
+  providers: [
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: TokenInterceptor,
+    multi: true
+  },
+    AuthService,
+    ApiService,
+    UserService,
+    ConfigService,
+    CertificateService
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
