@@ -44,7 +44,7 @@ public class Certificate {
     private String withdrawnReason;
 
     @Column(name = "serial_number", nullable = true)
-    private long serialNumber;
+    private String serialNumber;
 
     public boolean isValid() {
         Date now = new Date();

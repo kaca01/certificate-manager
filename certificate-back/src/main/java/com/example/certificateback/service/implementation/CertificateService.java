@@ -44,7 +44,7 @@ public class CertificateService implements ICertificateService {
     }
 
     @Override
-    public Boolean checkingValidation(long serialNumber) {
+    public Boolean checkingValidation(String serialNumber) {
         Certificate certificate = certificateRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
 

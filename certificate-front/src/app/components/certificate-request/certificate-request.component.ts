@@ -4,6 +4,7 @@ import { AllCertificate, Certificate } from '../certificate/certificate.componen
 import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestService } from './certificate-request.service';
 import { UserService } from 'src/app/service/user.service';
+import { CertificateRequest } from 'src/app/domains';
 
 @Component({
   selector: 'app-certificate-request',
@@ -28,10 +29,17 @@ export class CertificateRequestComponent implements OnInit {
   }
 
   save():void {
-    console.log("PRINTTTTTTT");
-    console.log(this.type);
-    console.log(this.issuer);
-    console.log(this.userService.currentUser?.id);
+    let certifcateRequest: CertificateRequest = {} as CertificateRequest;
+    certifcateRequest.certificateType = this.type;
+    certifcateRequest.issuer = this.issuer;
+    certifcateRequest.requestType = "ACTIVE";
+    if (this.userService.currentUser?.id != undefined) certifcateRequest.subject = this.userService.currentUser?.id;
+
+    this.certificateRequsetService.insert(certifcateRequest).subscribe((res)=> {
+      console.log("DONE");
+    });
+
+    this.dialogRef.close();
   }
 
   close(): void{

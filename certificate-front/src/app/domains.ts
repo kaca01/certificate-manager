@@ -10,7 +10,7 @@ export interface User {
 
 export interface CertificateRequest {
     requestType: string,
-    issuer: number,
+    issuer: string,
     certificateType: string,
     subject: number,
     refusalReason: number
