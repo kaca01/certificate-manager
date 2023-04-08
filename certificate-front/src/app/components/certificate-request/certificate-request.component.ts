@@ -2,6 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AllCertificate, Certificate } from '../certificate/certificate.component';
 import { CertificateService } from 'src/app/service/certificate.service';
+import { CertificateRequestService } from './certificate-request.service';
+import { UserService } from 'src/app/service/user.service';
 
 @Component({
   selector: 'app-certificate-request',
@@ -10,34 +12,30 @@ import { CertificateService } from 'src/app/service/certificate.service';
 })
 export class CertificateRequestComponent implements OnInit {
   issuers: AllCertificate = {} as AllCertificate;
+  issuer: string = "";
+  type: string = "";
 
   constructor(private dialogRef: MatDialogRef<CertificateRequestComponent>, private certificateService: CertificateService,
-    @Inject(MAT_DIALOG_DATA) data: any) {
+              private certificateRequsetService: CertificateRequestService, private userService: UserService,
+              @Inject(MAT_DIALOG_DATA) data: any) {
 
      }
 
   ngOnInit(): void {
     this.certificateService.getIssuers().subscribe((res)=> {
       this.issuers = res;
-      console.log("ISSUERS");
-      console.log(this.issuers.results.at(0));
     });
   }
 
   save():void {
-
+    console.log("PRINTTTTTTT");
+    console.log(this.type);
+    console.log(this.issuer);
+    console.log(this.userService.currentUser?.id);
   }
 
   close(): void{
     this.dialogRef.close();
   }
 
-}
-
-export interface CertificateRequest {
-    requestType: string,
-    issuer: number,
-    certificateType: string,
-    subject: number,
-    refusalReason: number
 }

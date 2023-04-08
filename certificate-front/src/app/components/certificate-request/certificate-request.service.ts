@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CertificateRequest } from './certificate-request.component';
 import { Observable } from 'rxjs';
+import { CertificateRequest } from 'src/app/domains';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
