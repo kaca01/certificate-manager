@@ -9,7 +9,7 @@
     <!-- <div id="btn-container"> -->
         <mat-form-field appearance="fill" id="first-field">
             <mat-label>Serial number of the issuer</mat-label>
-            <mat-select [(value)]="issuer">
+            <mat-select [(value)]="issuer" required>
               <mat-option value="{{ a.serialNumber }}"
               *ngFor="let a of issuers.results; index as i">{{ a.serialNumber }}</mat-option>
             </mat-select>
@@ -17,7 +17,7 @@
 
           <mat-form-field appearance="fill" id="second-field">
             <mat-label>Select certificate type</mat-label>
-            <mat-select [(value)]="type">
+            <mat-select [(value)]="type" required>
               <mat-option value="ROOT">Root</mat-option>
               <mat-option value="INTERMEDIATE">Intermediate</mat-option>
               <mat-option value="END">End</mat-option>
