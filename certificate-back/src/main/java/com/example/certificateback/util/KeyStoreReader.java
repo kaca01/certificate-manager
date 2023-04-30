@@ -16,8 +16,11 @@ import java.security.cert.X509Certificate;
 @Service
 public class KeyStoreReader {
 
-    public KeyStore load() {
-        char[] keyStorePassword = "siit2020".toCharArray();
+    public static final String KEYSTORE_PATH = "src/main/resources/keystore/keystore.jks";
+    public static final char[] KEYSTORE_PASSWORD = "siit2020".toCharArray();
+    public final static String ENTRY_PASSWORD = "siit2020";
+
+    public static KeyStore load() {
         KeyStore keyStore = null;
 
         try {
@@ -25,8 +28,8 @@ public class KeyStoreReader {
         } catch (KeyStoreException e) {
             e.printStackTrace();
         }
-        try(InputStream keyStoreData = Files.newInputStream(Paths.get(".keystore"))){
-            keyStore.load(keyStoreData, keyStorePassword);
+        try(InputStream keyStoreData = Files.newInputStream(Paths.get(KEYSTORE_PATH))){
+            keyStore.load(keyStoreData, KEYSTORE_PASSWORD);
         } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
             throw new RuntimeException(e);
         }
@@ -42,7 +45,7 @@ public class KeyStoreReader {
      * @param keyPass      - lozinka koja je neophodna da se izvuce privatni kljuc
      * @return - podatke o izdavaocu i odgovarajuci privatni kljuc
      */
-    public IssuerData readIssuer(String alias, char[] keyPass) {
+    public static IssuerData readIssuer(String alias, char[] keyPass) {
         try {
             KeyStore keyStore = load();
 

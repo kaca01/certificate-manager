@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,6 +46,17 @@ public class Certificate {
 
     @Column(name = "serial_number", nullable = true)
     private long serialNumber;
+
+    public Certificate(X509Certificate xCertificate, CertificateRequest request) {
+        this.serialNumber = xCertificate.getSerialNumber().toString();
+        this.certificateType = request.getCertificateType();
+        this.subject = request.getSubject();
+                .issuer(certificateDemand.getRequestedIssuer())
+                .startDate(certificate.getNotBefore())
+                .endDate(certificate.getNotAfter())
+                .publicKey(certificate.getPublicKey())
+                .signature(certificate.getSignature())
+    }
 
     public boolean isValid() {
         Date now = new Date();

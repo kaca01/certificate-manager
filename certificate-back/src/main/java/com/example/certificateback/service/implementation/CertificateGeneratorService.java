@@ -5,7 +5,10 @@ import com.example.certificateback.domain.CertificateRequest;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.domain.ksData.IssuerData;
 import com.example.certificateback.domain.ksData.SubjectData;
+import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.service.interfaces.ICertificateGeneratorService;
+import com.example.certificateback.util.KeyStoreReader;
+import com.example.certificateback.util.KeyStoreWriter;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -15,6 +18,7 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -23,45 +27,57 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
 public class CertificateGeneratorService implements ICertificateGeneratorService {
 
+    @Autowired
+    private ICertificateRepository certificateRepository;
+    @Autowired
+    private KeyStoreWriter keyStoreWriter;
+
     @Override
     public Certificate generateCertificate(CertificateRequest certificateRequest) {
         SubjectData subjectData = generateSubjectData(certificateRequest);
-        IssuerData issuerData = generateIssuerData(certificateRequest);
+        //todo if issuer is null
+        IssuerData issuerData = KeyStoreReader.readIssuer(Long.toString(certificateRequest.getIssuer().getSerialNumber()), KeyStoreReader.ENTRY_PASSWORD.toCharArray());
         try {
             JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
-
-            // Takodje se navodi koji provider se koristi, u ovom slucaju Bouncy Castle
             builder = builder.setProvider("BC");
 
             // Formira se objekat koji ce sadrzati privatni kljuc i koji ce se koristiti za potpisivanje sertifikata
             ContentSigner contentSigner = builder.build(issuerData.getPrivateKey());
 
-            // Postavljaju se podaci za generisanje sertifikata
             X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(
                     issuerData.getX500name(),
-                    new BigInteger(subjectData.getSerialNumber()),
+                    new BigInteger(String.valueOf(subjectData.getSerialNumber())),
                     subjectData.getStartDate(),
                     subjectData.getEndDate(),
                     subjectData.getX500name(),
                     subjectData.getPublicKey());
-
-            // Generise se sertifikat
             X509CertificateHolder certHolder = certGen.build(contentSigner);
-            // Builder generise sertifikat kao objekat klase X509CertificateHolder
-            // Nakon toga je potrebno certHolder konvertovati u sertifikat, za sta se koristi certConverter
             JcaX509CertificateConverter certConverter = new JcaX509CertificateConverter();
             certConverter = certConverter.setProvider("BC");
 
             // Konvertuje objekat u sertifikat
             X509Certificate xCertificate = certConverter.getCertificate(certHolder);
-            //we can also check if the digital signature of certificate is valid
-            //todo save certificate to db, save to keystore
+
+            keyStoreWriter.write(
+                    xCertificate.getSerialNumber().toString(),
+                    subjectData.getPrivateKey(),   //changed from issuer to subject
+                    KeyStoreReader.ENTRY_PASSWORD.toCharArray(),
+                    xCertificate
+            );
+            keyStoreWriter.saveKeyStore(KeyStoreReader.KEYSTORE_PATH, KeyStoreReader.KEYSTORE_PASSWORD);
+            //save certificate to db
+            Certificate certificateEntity = new Certificate(xCertificate, certificateRequest);
+            certificateEntity = certificateRepository.save(certificateEntity);
             //return todo return a converted certificated type (to dto)
         } catch (IllegalArgumentException | IllegalStateException | OperatorCreationException | CertificateException e) {
             e.printStackTrace();
@@ -73,45 +89,26 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
         try {
             KeyPair keyPairSubject = generateKeyPair();
             User user = certificateRequest.getSubject();
-            //todo what to do with private key?
 
-            SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
-            //todo how to generate validation dates? Does user input that or do we do that through code?
-            Date startDate = iso8601Formater.parse("2022-03-01");
-            Date endDate = iso8601Formater.parse("2024-03-01");
+            Date startDate = generateStartTime();
+            Date endDate = generateEndTime(startDate);
 
-            String serialNumber = certificateRequest.getSubject().getEmail() + UUID.randomUUID().toString();
+            //todo extract to new function
+            Long serialNumber = Long.parseLong(certificateRequest.getSubject().getId().toString() + new Random().nextLong());
 
             X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
             builder.addRDN(BCStyle.CN, user.getUsername());
             builder.addRDN(BCStyle.SURNAME, user.getSurname());
             builder.addRDN(BCStyle.GIVENNAME, user.getName());
             builder.addRDN(BCStyle.E, user.getEmail());
-            // UID (USER ID) je ID korisnika
             builder.addRDN(BCStyle.UID, user.getId().toString());
 
-            // Kreiraju se podaci za sertifikat, sto ukljucuje:
-            // - javni kljuc koji se vezuje za sertifikat
-            // - podatke o vlasniku
-            // - serijski broj sertifikata
-            // - od kada do kada vazi sertifikat
-            return new SubjectData(keyPairSubject.getPublic(), builder.build(), serialNumber, startDate, endDate);
+            return new SubjectData(keyPairSubject.getPublic(), keyPairSubject.getPrivate(), builder.build(), serialNumber,
+                    startDate, endDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private IssuerData generateIssuerData(CertificateRequest certificateRequest){
-        User issuer = certificateRequest.getIssuer().getSubject();
-        PrivateKey issuerKey = null; //todo treba dobaviti privatni kljuc issuer-a tog sertifikata (digitalni potipis)
-        X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-        builder.addRDN(BCStyle.CN, issuer.getUsername());
-        builder.addRDN(BCStyle.SURNAME, issuer.getSurname());
-        builder.addRDN(BCStyle.GIVENNAME, issuer.getName());
-        builder.addRDN(BCStyle.UID, String.valueOf(issuer.getId()));
-
-        return new IssuerData(builder.build(), issuerKey);
     }
 
     private KeyPair generateKeyPair() {
@@ -124,5 +121,25 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
             e.printStackTrace();
         }
         return null;
+    }
+
+    //todo extract to new file
+    public static Date generateStartTime() {
+        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
+        return localDateTimeToDate(startOfDay);
+    }
+
+    public static Date generateEndTime(Date date){
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime endTime = localDateTime.plusYears(1);
+        return localDateTimeToDate(endTime);
+    }
+
+    private static LocalDateTime dateToLocalDateTime(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+
+    private static Date localDateTimeToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 }
