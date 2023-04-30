@@ -1,0 +1,81 @@
+<div class="background">
+    <img src="../../assets/images/close.png" id="bgCloseImg" class="close" [routerLink]="['/welcome-page']"/>
+    <div class="row">
+
+    <mat-card>
+        <mat-card-content>
+            <img src="../../assets/images/close.png" id="cardCloseImg" class="close" [routerLink]="['/welcome-page']"/>
+            <div id="cardHeader">
+                <div id="left">
+                    <p id="sign-up-p">Sign up</p>
+                </div>
+                <div id="right">
+                    <p id="joined">Joined us before?</p>
+                    <a><p id="login" (click)="login()">Login</p></a>
+                </div>
+            </div>
+            
+            
+            <form [formGroup]="registrationForm" fxLayout="column" (ngSubmit)="reg()">
+
+            <mat-form-field appearance="outline" class="advanced_width">
+                <mat-label>Name</mat-label>
+                <input matInput type="text" name="name" formControlName="name" />
+                <mat-error *ngIf="!registrationForm.controls['name'].valid"></mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="advanced_width">
+                <mat-label>Last name</mat-label>
+                <input matInput type="text" name="surname" formControlName="surname" />
+                <mat-error *ngIf="!registrationForm.controls['surname'].valid"></mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="advanced_width">
+                <mat-label>Email address</mat-label>
+                <input matInput type="email" name="email" formControlName="email" />
+                <mat-error *ngIf="!registrationForm.controls['email'].valid"></mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="advanced_width">
+                <mat-label>Password</mat-label>
+                <input name="password" formControlName="password" matInput [type]=" hide ? 'password' : 'text'" required />
+                <button  mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide Password'"
+                        [attr.aria-pressed]="hide" type="button">
+                <mat-icon>
+                    {{hide ? 'visibility_off' : 'visibility'}}
+                </mat-icon>
+            </button>
+                <mat-error *ngIf="!registrationForm.controls['password'].valid"></mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="advanced_width">
+                <mat-label>Repeat password</mat-label>
+                <input name="repeatPassword" formControlName="repeatPassword" matInput [type]=" hideAgain ? 'password' : 'text'" required />
+                <button  mat-icon-button matSuffix (click)="hideAgain = !hideAgain" [attr.aria-label]="'Hide Password'"
+                        [attr.aria-pressed]="hideAgain" type="button">
+                <mat-icon>
+                    {{hideAgain ? 'visibility_off' : 'visibility'}}
+                </mat-icon>
+            </button>
+                <mat-error *ngIf="!registrationForm.controls['password'].valid"></mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="advanced_width">
+                <mat-label>Phone</mat-label>
+                <input matInput type="tel" name="telephoneNumber" formControlName="telephoneNumber" />
+                <mat-error *ngIf="!registrationForm.controls['telephoneNumber'].valid"></mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="advanced_width">
+                <mat-label>Country</mat-label>
+                <input matInput type="text" name="country" formControlName="country" />
+                <mat-error *ngIf="!registrationForm.controls['country'].valid"></mat-error>
+            </mat-form-field >
+
+            <p *ngIf="notification" [class]="notification.msgType">{{notification.msgBody}}</p>
+            <button mat-raised-button color="blue" type="submit" class="reg-btn">Sign up</button>
+        </form>
+    </mat-card-content>
+    </mat-card>
+    </div>
+</div>

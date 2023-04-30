@@ -1,0 +1,139 @@
+.highlightTableColor{
+    background-color: #ebe9e9b7;
+}
+
+#main-container {
+    margin: 50px 5% 65px 5%;
+}
+
+.title {
+    margin-top: 1.4em;
+    font-size: 3em;
+    font-weight: 600;
+}
+
+.tools {
+    display: flex;
+    float: right;
+}
+
+.add {
+    padding-top: 5px;
+}
+
+.add:hover {
+    cursor: pointer;
+}
+
+#plus-icon {
+    height: 15px;
+    width: 15px;
+    margin-right: 8px;
+}
+
+span {
+    margin-right: 30px;
+    font-size: 1.15em;
+    font-weight: 600;
+}
+
+form {
+    float: right;
+    position: relative;
+}
+
+#search {
+    border-radius: 30px;
+    height: 25px;
+    width: 18em;
+    padding: 5px 10px 5px 36px;
+    border: 2px solid rgba(116, 114, 114, 0.495);
+    margin-bottom: 10px;
+}
+
+#search:focus{
+    outline-color: #5F92C5;
+    color: rgba(63, 63, 63, 0.737);
+}
+
+#search-icon{
+    position: absolute;
+    left: 13px;
+    top: 9px;
+    width: 17px;
+    height: 17px;
+}
+
+table {
+    width: 100%;
+    margin: 20px 0 10px 0;
+    overflow: scroll;
+}
+
+.row:hover{
+    background-color: #ebe9e956;
+    cursor: pointer;
+}
+
+.header
+{
+    border-bottom-width: 1.5px;
+    border-bottom-color: black;
+    color: black;
+    font-weight: 600;
+}
+
+.cell {
+    border-bottom-style: none;
+    font-size: 17px;
+}
+
+.row {
+    height: 60px;
+}
+
+td {
+    color: rgba(63, 63, 63, 0.737);
+}
+
+#download-icon {
+    height: 25px;
+    width: 20px;
+    cursor: pointer;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+    background-color: white;
+}
+
+button {
+    padding: 0 1.8em;
+    margin: 0 2.7em;
+    font-size: 1.3em;
+    background-color: white;
+    border: none;
+    font-weight: 600;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+#validation {
+    color: #5F92C5;
+}
+
+#withdraw {
+    width: 100px;
+    color: rgba(252, 83, 83, 0.685);
+}
+
+.bottom-margin{
+    color: white;
+}
