@@ -2,8 +2,8 @@ package com.example.certificateback.service.implementation;
 
 import com.example.certificateback.domain.Certificate;
 import com.example.certificateback.domain.User;
+import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
-import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.IUserRepository;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CertificateService implements ICertificateService {
@@ -34,7 +35,8 @@ public class CertificateService implements ICertificateService {
             List<Certificate> certificates = certificateRepository.findAll();
             List<CertificateDTO> certificatesDTO = new ArrayList<>();
             for (Certificate c : certificates){
-                certificatesDTO.add(new CertificateDTO(c.getIssue_date(), c.getSubject(), c.getCertificateType()));
+                certificatesDTO.add(new CertificateDTO(c.getIssue_date(), c.getSubject(), c.getCertificateType(),
+                                    c.getSerialNumber()));
             }
             return certificatesDTO;
         }
@@ -42,7 +44,7 @@ public class CertificateService implements ICertificateService {
     }
 
     @Override
-    public Boolean checkingValidation(long serialNumber) {
+    public Boolean checkingValidation(String serialNumber) {
         Certificate certificate = certificateRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
 
@@ -50,5 +52,13 @@ public class CertificateService implements ICertificateService {
             return certificate.isValid() && !certificate.isWithdrawn();
 
         return false;
+    }
+
+    @Override
+    public AllDTO<CertificateDTO> getIssuers() {
+        List<CertificateDTO> certificates = getAllCertificates();
+        certificates.removeIf(certificate -> Objects.equals(certificate.getCertificateType(), "END"));
+        AllDTO<CertificateDTO> certificatesDTO = new AllDTO<>(certificates);
+        return certificatesDTO;
     }
 }

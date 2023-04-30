@@ -30,7 +30,7 @@ public class CertificateDTO {
 
     private String withdrawnReason;
 
-    private long serialNumber;
+    private String serialNumber;
 
     public CertificateDTO(Certificate certificate) {
         this.certificateType = certificate.getCertificateType().toString();
@@ -44,9 +44,10 @@ public class CertificateDTO {
     }
 
     // response
-    public CertificateDTO(Date issueDate, User user, CertificateType type) {
+    public CertificateDTO(Date issueDate, User user, CertificateType type, String serialNum) {
         this.issueDate =  issueDate.toString();
         this.subject = new UserDTO(user);
         this.certificateType = type.toString();
+        this.serialNumber = serialNum;
     }
 }

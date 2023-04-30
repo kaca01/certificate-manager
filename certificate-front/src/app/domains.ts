@@ -1,10 +1,19 @@
 export interface User {
-  _id: number;
-  name: string;
-  surname: string;
-  email: string;
-  country: string;
-  phone: string;
+    id: number,
+    name: string,
+    surname: string,
+    phone: string,
+    country: string,
+    password: string,
+    email: string
+}
+
+export interface CertificateRequest {
+    requestType: string,
+    issuer: string,
+    certificateType: string,
+    subject: number,
+    refusalReason: number
 }
 
 export interface Request {
@@ -18,9 +27,14 @@ export interface Request {
 
 export interface Certificate {
   _id: number;
-  serialNum: string;
+  serialNumber: string;
   subject: string;
   validFrom: string;
   validTo: string;
   type: string;
+}
+
+export interface AllCertificate {
+  totalCount: number;
+  results: Certificate[];
 }

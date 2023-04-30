@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Certificate } from 'src/app/domains';
 import { CertificateService } from 'src/app/service/certificate.service';
+import { CertificateRequestComponent } from '../certificate-request/certificate-request.component';
 
 @Component({
   selector: 'certificate',
@@ -21,7 +23,7 @@ export class CertificateComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private certificateService: CertificateService) {}
+  constructor(private certificateService: CertificateService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.certificates = this.certificateService.getAll();
@@ -40,6 +42,15 @@ export class CertificateComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  openDialog() {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    
+    this.dialog.open(CertificateRequestComponent, dialogConfig);
+  }
+
   getCertificate(cer : Certificate) {
     this.selectedRowIndex=cer._id;
     this.certificate = cer;
@@ -47,3 +58,17 @@ export class CertificateComponent implements OnInit {
     if(Menu != null) Menu.style.display = 'none';
   }
 }
+
+// export interface Certificate {
+//   _id: number;
+//   serialNumber: string;
+//   subject: string;
+//   validFrom: string;
+//   validTo: string;
+//   type: string;
+//   }
+
+// export interface AllCertificate {
+//   totalCount: number;
+//   results: Certificate[];
+// }

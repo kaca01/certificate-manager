@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/service/auth.service';
+import { UserService } from 'src/app/service/user.service';
 
 @Component({
   selector: 'app-login',
@@ -20,13 +22,31 @@ export class LoginComponent implements OnInit {
   submitted = false;
   notification!: DisplayMessage;
 
-  constructor(private router : Router) {}
+  constructor(private router : Router, private userService: UserService, private authService: AuthService) {}
 
   ngOnInit(): void { }
 
   login(): void { 
     this.notification;
     this.submitted = true;
+
+    this.userService.login(this.loginForm.value)
+    .subscribe(data => {
+        localStorage.setItem("jwt", data.accessToken);
+        this.authService.setToken(data.accessToken);
+      
+      console.log('Login success');
+        this.userService.getMyInfo().subscribe((res:any) => {
+          if(this.userService.currentUser != null) {
+            this.router.navigate(['/certificate']);
+          }
+          });
+        },
+    error => {
+      console.log(error);
+      this.submitted = false;
+      this.notification = {msgType: 'error', msgBody: 'Incorrect username or password'};
+    });
   } 
 
   register() {
