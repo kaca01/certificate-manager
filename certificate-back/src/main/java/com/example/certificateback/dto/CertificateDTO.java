@@ -10,8 +10,6 @@ import lombok.*;
 import java.util.Date;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CertificateDTO {
@@ -22,7 +20,7 @@ public class CertificateDTO {
 
     private String validFrom;
 
-    private String issueDate;
+    private String issueDate;  // we don't need this ??
 
     private UserDTO subject;
 

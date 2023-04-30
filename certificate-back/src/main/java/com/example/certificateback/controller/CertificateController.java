@@ -1,12 +1,8 @@
 package com.example.certificateback.controller;
 
-import com.example.certificateback.domain.Certificate;
 import com.example.certificateback.dto.AllDTO;
-import com.example.certificateback.dto.CertificateRequestDTO;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
-import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
-import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.service.interfaces.ICertificateService;
 import com.example.certificateback.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +30,14 @@ public class CertificateController {
 
     @GetMapping(value = "/accept", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Certificate> acceptRequest(@PathVariable Long id) {
-        Certificate certificate = certificateRequestService.acceptRequest(id);
+    public ResponseEntity<CertificateDTO> acceptRequest(@PathVariable Long id) {
+        CertificateDTO certificate = certificateRequestService.acceptRequest(id);
         return new ResponseEntity<>(certificate, HttpStatus.OK);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<AllDTO<CertificateDTO>> getAllCertificate()
+    public ResponseEntity<AllDTO<CertificateDTO>> getAllCertificates()
     {
         List<CertificateDTO> certificatesDTO = certificateService.getAllCertificates();
         AllDTO<CertificateDTO> allMyCertificates = new AllDTO<>(certificatesDTO);
@@ -50,7 +46,7 @@ public class CertificateController {
 
     @GetMapping("/verify/{serialNumber}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public Boolean isCertificateValidate(@PathVariable String serialNumber) {
+    public Boolean isCertificateValid(@PathVariable String serialNumber) {
         return certificateService.checkingValidation(Long.parseLong(serialNumber));
     }
 }

@@ -7,7 +7,6 @@ import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.dto.CertificateRequestDTO;
-import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.enumeration.CertificateType;
 import com.example.certificateback.enumeration.RequestType;
 import com.example.certificateback.exception.BadRequestException;
@@ -22,9 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +44,7 @@ public class CertificateRequestService implements ICertificateRequestService {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) throw new NotFoundException("User not found!");
-        List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
+        //List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
         return user;
     }
 
@@ -65,22 +62,13 @@ public class CertificateRequestService implements ICertificateRequestService {
     }
 
     @Override
-    public Certificate acceptRequest(Long id) {
+    public CertificateDTO acceptRequest(Long id) {
         CertificateRequest request = certificateRequestRepository.findById(id).get();
         //todo check validity of issuer certificate
         request.setRequestType(RequestType.ACCEPTED);
         certificateRequestRepository.save(request);
 
         return certificateGeneratorService.generateCertificate(request);
-    }
-
-    //todo delete
-    private CertificateRequestDTO acceptCertificate(CertificateRequest request) {
-        CertificateRequestDTO dto = new CertificateRequestDTO(request);
-        dto.setSubject(request.getSubject().getId());
-        certificateRequestRepository.save(request);
-        // TODO : here needs to be called function that will create certificate
-        return dto;
     }
 
     private void checkForExceptions(CertificateRequest request) {
@@ -105,26 +93,30 @@ public class CertificateRequestService implements ICertificateRequestService {
                 .orElseThrow(() -> new NotFoundException("Certificate not found!"));;
         request.setIssuer(issuer);
         request.setSubject(user);
-        certificateRequestDTO.setSubject(user.getId());
+        request.setRequestType(RequestType.ACTIVE);
 
         checkForExceptions(request);
 
+        request = certificateRequestRepository.save(request);
+
         if (role.getName().equals("ROLE_ADMIN")) {
+            acceptRequest(request.getId());
             request.setRequestType(RequestType.ACCEPTED);
-            return acceptCertificate(request);
         }
 
-        if (request.getCertificateType() == CertificateType.ROOT)
+        else if (request.getCertificateType() == CertificateType.ROOT)
             throw new BadRequestException("User can't ask for the root certificate!");
 
-        if (request.getIssuer().getSubject().getId() == user.getId()) {
+        else if (request.getIssuer().getSubject().getId() == user.getId()) {
+            acceptRequest(request.getId());
             request.setRequestType(RequestType.ACCEPTED);
-            return acceptCertificate(request);
         }
-        else {
-            // TODO : here also call a function that will create certificate
-            certificateRequestRepository.save(request);
-        }
-        return certificateRequestDTO;
+//
+//        else {
+//            // TODO : here also call a function that will create certificate    ???
+//        }
+
+        request = certificateRequestRepository.save(request);
+        return new CertificateRequestDTO(request);
     }
 }

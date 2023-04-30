@@ -5,6 +5,7 @@ import com.example.certificateback.domain.CertificateRequest;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.domain.ksData.IssuerData;
 import com.example.certificateback.domain.ksData.SubjectData;
+import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.service.interfaces.ICertificateGeneratorService;
 import com.example.certificateback.util.KeyStoreReader;
@@ -25,14 +26,10 @@ import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 public class CertificateGeneratorService implements ICertificateGeneratorService {
@@ -43,10 +40,14 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
     private KeyStoreWriter keyStoreWriter;
 
     @Override
-    public Certificate generateCertificate(CertificateRequest certificateRequest) {
+    public CertificateDTO generateCertificate(CertificateRequest certificateRequest) {
         SubjectData subjectData = generateSubjectData(certificateRequest);
-        //todo if issuer is null
-        IssuerData issuerData = KeyStoreReader.readIssuer(Long.toString(certificateRequest.getIssuer().getSerialNumber()), KeyStoreReader.ENTRY_PASSWORD.toCharArray());
+        IssuerData issuerData;
+        if (certificateRequest.getIssuer() != null)   // if it isn't root certificate
+            issuerData = KeyStoreReader.readIssuer(Long.toString(certificateRequest.getIssuer().getSerialNumber()), KeyStoreReader.ENTRY_PASSWORD.toCharArray());
+        else {  // if it's root certificate
+            issuerData = new IssuerData(subjectData.getX500name(), subjectData.getPrivateKey());
+        }
         try {
             JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
             builder = builder.setProvider("BC");
@@ -64,10 +65,10 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
             X509CertificateHolder certHolder = certGen.build(contentSigner);
             JcaX509CertificateConverter certConverter = new JcaX509CertificateConverter();
             certConverter = certConverter.setProvider("BC");
-
             // Konvertuje objekat u sertifikat
             X509Certificate xCertificate = certConverter.getCertificate(certHolder);
 
+            // save certificate to keystore
             keyStoreWriter.write(
                     xCertificate.getSerialNumber().toString(),
                     subjectData.getPrivateKey(),   //changed from issuer to subject
@@ -75,10 +76,11 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
                     xCertificate
             );
             keyStoreWriter.saveKeyStore(KeyStoreReader.KEYSTORE_PATH, KeyStoreReader.KEYSTORE_PASSWORD);
+
             //save certificate to db
             Certificate certificateEntity = new Certificate(xCertificate, certificateRequest);
             certificateEntity = certificateRepository.save(certificateEntity);
-            //return todo return a converted certificated type (to dto)
+            return new CertificateDTO(certificateEntity);
         } catch (IllegalArgumentException | IllegalStateException | OperatorCreationException | CertificateException e) {
             e.printStackTrace();
         }
