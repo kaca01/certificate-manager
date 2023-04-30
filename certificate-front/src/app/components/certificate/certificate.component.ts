@@ -50,16 +50,6 @@ export class CertificateComponent implements OnInit {
     
     this.dialog.open(CertificateRequestComponent, dialogConfig);
   }
-}
-
-export interface Certificate {
-  _id: number;
-  serialNumber: string;
-  subject: string;
-  validFrom: string;
-  validTo: string;
-  type: string;
-  }
 
   getCertificate(cer : Certificate) {
     this.selectedRowIndex=cer._id;
@@ -67,9 +57,18 @@ export interface Certificate {
     const Menu = document.getElementById("menu-container");
     if(Menu != null) Menu.style.display = 'none';
   }
-
-
-export interface AllCertificate {
-  totalCount: number;
-  results: Certificate[];
 }
+
+// export interface Certificate {
+//   _id: number;
+//   serialNumber: string;
+//   subject: string;
+//   validFrom: string;
+//   validTo: string;
+//   type: string;
+//   }
+
+// export interface AllCertificate {
+//   totalCount: number;
+//   results: Certificate[];
+// }

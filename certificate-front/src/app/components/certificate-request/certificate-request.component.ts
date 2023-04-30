@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { AllCertificate, Certificate } from '../certificate/certificate.component';
 import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestService } from './certificate-request.service';
 import { UserService } from 'src/app/service/user.service';
-import { CertificateRequest } from 'src/app/domains';
+import { AllCertificate, CertificateRequest } from 'src/app/domains';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-certificate-request',

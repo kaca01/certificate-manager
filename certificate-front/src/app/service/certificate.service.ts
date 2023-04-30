@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AllCertificate, Certificate } from '../components/certificate/certificate.component';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Certificate } from '../domains';
+import { Certificate, AllCertificate } from '../domains';
 
 const CERTIFICATES = [
   {
