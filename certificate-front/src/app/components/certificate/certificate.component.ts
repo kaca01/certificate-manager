@@ -3,6 +3,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Certificate } from 'src/app/domains';
 import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestComponent } from '../certificate-request/certificate-request.component';
 
@@ -12,10 +13,12 @@ import { CertificateRequestComponent } from '../certificate-request/certificate-
   styleUrls: ['./certificate.component.css']
 })
 export class CertificateComponent implements OnInit {
+  selectedRowIndex : number = -1;
   displayedColumns: string[] = ['serial number', 'subject', 'valid from', 'valid to', 'type', 'download'];
   dataSource!: MatTableDataSource<Certificate>;
-  certificate: Certificate[] = [];
-  condition: boolean = true;
+
+  certificates: Certificate[] = [];
+  private certificate = {} as Certificate;
 
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
@@ -23,8 +26,10 @@ export class CertificateComponent implements OnInit {
   constructor(private certificateService: CertificateService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.certificate = this.certificateService.getAll();
-    this.dataSource = new MatTableDataSource<Certificate>(this.certificate);
+    this.certificates = this.certificateService.getAll();
+    this.dataSource = new MatTableDataSource<Certificate>(this.certificates);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   ngAfterViewInit() {
@@ -54,7 +59,15 @@ export interface Certificate {
   validFrom: string;
   validTo: string;
   type: string;
-}
+  }
+
+  getCertificate(cer : Certificate) {
+    this.selectedRowIndex=cer._id;
+    this.certificate = cer;
+    const Menu = document.getElementById("menu-container");
+    if(Menu != null) Menu.style.display = 'none';
+  }
+
 
 export interface AllCertificate {
   totalCount: number;

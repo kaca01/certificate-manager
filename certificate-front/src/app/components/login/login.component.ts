@@ -48,6 +48,10 @@ export class LoginComponent implements OnInit {
       this.notification = {msgType: 'error', msgBody: 'Incorrect username or password'};
     });
   } 
+
+  register() {
+    this.router.navigate(['registration']);
+  }
 }
 
 interface DisplayMessage {

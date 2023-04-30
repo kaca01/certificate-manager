@@ -3,6 +3,7 @@ import { AllCertificate, Certificate } from '../components/certificate/certifica
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Certificate } from '../domains';
 
 const CERTIFICATES = [
   {

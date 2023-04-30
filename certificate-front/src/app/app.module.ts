@@ -18,6 +18,9 @@ import { ApiService } from './service/api.service';
 import { UserService } from './service/user.service';
 import { ConfigService } from './service/config.service';
 import { CertificateService } from './service/certificate.service';
+import { NavigationComponent } from './components/navigation/navigation.component';
+import { RegistrationComponent } from './components/registration/registration.component';
+import { RequestsComponent } from './components/requests/requests.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +29,9 @@ import { CertificateService } from './service/certificate.service';
     LoginComponent,
     CertificateComponent,
     CertificateRequestComponent,
+    NavigationComponent,
+    RegistrationComponent,
+    RequestsComponent,
   ],
   imports: [
     FormsModule,
