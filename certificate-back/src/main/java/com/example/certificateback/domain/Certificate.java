@@ -32,9 +32,6 @@ public class Certificate {
     @Column(name = "valid_to", nullable = false)
     private Date validTo;
 
-    @Column(name = "issue_date", nullable = false)
-    private Date issue_date;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User subject;
 
@@ -48,14 +45,13 @@ public class Certificate {
     private long serialNumber;
 
     public Certificate(X509Certificate xCertificate, CertificateRequest request) {
-        this.serialNumber = xCertificate.getSerialNumber().toString();
+        this.serialNumber = Long.parseLong(String.valueOf(xCertificate.getSerialNumber()));
         this.certificateType = request.getCertificateType();
-        this.subject = request.getSubject();
-                .issuer(certificateDemand.getRequestedIssuer())
-                .startDate(certificate.getNotBefore())
-                .endDate(certificate.getNotAfter())
-                .publicKey(certificate.getPublicKey())
-                .signature(certificate.getSignature())
+        this.subject = request.getSubject();  //todo check if this has enough data
+        this.withdrawnReason = null;
+        this.isWithdrawn = false;
+        this.validFrom = xCertificate.getNotBefore();
+        this.validTo = xCertificate.getNotAfter();
     }
 
     public boolean isValid() {

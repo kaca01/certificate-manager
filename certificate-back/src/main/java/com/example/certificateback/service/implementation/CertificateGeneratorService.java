@@ -86,29 +86,24 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
     }
 
     private SubjectData generateSubjectData(CertificateRequest certificateRequest){
-        try {
-            KeyPair keyPairSubject = generateKeyPair();
-            User user = certificateRequest.getSubject();
+        KeyPair keyPairSubject = generateKeyPair();
+        User user = certificateRequest.getSubject();
 
-            Date startDate = generateStartTime();
-            Date endDate = generateEndTime(startDate);
+        Date startDate = generateStartTime();
+        Date endDate = generateEndTime(startDate);
 
-            //todo extract to new function
-            Long serialNumber = Long.parseLong(certificateRequest.getSubject().getId().toString() + new Random().nextLong());
+        //todo extract to new function
+        Long serialNumber = Long.parseLong(certificateRequest.getSubject().getId().toString() + new Random().nextLong());
 
-            X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-            builder.addRDN(BCStyle.CN, user.getUsername());
-            builder.addRDN(BCStyle.SURNAME, user.getSurname());
-            builder.addRDN(BCStyle.GIVENNAME, user.getName());
-            builder.addRDN(BCStyle.E, user.getEmail());
-            builder.addRDN(BCStyle.UID, user.getId().toString());
+        X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+        builder.addRDN(BCStyle.CN, user.getUsername());
+        builder.addRDN(BCStyle.SURNAME, user.getSurname());
+        builder.addRDN(BCStyle.GIVENNAME, user.getName());
+        builder.addRDN(BCStyle.E, user.getEmail());
+        builder.addRDN(BCStyle.UID, user.getId().toString());
 
-            return new SubjectData(keyPairSubject.getPublic(), keyPairSubject.getPrivate(), builder.build(), serialNumber,
-                    startDate, endDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return new SubjectData(keyPairSubject.getPublic(), keyPairSubject.getPrivate(), builder.build(), serialNumber,
+                startDate, endDate);
     }
 
     private KeyPair generateKeyPair() {

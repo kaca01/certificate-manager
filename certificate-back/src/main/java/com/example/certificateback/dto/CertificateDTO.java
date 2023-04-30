@@ -36,7 +36,6 @@ public class CertificateDTO {
         this.certificateType = certificate.getCertificateType().toString();
         this.validTo = certificate.getValidTo().toString();
         this.validFrom = certificate.getValidFrom().toString();
-        this.issueDate =  certificate.getIssue_date().toString();
         this.subject = new UserDTO(certificate.getSubject());
         this.isWithdrawn = certificate.isWithdrawn();
         this.withdrawnReason = certificate.getWithdrawnReason();
@@ -44,8 +43,7 @@ public class CertificateDTO {
     }
 
     // response
-    public CertificateDTO(Date issueDate, User user, CertificateType type) {
-        this.issueDate =  issueDate.toString();
+    public CertificateDTO(User user, CertificateType type) {
         this.subject = new UserDTO(user);
         this.certificateType = type.toString();
     }
