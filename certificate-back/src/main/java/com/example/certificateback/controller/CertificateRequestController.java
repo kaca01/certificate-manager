@@ -27,8 +27,7 @@ public class CertificateRequestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    // TODO : for some reason doesn't work with authorization
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CertificateRequestDTO> create(@RequestBody CertificateRequestDTO certificateRequestDTO) {
         return new ResponseEntity<>(service.insert(certificateRequestDTO), HttpStatus.CREATED);
     }
