@@ -64,11 +64,10 @@ public class CertificateRequestService implements ICertificateRequestService {
     @Override
     public CertificateDTO acceptRequest(Long id) {
         CertificateRequest request = certificateRequestRepository.findById(id).get();
-        //todo check validity of issuer certificate
         request.setRequestType(RequestType.ACCEPTED);
         certificateRequestRepository.save(request);
 
-        return certificateGeneratorService.generateCertificate(request);
+        return certificateGeneratorService.createCertificate(request);
     }
 
     private void checkForExceptions(CertificateRequest request) {
@@ -84,7 +83,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 
     @Override
     public CertificateRequestDTO insert(CertificateRequestDTO certificateRequestDTO) {
-        // TODO : also later check if certificate is valid
+        // TODO : check validity of issuer certificate
         // this can be implemented after 7a implementation
         User user = getLoggedUser();
         Role role = user.getRoles().get(0);

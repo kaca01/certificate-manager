@@ -18,11 +18,8 @@ import java.security.cert.CertificateException;
 @Service
 public class KeyStoreWriter {
 
-    @Autowired
-    private KeyStoreReader keyStoreReader;
-
     public void saveKeyStore(String fileName, char[] password) {
-        KeyStore keyStore = keyStoreReader.load();
+        KeyStore keyStore = KeyStoreReader.load();
         try {
             keyStore.store(Files.newOutputStream(Paths.get(fileName)), password);
         } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
@@ -30,8 +27,11 @@ public class KeyStoreWriter {
         }
     }
 
+    /**
+     * Moze da sacuva novi sertifikat u keystore
+     */
     public void write(String alias, PrivateKey privateKey, char[] password, Certificate certificate) {
-        KeyStore keyStore = keyStoreReader.load();
+        KeyStore keyStore = KeyStoreReader.load();
         try {
             keyStore.setKeyEntry(alias, privateKey, password, new Certificate[]{certificate});
         } catch (KeyStoreException e) {

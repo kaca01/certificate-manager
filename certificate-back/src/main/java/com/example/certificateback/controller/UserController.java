@@ -8,6 +8,7 @@ import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
+import com.example.certificateback.util.KeyStoreReader;
 import com.example.certificateback.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

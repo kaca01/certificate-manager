@@ -28,7 +28,7 @@ public class CertificateController {
     @Autowired
     ICertificateRequestService certificateRequestService;
 
-    @GetMapping(value = "/accept", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/accept/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CertificateDTO> acceptRequest(@PathVariable Long id) {
         CertificateDTO certificate = certificateRequestService.acceptRequest(id);
