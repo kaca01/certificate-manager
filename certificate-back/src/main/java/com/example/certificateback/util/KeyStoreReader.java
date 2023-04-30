@@ -60,7 +60,7 @@ public class KeyStoreReader {
     /**
      * Ucitava sertifikat is KS fajla
      */
-    public Certificate readCertificate(String alias) {
+    public static Certificate readCertificate(String alias) {
         try {
             KeyStore ks = load();
 
@@ -77,7 +77,7 @@ public class KeyStoreReader {
     /**
      * Ucitava privatni kljuc is KS fajla
      */
-    public PrivateKey readPrivateKey(String alias, String pass) {
+    public static PrivateKey readPrivateKey(String alias, String pass) {
         try {
             // kreiramo instancu KeyStore
             KeyStore ks = load();

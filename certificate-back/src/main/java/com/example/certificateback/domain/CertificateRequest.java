@@ -31,7 +31,7 @@ public class CertificateRequest {
     @OneToOne
     private User subject;
 
-    @Column(name = "refusal_reason", nullable = true)
+    @Column(name = "refusal_reason")
     private String refusalReason;
 
     public CertificateRequest(CertificateRequestDTO dto) {

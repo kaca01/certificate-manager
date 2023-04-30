@@ -38,10 +38,10 @@ public class Certificate {
     @Column(name = "is_withdrawn", nullable = false)
     private boolean isWithdrawn;
 
-    @Column(name = "withdrawn_reason", nullable = false)
+    @Column(name = "withdrawn_reason")
     private String withdrawnReason;
 
-    @Column(name = "serial_number", nullable = true)
+    @Column(name = "serial_number", nullable = false)
     private long serialNumber;
 
     public Certificate(X509Certificate xCertificate, CertificateRequest request) {

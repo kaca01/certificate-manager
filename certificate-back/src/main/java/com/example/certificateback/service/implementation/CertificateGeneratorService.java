@@ -30,6 +30,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
@@ -48,7 +49,7 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
         IssuerData issuerData;
         if (certificateRequest.getIssuer() != null)
             // if it isn't root certificate
-            issuerData = KeyStoreReader.readIssuer(Long.toString(certificateRequest.getIssuer().getSerialNumber()), KeyStoreConstants.ENTRY_PASSWORD);
+            issuerData = generateIssuerData(certificateRequest);
         else {
             // if it is root certificate
             issuerData = new IssuerData(subjectData.getX500name(), subjectData.getPrivateKey());
@@ -124,6 +125,19 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
 
         return new SubjectData(keyPairSubject.getPublic(), keyPairSubject.getPrivate(), builder.build(), serialNumber,
                 startDate, endDate);
+    }
+
+    private IssuerData generateIssuerData(CertificateRequest certificateRequest){
+        User issuer = certificateRequest.getIssuer().getSubject();
+        PrivateKey issuerKey = KeyStoreReader.readPrivateKey(Long.toString(certificateRequest.getIssuer().getSerialNumber()), Arrays.toString(KeyStoreConstants.ENTRY_PASSWORD));
+        System.out.println(issuerKey);
+        X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+        builder.addRDN(BCStyle.CN, issuer.getUsername());
+        builder.addRDN(BCStyle.SURNAME, issuer.getSurname());
+        builder.addRDN(BCStyle.GIVENNAME, issuer.getName());
+        builder.addRDN(BCStyle.UID, String.valueOf(issuer.getId()));
+
+        return new IssuerData(builder.build(), issuerKey);
     }
 
     private KeyPair generateKeyPair() {
