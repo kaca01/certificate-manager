@@ -47,6 +47,6 @@ public class CertificateController {
     @GetMapping("/verify/{serialNumber}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Boolean isCertificateValid(@PathVariable String serialNumber) {
-        return certificateService.checkingValidation(Long.parseLong(serialNumber));
+        return certificateService.checkingValidation(serialNumber);
     }
 }

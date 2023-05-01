@@ -42,10 +42,10 @@ public class Certificate {
     private String withdrawnReason;
 
     @Column(name = "serial_number", nullable = false)
-    private long serialNumber;
+    private String serialNumber;
 
     public Certificate(X509Certificate xCertificate, CertificateRequest request) {
-        this.serialNumber = Long.parseLong(String.valueOf(xCertificate.getSerialNumber()));
+        this.serialNumber = xCertificate.getSerialNumber() + "cert";
         this.certificateType = request.getCertificateType();
         this.subject = request.getSubject();  //todo check if this has enough data
         this.withdrawnReason = null;
@@ -70,6 +70,6 @@ public class Certificate {
         this.subject = new User(dto.getSubject());
         this.isWithdrawn = dto.isWithdrawn();
         this.withdrawnReason = dto.getWithdrawnReason();
-        this.serialNumber = dto.getSerialNumber();
+        this.serialNumber = String.valueOf(dto.getSerialNumber());
     }
 }

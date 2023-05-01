@@ -18,21 +18,17 @@ import java.security.cert.X509Certificate;
 @Service
 public class KeyStoreReader {
 
-    public static KeyStore load() {
-        KeyStore keyStore = null;
+    public static KeyStore keyStore;
 
+    public static void load() {
         try {
-            keyStore = KeyStore.getInstance("JKS");
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
-        try(InputStream keyStoreData = Files.newInputStream(Paths.get(KeyStoreConstants.KEYSTORE_PATH))){
-            keyStore.load(keyStoreData, KeyStoreConstants.KEYSTORE_PASSWORD);
-        } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+            keyStore = KeyStore.getInstance("JKS", "SUN");
+            BufferedInputStream in = new BufferedInputStream(Files.newInputStream(Paths.get(KeyStoreConstants.KEYSTORE_PATH)));
+            keyStore.load(in, KeyStoreConstants.KEYSTORE_PASSWORD);
+        } catch (KeyStoreException | NoSuchAlgorithmException | IOException | NoSuchProviderException |
+                 CertificateException e) {
             throw new RuntimeException(e);
         }
-
-        return keyStore;
     }
 
     /**
@@ -41,12 +37,11 @@ public class KeyStoreReader {
     **/
     public static IssuerData readIssuer(String alias, char[] keyPass) {
         try {
-            KeyStore keyStore = load();
-
-            Certificate cert = keyStore.getCertificate(alias);
+            load();
+            Certificate cert = keyStore.getCertificate(alias + "Cert");
 
             // Iscitava se privatni kljuc vezan za javni kljuc koji se nalazi na sertifikatu sa datim aliasom
-            PrivateKey privKey = (PrivateKey) keyStore.getKey(alias, keyPass);
+            PrivateKey privKey = (PrivateKey) keyStore.getKey(alias + "Key", keyPass);
 
             X500Name issuerName = new JcaX509CertificateHolder((X509Certificate) cert).getSubject();
             return new IssuerData(issuerName, privKey);
@@ -62,10 +57,10 @@ public class KeyStoreReader {
      */
     public static Certificate readCertificate(String alias) {
         try {
-            KeyStore ks = load();
-
-            if (ks.isKeyEntry(alias)) {
-                Certificate cert = ks.getCertificate(alias);
+            load();
+            alias = alias + "cert";
+            if (keyStore.isKeyEntry(alias)) {
+                Certificate cert = keyStore.getCertificate(alias);
                 return cert;
             }
         } catch (KeyStoreException e) {
@@ -80,10 +75,11 @@ public class KeyStoreReader {
     public static PrivateKey readPrivateKey(String alias, String pass) {
         try {
             // kreiramo instancu KeyStore
-            KeyStore ks = load();
+            load();
+            alias = alias + "key";
 
-            if (ks.isKeyEntry(alias)) {
-                PrivateKey pk = (PrivateKey) ks.getKey(alias, pass.toCharArray());
+            if (keyStore.isKeyEntry(alias)) {
+                PrivateKey pk = (PrivateKey) keyStore.getKey(alias, pass.toCharArray());
                 return pk;
             }
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {

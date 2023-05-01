@@ -13,7 +13,7 @@ public class CertificateRequestDTO {
 
     private String requestType;
 
-    private long issuer;
+    private String issuer;  // serial number of certificate
 
     private String certificateType;
 

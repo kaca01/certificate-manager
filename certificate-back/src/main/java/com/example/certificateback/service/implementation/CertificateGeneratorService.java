@@ -56,17 +56,16 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
         }
 
         try {
-            assert issuerData != null;
             X509Certificate xCertificate = generateCertificateData(issuerData, subjectData);
 
             // save certificate to keystore
             keyStoreWriter.write(
                     xCertificate.getSerialNumber().toString(),
                     subjectData.getPrivateKey(),   //changed from issuer to subject
-                    KeyStoreConstants.ENTRY_PASSWORD,
+                    KeyStoreConstants.KEYSTORE_PASSWORD,
                     xCertificate
             );
-            keyStoreWriter.saveKeyStore(KeyStoreConstants.KEYSTORE_PATH, KeyStoreConstants.KEYSTORE_PASSWORD);
+            //keyStoreWriter.saveKeyStore(KeyStoreConstants.KEYSTORE_PATH, KeyStoreConstants.KEYSTORE_PASSWORD);
 
             //save certificate to db
             Certificate certificateEntity = new Certificate(xCertificate, certificateRequest);
@@ -89,7 +88,7 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
 
         X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(
                 issuerData.getX500name(),
-                new BigInteger(String.valueOf(subjectData.getSerialNumber())),
+                new BigInteger(subjectData.getSerialNumber()),
                 subjectData.getStartDate(),
                 subjectData.getEndDate(),
                 subjectData.getX500name(),
@@ -102,9 +101,8 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
         return certConverter.getCertificate(certHolder);
     }
 
-    private Long generateAlias(User user){
-        //todo change to email + randomNum
-        return user.getId();
+    private String generateAlias(User user){
+        return String.valueOf(new Random().nextLong());
     }
 
     private SubjectData generateSubjectData(CertificateRequest certificateRequest){
@@ -114,7 +112,7 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
         DateUtil dateUtil = new DateUtil();
         Date startDate = dateUtil.generateStartTime();
         Date endDate = dateUtil.generateEndTime(startDate);
-        Long serialNumber = generateAlias(certificateRequest.getSubject());
+        String serialNumber = generateAlias(certificateRequest.getSubject());
 
         X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
         builder.addRDN(BCStyle.CN, user.getUsername());
@@ -129,8 +127,8 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
 
     private IssuerData generateIssuerData(CertificateRequest certificateRequest){
         User issuer = certificateRequest.getIssuer().getSubject();
-        PrivateKey issuerKey = KeyStoreReader.readPrivateKey(Long.toString(certificateRequest.getIssuer().getSerialNumber()), Arrays.toString(KeyStoreConstants.ENTRY_PASSWORD));
-        System.out.println(issuerKey);
+        PrivateKey issuerKey = KeyStoreReader.readPrivateKey(certificateRequest.getIssuer().getSerialNumber(),
+                Arrays.toString(KeyStoreConstants.KEYSTORE_PASSWORD));
         X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
         builder.addRDN(BCStyle.CN, issuer.getUsername());
         builder.addRDN(BCStyle.SURNAME, issuer.getSurname());

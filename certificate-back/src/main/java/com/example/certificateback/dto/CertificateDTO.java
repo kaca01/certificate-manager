@@ -28,7 +28,7 @@ public class CertificateDTO {
 
     private String withdrawnReason;
 
-    private long serialNumber;
+    private String serialNumber;
 
     public CertificateDTO(Certificate certificate) {
         this.certificateType = certificate.getCertificateType().toString();

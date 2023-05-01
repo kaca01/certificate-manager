@@ -89,7 +89,11 @@ public class CertificateRequestService implements ICertificateRequestService {
         User user = getLoggedUser();
         Role role = user.getRoles().get(0);
         CertificateRequest request = new CertificateRequest(certificateRequestDTO);
-        Certificate issuer = certificateRepository.findBySerialNumber(certificateRequestDTO.getIssuer())
+        Certificate issuer;
+        if (request.getCertificateType() == CertificateType.ROOT)
+            issuer = null;
+        else
+            issuer = certificateRepository.findBySerialNumber(certificateRequestDTO.getIssuer())
                 .orElseThrow(() -> new NotFoundException("Certificate not found!"));;
         request.setIssuer(issuer);
         request.setSubject(user);

@@ -10,5 +10,5 @@ public interface ICertificateService {
 
     List<CertificateDTO> getAllCertificates();
 
-    Boolean checkingValidation(long serialNumber);
+    Boolean checkingValidation(String serialNumber);
 }
