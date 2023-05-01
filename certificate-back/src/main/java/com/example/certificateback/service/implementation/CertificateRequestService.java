@@ -94,7 +94,7 @@ public class CertificateRequestService implements ICertificateRequestService {
             issuer = null;
         else
             issuer = certificateRepository.findBySerialNumber(certificateRequestDTO.getIssuer())
-                .orElseThrow(() -> new NotFoundException("Certificate not found!"));;
+                .orElseThrow(() -> new NotFoundException("Certificate not found!"));
         request.setIssuer(issuer);
         request.setSubject(user);
         request.setRequestType(RequestType.ACTIVE);

@@ -35,13 +35,13 @@ public class KeyStoreReader {
      * Zadatak ove funkcije jeste da ucita podatke o izdavaocu i odgovarajuci privatni kljuc.
      * Ovi podaci se mogu iskoristiti da se novi sertifikati izdaju.
     **/
-    public static IssuerData readIssuer(String alias, char[] keyPass) {
+    public static IssuerData readIssuer(String alias, String keyPass) {
         try {
             load();
-            Certificate cert = keyStore.getCertificate(alias + "Cert");
+            Certificate cert = keyStore.getCertificate(alias + "cert");
 
             // Iscitava se privatni kljuc vezan za javni kljuc koji se nalazi na sertifikatu sa datim aliasom
-            PrivateKey privKey = (PrivateKey) keyStore.getKey(alias + "Key", keyPass);
+            PrivateKey privKey = (PrivateKey) keyStore.getKey(alias + "key", keyPass.toCharArray());
 
             X500Name issuerName = new JcaX509CertificateHolder((X509Certificate) cert).getSubject();
             return new IssuerData(issuerName, privKey);
@@ -74,7 +74,6 @@ public class KeyStoreReader {
      */
     public static PrivateKey readPrivateKey(String alias, String pass) {
         try {
-            // kreiramo instancu KeyStore
             load();
             alias = alias + "key";
 

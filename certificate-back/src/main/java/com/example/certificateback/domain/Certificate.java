@@ -32,7 +32,7 @@ public class Certificate {
     @Column(name = "valid_to", nullable = false)
     private Date validTo;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private User subject;
 
     @Column(name = "is_withdrawn", nullable = false)
@@ -45,7 +45,7 @@ public class Certificate {
     private String serialNumber;
 
     public Certificate(X509Certificate xCertificate, CertificateRequest request) {
-        this.serialNumber = xCertificate.getSerialNumber() + "cert";
+        this.serialNumber = xCertificate.getSerialNumber().toString();
         this.certificateType = request.getCertificateType();
         this.subject = request.getSubject();  //todo check if this has enough data
         this.withdrawnReason = null;

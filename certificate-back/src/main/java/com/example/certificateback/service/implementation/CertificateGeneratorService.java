@@ -8,6 +8,7 @@ import com.example.certificateback.domain.ksData.IssuerData;
 import com.example.certificateback.domain.ksData.SubjectData;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.repository.ICertificateRepository;
+import com.example.certificateback.repository.ICertificateRequestRepository;
 import com.example.certificateback.service.interfaces.ICertificateGeneratorService;
 import com.example.certificateback.util.DateUtil;
 import com.example.certificateback.util.KeyStoreReader;
@@ -40,6 +41,9 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
 
     @Autowired
     private ICertificateRepository certificateRepository;
+
+    @Autowired
+    private ICertificateRequestRepository certificateRequestRepository;
     @Autowired
     private KeyStoreWriter keyStoreWriter;
 
@@ -126,13 +130,13 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
     }
 
     private IssuerData generateIssuerData(CertificateRequest certificateRequest){
-        User issuer = certificateRequest.getIssuer().getSubject();
-        PrivateKey issuerKey = KeyStoreReader.readPrivateKey(certificateRequest.getIssuer().getSerialNumber(),
-                Arrays.toString(KeyStoreConstants.KEYSTORE_PASSWORD));
+        User issuer = certificateRepository.findById(certificateRequest.getIssuer().getId()).get().getSubject();
+        PrivateKey issuerKey = KeyStoreReader.readPrivateKey(certificateRequest.getIssuer().getSerialNumber(), KeyStoreConstants.ENTRY_PASSWORD);
         X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
         builder.addRDN(BCStyle.CN, issuer.getUsername());
         builder.addRDN(BCStyle.SURNAME, issuer.getSurname());
         builder.addRDN(BCStyle.GIVENNAME, issuer.getName());
+        builder.addRDN(BCStyle.E, issuer.getEmail());
         builder.addRDN(BCStyle.UID, String.valueOf(issuer.getId()));
 
         return new IssuerData(builder.build(), issuerKey);

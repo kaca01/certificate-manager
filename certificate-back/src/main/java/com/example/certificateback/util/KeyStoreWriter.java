@@ -46,8 +46,8 @@ public class KeyStoreWriter {
     public void write(String alias, PrivateKey privateKey, char[] password, Certificate certificate) {
         KeyStoreReader.load();
         try {
-            KeyStoreReader.keyStore.setCertificateEntry(alias + "Cert", certificate);
-            KeyStoreReader.keyStore.setKeyEntry(alias + "Key", privateKey, password, new Certificate[]{certificate});
+            KeyStoreReader.keyStore.setCertificateEntry(alias + "cert", certificate);
+            KeyStoreReader.keyStore.setKeyEntry(alias + "key", privateKey, password, new Certificate[]{certificate});
             KeyStoreReader.keyStore.store(Files.newOutputStream(Paths.get(KeyStoreConstants.KEYSTORE_PATH)), KeyStoreConstants.KEYSTORE_PASSWORD);
         } catch (KeyStoreException e) {
             e.printStackTrace();

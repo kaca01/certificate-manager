@@ -22,13 +22,13 @@ public class CertificateRequest {
     @Column(name = "status", nullable = false)
     private RequestType requestType;
 
-    @OneToOne
+    @ManyToOne
     private Certificate issuer;
 
     @Column(name = "type", nullable = false)
     private CertificateType certificateType;
 
-    @OneToOne
+    @ManyToOne
     private User subject;
 
     @Column(name = "refusal_reason")
