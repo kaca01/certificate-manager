@@ -11,11 +11,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 public class Certificate {
 
@@ -47,7 +45,7 @@ public class Certificate {
     public Certificate(X509Certificate xCertificate, CertificateRequest request) {
         this.serialNumber = xCertificate.getSerialNumber().toString();
         this.certificateType = request.getCertificateType();
-        this.subject = request.getSubject();  //todo check if this has enough data
+        this.subject = request.getSubject();  //check if this has enough data
         this.withdrawnReason = null;
         this.isWithdrawn = false;
         this.validFrom = xCertificate.getNotBefore();

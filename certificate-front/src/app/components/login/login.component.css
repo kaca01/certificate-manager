@@ -1,0 +1,127 @@
+.background {
+    min-height: 100%;
+    padding: 5px 1rem;
+    background: linear-gradient(90deg, #5F92C5 50%, #ffffff 50%);
+    display: block;
+}
+  
+#bg-close-img{
+    float: right;
+    width: 30px;
+    height: 30px;
+    margin-left: 0;
+    margin-top: 32px;
+    margin-right: 60px;
+    padding: 8px;
+    border-radius: 20px;
+}
+  
+#card-close-img {
+    display: none;
+}
+  
+.close:hover {
+    background-color: rgb(243, 237, 237);
+    cursor: pointer;
+}
+  
+.column {
+    float: left;
+}
+  
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+  
+img {
+    width: 100%;
+    margin-left: 25%;
+    margin-top: 30%;
+}
+
+mat-card {
+    width: 30%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: 35%;
+    margin-right: auto;
+    border: 1px solid white;
+    border-radius: 10px;
+    -webkit-box-shadow: 2px 9px 50px -21px rgba(0,0,0,0.81);
+    -moz-box-shadow: 2px 9px 50px -21px rgba(0,0,0,0.81);
+    box-shadow: 2px 9px 50px -21px rgba(0,0,0,0.81);
+}
+
+mat-card-content {
+    margin-left: 5%;
+}
+
+#card-header{
+    margin-top: 10%;
+}
+
+form {
+    margin-right: 5%;
+}
+
+.left {
+    width: 55%;
+    float: left;
+}
+
+.welcome {
+    font-size: 18px;
+    font-weight: 540;
+    margin-bottom: 30px;
+}
+
+.right {
+    width: 35%;
+    float: right;
+}
+
+.no-account {
+    color: #9f9f9f;
+    font-size: small;
+    margin: 0 !important;
+}
+
+.sign-up {
+    text-decoration: none;
+    color: #5F92C5;
+    font-size: small;
+    cursor: pointer;
+}
+
+.title {
+    font-size: 3em;
+    margin-bottom: 0.8em;
+    clear: both;
+}
+
+.full-width {
+    width: 100%;
+    padding-top: 5px;
+    font-size: 14px !important;
+}
+
+.forgot-password {
+    float: right;
+    text-decoration: none;
+    color: #5F92C5;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.login-btn {
+    margin-top: 35px;
+    margin-bottom: 50px;
+    width: 100%;
+}
+
+.error {
+    width: 100%;
+    color: red;
+}

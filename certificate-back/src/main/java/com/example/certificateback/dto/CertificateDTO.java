@@ -20,8 +20,6 @@ public class CertificateDTO {
 
     private String validFrom;
 
-    private String issueDate;  // we don't need this ??
-
     private UserDTO subject;
 
     private boolean isWithdrawn;
@@ -41,8 +39,11 @@ public class CertificateDTO {
     }
 
     // response
-    public CertificateDTO(User user, CertificateType type) {
+    public CertificateDTO(Date validFrom, User user, CertificateType type, String serialNum) {
+        this.validFrom =  validFrom.toString();
         this.subject = new UserDTO(user);
         this.certificateType = type.toString();
+        this.serialNumber = serialNum;
     }
+
 }

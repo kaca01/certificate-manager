@@ -23,8 +23,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -78,6 +78,11 @@ public class UserController {
         AllDTO<UserDTO> allUsers = new AllDTO<>(usersDTO);
 
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
+    }
+
+    @GetMapping("/currentUser")
+    public User user(Principal user) {
+        return this.service.findByEmail(user.getName());
     }
 
 }
