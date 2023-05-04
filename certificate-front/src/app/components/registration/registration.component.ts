@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { User } from 'src/app/domains';
@@ -16,7 +16,7 @@ export class RegistrationComponent implements OnInit {
     name: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+')]),
     surname: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+')]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required, Validators.minLength(8), this.createPasswordStrengthValidator()]),
     repeatPassword: new FormControl('', [Validators.required]),
     phone: new FormControl('', [Validators.required, Validators.pattern('[- +()0-9]+')]),
     country: new FormControl('', [Validators.required]),
@@ -57,6 +57,7 @@ export class RegistrationComponent implements OnInit {
   }
 
   handleErrors(error: any) {
+    //todo fix this
     console.log(error);
     let e = JSON.parse(error.error);
     if(e.message!= null || e.message != undefined)  
@@ -70,6 +71,30 @@ export class RegistrationComponent implements OnInit {
     this._snackBar.open(snackMsg, "Dismiss", {
       duration: 2000
     });
+  }
+
+  createPasswordStrengthValidator(): ValidatorFn {
+    return (control:AbstractControl) : ValidationErrors | null => {
+
+        const value = control.value;
+
+        if (!value) {
+            return null;
+        }
+
+        const hasUpperCase = /[A-Z]+/.test(value);
+
+        const hasLowerCase = /[a-z]+/.test(value);
+
+        const hasNumeric = /[0-9]+/.test(value);
+
+        const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value);
+
+        const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && specialChars;
+
+        return !passwordValid ? {passwordStrength:true}: null;
+    }
+
   }
 
 }
