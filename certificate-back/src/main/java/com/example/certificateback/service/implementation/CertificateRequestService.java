@@ -48,17 +48,27 @@ public class CertificateRequestService implements ICertificateRequestService {
         return user;
     }
 
-    @Override
-    @Transactional
-    public AllDTO<CertificateRequestDTO> get() {
-        User user = getLoggedUser();
-        List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
-
+    private AllDTO<CertificateRequestDTO> getRequests(List<CertificateRequest> certificateRequests) {
         List<CertificateRequestDTO> certificateRequestDTOS = new ArrayList<>();
         for (CertificateRequest certificate : certificateRequests)
             certificateRequestDTOS.add(new CertificateRequestDTO(certificate));
 
         return new AllDTO<>(certificateRequestDTOS);
+    }
+
+    @Override
+    @Transactional
+    public AllDTO<CertificateRequestDTO> getUserRequests() {
+        User user = getLoggedUser();
+        List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
+
+        return getRequests(certificateRequests);
+    }
+
+    @Override
+    public AllDTO<CertificateRequestDTO> getAllRequests() {
+        List<CertificateRequest> certificateRequests = certificateRequestRepository.findAll();
+        return getRequests(certificateRequests);
     }
 
     @Override

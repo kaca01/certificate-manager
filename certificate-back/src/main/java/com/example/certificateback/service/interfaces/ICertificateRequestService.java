@@ -6,7 +6,9 @@ import com.example.certificateback.dto.CertificateRequestDTO;
 
 public interface ICertificateRequestService {
 
-    public AllDTO<CertificateRequestDTO> get();
+    public AllDTO<CertificateRequestDTO> getUserRequests();
+
+    AllDTO<CertificateRequestDTO> getAllRequests();
 
     CertificateDTO acceptRequest(Long id);
     public CertificateRequestDTO insert(CertificateRequestDTO certificateRequestDTO);
