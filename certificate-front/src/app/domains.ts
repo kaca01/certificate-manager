@@ -1,3 +1,9 @@
+export interface Role {
+  id: number,
+  name: string,
+  authority: string
+}
+
 export interface User {
     id: number,
     name: string,
@@ -5,7 +11,8 @@ export interface User {
     phone: string,
     country: string,
     password: string,
-    email: string
+    email: string,
+    roles: Role[]
 }
 
 export interface CertificateRequest {

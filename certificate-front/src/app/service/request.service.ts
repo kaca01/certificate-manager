@@ -12,8 +12,12 @@ export class RequestService {
   selectedValue$ = this.value$.asObservable();
 
   constructor(private http: HttpClient) { }
+
+  getUserRequests(): Observable<AllRequests> {
+    return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/user');
+  }
   
     getAllRequests(): Observable<AllRequests> {
-      return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request');
+      return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/admin');
     }
 }
