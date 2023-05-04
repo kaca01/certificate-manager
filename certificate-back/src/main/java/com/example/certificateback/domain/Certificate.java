@@ -6,15 +6,14 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 public class Certificate {
 
@@ -31,20 +30,27 @@ public class Certificate {
     @Column(name = "valid_to", nullable = false)
     private Date validTo;
 
-    @Column(name = "issue_date", nullable = false)
-    private Date issue_date;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private User subject;
 
     @Column(name = "is_withdrawn", nullable = false)
     private boolean isWithdrawn;
 
-    @Column(name = "withdrawn_reason", nullable = false)
+    @Column(name = "withdrawn_reason")
     private String withdrawnReason;
 
-    @Column(name = "serial_number", nullable = true)
+    @Column(name = "serial_number", nullable = false)
     private String serialNumber;
+
+    public Certificate(X509Certificate xCertificate, CertificateRequest request) {
+        this.serialNumber = xCertificate.getSerialNumber().toString();
+        this.certificateType = request.getCertificateType();
+        this.subject = request.getSubject();  //check if this has enough data
+        this.withdrawnReason = null;
+        this.isWithdrawn = false;
+        this.validFrom = xCertificate.getNotBefore();
+        this.validTo = xCertificate.getNotAfter();
+    }
 
     public boolean isValid() {
         Date now = new Date();
@@ -62,6 +68,6 @@ public class Certificate {
         this.subject = new User(dto.getSubject());
         this.isWithdrawn = dto.isWithdrawn();
         this.withdrawnReason = dto.getWithdrawnReason();
-        this.serialNumber = dto.getSerialNumber();
+        this.serialNumber = String.valueOf(dto.getSerialNumber());
     }
 }

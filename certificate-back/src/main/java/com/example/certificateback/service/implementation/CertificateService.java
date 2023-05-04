@@ -35,7 +35,7 @@ public class CertificateService implements ICertificateService {
             List<Certificate> certificates = certificateRepository.findAll();
             List<CertificateDTO> certificatesDTO = new ArrayList<>();
             for (Certificate c : certificates){
-                certificatesDTO.add(new CertificateDTO(c.getIssue_date(), c.getSubject(), c.getCertificateType(),
+                certificatesDTO.add(new CertificateDTO(c.getValidFrom(), c.getSubject(), c.getCertificateType(),
                                     c.getSerialNumber()));
             }
             return certificatesDTO;

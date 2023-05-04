@@ -1,5 +1,6 @@
 package com.example.certificateback.controller;
 
+import com.example.certificateback.configuration.KeyStoreConstants;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.LoginDTO;
@@ -8,6 +9,8 @@ import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
+import com.example.certificateback.util.KeyStoreReader;
+import com.example.certificateback.util.KeyStoreWriter;
 import com.example.certificateback.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.Arrays;
 import java.security.Principal;
 import java.util.List;
 

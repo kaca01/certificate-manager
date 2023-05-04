@@ -7,7 +7,6 @@ import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.dto.CertificateRequestDTO;
-import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.enumeration.CertificateType;
 import com.example.certificateback.enumeration.RequestType;
 import com.example.certificateback.exception.BadRequestException;
@@ -15,25 +14,24 @@ import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.ICertificateRequestRepository;
 import com.example.certificateback.repository.IUserRepository;
+import com.example.certificateback.service.interfaces.ICertificateGeneratorService;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
-import com.example.certificateback.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CertificateRequestService implements ICertificateRequestService {
 
     @Autowired
-    private ICertificateRequestRepository repository;
+    private ICertificateRequestRepository certificateRequestRepository;
+    @Autowired
+    private ICertificateGeneratorService certificateGeneratorService;
 
     @Autowired
     private IUserRepository userRepository;
@@ -46,6 +44,7 @@ public class CertificateRequestService implements ICertificateRequestService {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) throw new NotFoundException("User not found!");
+        //List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
         return user;
     }
 
@@ -53,7 +52,7 @@ public class CertificateRequestService implements ICertificateRequestService {
     @Transactional
     public AllDTO<CertificateRequestDTO> get() {
         User user = getLoggedUser();
-        List<CertificateRequest> certificateRequests = repository.findBySubjectId(user.getId());
+        List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
 
         List<CertificateRequestDTO> certificateRequestDTOS = new ArrayList<>();
         for (CertificateRequest certificate : certificateRequests)
@@ -62,12 +61,14 @@ public class CertificateRequestService implements ICertificateRequestService {
         return new AllDTO<>(certificateRequestDTOS);
     }
 
-    private CertificateRequestDTO acceptCertificate(CertificateRequest request) {
-        CertificateRequestDTO dto = new CertificateRequestDTO(request);
-        dto.setSubject(request.getSubject().getId());
-        repository.save(request);
-        // TODO : here needs to be called function that will create certificate
-        return dto;
+    @Override
+    public CertificateDTO acceptRequest(Long id) {
+        CertificateRequest request = certificateRequestRepository.findById(id).orElseThrow(() ->
+                new NotFoundException("Request does not exist!"));
+        request.setRequestType(RequestType.ACCEPTED);
+        certificateRequestRepository.save(request);
+
+        return certificateGeneratorService.createCertificate(request);
     }
 
     private void checkForExceptions(CertificateRequest request) {
@@ -83,35 +84,43 @@ public class CertificateRequestService implements ICertificateRequestService {
 
     @Override
     public CertificateRequestDTO insert(CertificateRequestDTO certificateRequestDTO) {
-        // TODO : also later check if certificate is valid
+        // TODO : check validity of issuer certificate
         // this can be implemented after 7a implementation
         User user = getLoggedUser();
         Role role = user.getRoles().get(0);
         CertificateRequest request = new CertificateRequest(certificateRequestDTO);
-        Certificate issuer = certificateRepository.findBySerialNumber(certificateRequestDTO.getIssuer())
-                .orElseThrow(() -> new NotFoundException("Certificate not found!"));;
+        Certificate issuer;
+        if (request.getCertificateType() == CertificateType.ROOT)
+            issuer = null;
+        else
+            issuer = certificateRepository.findBySerialNumber(certificateRequestDTO.getIssuer())
+                .orElseThrow(() -> new NotFoundException("Certificate not found!"));
         request.setIssuer(issuer);
         request.setSubject(user);
-        certificateRequestDTO.setSubject(user.getId());
+        request.setRequestType(RequestType.ACTIVE);
 
         checkForExceptions(request);
 
+        request = certificateRequestRepository.save(request);
+
         if (role.getName().equals("ROLE_ADMIN")) {
+            acceptRequest(request.getId());
             request.setRequestType(RequestType.ACCEPTED);
-            return acceptCertificate(request);
         }
 
-        if (request.getCertificateType() == CertificateType.ROOT)
+        else if (request.getCertificateType() == CertificateType.ROOT)
             throw new BadRequestException("User can't ask for the root certificate!");
 
-        if (request.getIssuer().getSubject().getId() == user.getId()) {
+        else if (request.getIssuer().getSubject().getId() == user.getId()) {
+            acceptRequest(request.getId());
             request.setRequestType(RequestType.ACCEPTED);
-            return acceptCertificate(request);
         }
-        else {
-            // TODO : here also call a function that will create certificate
-            repository.save(request);
-        }
-        return certificateRequestDTO;
+//
+//        else {
+//            // TODO : here also call a function that will create certificate    ???
+//        }
+
+        request = certificateRequestRepository.save(request);
+        return new CertificateRequestDTO(request);
     }
 }
