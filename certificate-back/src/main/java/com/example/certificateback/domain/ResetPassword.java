@@ -27,4 +27,10 @@ public class ResetPassword {
     @Column(name = "code")
     private String code;
 
+    public ResetPassword(User user, Date expiredDate, String code) {
+        this.user = user;
+        this.expiredDate = expiredDate;
+        this.code = code;
+    }
+
 }

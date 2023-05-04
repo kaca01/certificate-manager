@@ -2,10 +2,7 @@ package com.example.certificateback.controller;
 
 import com.example.certificateback.configuration.KeyStoreConstants;
 import com.example.certificateback.domain.User;
-import com.example.certificateback.dto.AllDTO;
-import com.example.certificateback.dto.LoginDTO;
-import com.example.certificateback.dto.TokenStateDTO;
-import com.example.certificateback.dto.UserDTO;
+import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
@@ -23,6 +20,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.security.Principal;
 import java.util.List;
@@ -78,6 +78,21 @@ public class UserController {
         AllDTO<UserDTO> allUsers = new AllDTO<>(usersDTO);
 
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
+    }
+
+    // Reset password of user
+    @GetMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> sendResetEmail(@PathVariable String email) throws MessagingException, UnsupportedEncodingException {
+        service.sendResetEmail(email);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Change password of a user with the reset code
+    @PutMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> resetPassword(@PathVariable String email, @RequestBody ResetPasswordDTO resetPasswordDTO)
+    {
+        service.resetEmail(email, resetPasswordDTO);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/currentUser")
