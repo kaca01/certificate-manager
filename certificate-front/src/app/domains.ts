@@ -9,20 +9,12 @@ export interface User {
 }
 
 export interface CertificateRequest {
-    requestType: string,
-    issuer: string,
-    certificateType: string,
-    subject: number,
-    refusalReason: number
-}
-
-export interface Request {
   _id: number;
-  issuer: string;
-  type: string;
-  status: string;
-  subject: User;
-  refusalReason: string;
+  requestType: string,
+  issuer: string,
+  certificateType: string,
+  subject: number,
+  refusalReason: number
 }
 
 export interface AllRequests {
