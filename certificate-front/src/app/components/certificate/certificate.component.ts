@@ -26,7 +26,7 @@ export class CertificateComponent implements OnInit {
   constructor(private certificateService: CertificateService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.certificateService.getAllCerificates().subscribe((res) => {
+    this.certificateService.getAll().subscribe((res) => {
       this.certificates = res.results;
       this.dataSource = new MatTableDataSource<Certificate>(this.certificates);
       this.dataSource.paginator = this.paginator;
@@ -55,17 +55,3 @@ export class CertificateComponent implements OnInit {
     if(Menu != null) Menu.style.display = 'none';
   }
 }
-
-// export interface Certificate {
-//   _id: number;
-//   serialNumber: string;
-//   subject: string;
-//   validFrom: string;
-//   validTo: string;
-//   type: string;
-//   }
-
-// export interface AllCertificate {
-//   totalCount: number;
-//   results: Certificate[];
-// }
