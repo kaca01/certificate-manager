@@ -28,6 +28,9 @@ export class CertificateComponent implements OnInit {
 
   ngOnInit(): void {
     this.certificateService.getAll().subscribe((res) => {
+      for(let i = 0; i<res.totalCount; i++) {
+        res.results[i]._id = i+1;
+      }
       this.certificates = res.results;
       this.dataSource = new MatTableDataSource<Certificate>(this.certificates);
       this.dataSource.paginator = this.paginator;
@@ -50,7 +53,7 @@ export class CertificateComponent implements OnInit {
   }
 
   getCertificate(cer : Certificate) {
-    this.selectedRowIndex = this.certificates.findIndex(x => x.serialNumber == cer.serialNumber);
+    this.selectedRowIndex = cer._id;
     this.certificate = cer;
     const Menu = document.getElementById("menu-container");
     if(Menu != null) Menu.style.display = 'none';
