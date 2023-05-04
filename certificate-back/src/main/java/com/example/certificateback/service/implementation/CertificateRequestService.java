@@ -63,6 +63,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 
     @Override
     public CertificateDTO acceptRequest(Long id) {
+        //todo check validity?
         CertificateRequest request = certificateRequestRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("Request does not exist!"));
         request.setRequestType(RequestType.ACCEPTED);
