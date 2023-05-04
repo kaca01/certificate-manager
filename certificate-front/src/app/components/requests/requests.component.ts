@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { RequestService } from 'src/app/service/request.service';
-import { CertificateRequest, Request } from 'src/app/domains';
+import { CertificateRequest } from 'src/app/domains';
 
 @Component({
   selector: 'app-requests',
@@ -18,7 +18,7 @@ export class RequestsComponent implements OnInit {
   valueFromCreateComponent = '';
 
   all: CertificateRequest[] = [];
-  private request = {} as Request;
+  private request = {} as CertificateRequest;
 
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
@@ -26,8 +26,10 @@ export class RequestsComponent implements OnInit {
   constructor(private router: Router, private requestService: RequestService) { }
 
   ngOnInit(): void {
-    this.requestService.getAll().subscribe((res) => {
-      console.log(res.results);
+    this.requestService.getAllRequests().subscribe((res) => {
+      for(let i = 0; i<res.totalCount; i++) {
+        res.results[i]._id = i+1;
+      }
       this.all = res.results;
       this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
       this.dataSource.paginator = this.paginator;
@@ -40,7 +42,7 @@ export class RequestsComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  getRequest(request : Request) {
+  getRequest(request : CertificateRequest) {
     this.selectedRowIndex=request._id;
     this.request = request;
     const Menu = document.getElementById("menu-container");
