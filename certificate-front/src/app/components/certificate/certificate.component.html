@@ -62,13 +62,8 @@
     </mat-paginator>
 </div>
 
-<p class="bottom-margin">test</p>
-
 <footer>
-    <button [matMenuTriggerFor]="aboveMenu" id="validation">CHECK VALIDITY</button>
-        <mat-menu #aboveMenu="matMenu" yPosition="above">
-            <button class="menu-item" mat-menu-item (click)="checkValidationById()">BY ID</button>
-            <button class="menu-item" mat-menu-item>BY UPLOAD COPY</button>
-        </mat-menu>
+    <button class="validation" (click)="checkValidationById()">CHECK VALIDITY BY ID</button>
+    <button class="validation">CHECK VALIDITY BY COPY</button>
     <button id="withdraw">WITHDRAW</button>
 </footer>
