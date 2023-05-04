@@ -115,6 +115,7 @@ public class UserService implements IUserService, UserDetailsService {
 			return new ErrorDTO("Successful account activation!");
 		} else {
 			userActivationRepository.delete(activation);
+			passwordRepository.delete(p.getPasswords().get(0));
 			userRepository.delete(p);
 			throw new BadRequestException("Activation expired. Register again!");
 		}

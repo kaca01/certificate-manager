@@ -23,6 +23,7 @@ export class ActivationComponent implements OnInit {
         const login = document.getElementById("login");
         login!.innerHTML = "Login";
         }, (error) => { 
+          console.log(error);
             const errorTxt = this.handleErrors(error);
             const p = document.getElementById("message");
             p!.innerHTML = errorTxt;
