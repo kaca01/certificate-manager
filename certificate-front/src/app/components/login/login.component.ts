@@ -16,7 +16,6 @@ export class LoginComponent implements OnInit {
     password: new FormControl('', [Validators.required]),
   });
 
-
   hide: boolean = true;
   returnUrl!: string;
   submitted = false;

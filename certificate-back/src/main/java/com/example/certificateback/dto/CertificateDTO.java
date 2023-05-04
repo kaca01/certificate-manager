@@ -39,7 +39,8 @@ public class CertificateDTO {
     }
 
     // response
-    public CertificateDTO(Date validFrom, User user, CertificateType type, String serialNum) {
+    public CertificateDTO(Date validTo, Date validFrom, User user, CertificateType type, String serialNum) {
+        this.validTo = validTo.toString();
         this.validFrom =  validFrom.toString();
         this.subject = new UserDTO(user);
         this.certificateType = type.toString();

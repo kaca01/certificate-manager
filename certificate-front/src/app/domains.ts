@@ -31,7 +31,7 @@ export interface Certificate {
   subject: string;
   validFrom: string;
   validTo: string;
-  type: string;
+  certificateType: string;
 }
 
 export interface AllCertificate {
