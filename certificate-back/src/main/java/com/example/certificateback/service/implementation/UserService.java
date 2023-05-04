@@ -4,12 +4,16 @@ import com.example.certificateback.domain.Password;
 import com.example.certificateback.domain.Role;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.domain.UserActivation;
+import com.example.certificateback.dto.ErrorDTO;
 import com.example.certificateback.dto.UserDTO;
+import com.example.certificateback.exception.BadRequestException;
+import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.IPasswordRepository;
 import com.example.certificateback.repository.IRoleRepository;
 import com.example.certificateback.repository.IUserActivationRepository;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,8 +21,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,6 +40,8 @@ public class UserService implements IUserService, UserDetailsService {
 	private IPasswordRepository passwordRepository;
 	@Autowired
 	private IRoleRepository roleRepository;
+	@Autowired
+	private JavaMailSender mailSender;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -61,9 +72,8 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public UserDTO register(UserDTO registrationDTO) {
-//		if (this.userRepository.findByEmail(registrationDTO.getEmail())) {
-//			throw new BadRequestException("User with that email already exists!");
-//		}
+		this.userRepository.findByEmail(registrationDTO.getEmail()).orElseThrow(()
+				-> new BadRequestException("User with that email already exists!"));
 
 		User user = new User(registrationDTO);
 		user.setEnabled(false);
@@ -77,9 +87,37 @@ public class UserService implements IUserService, UserDetailsService {
 		user = userRepository.save(user);
 
 		UserActivation activation = userActivationRepository.save(new UserActivation(user));
-		//sendActivationEmail(activation);
+
+		try {
+			sendActivationEmail(activation);
+		} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
+			throw new RuntimeException(e);
+		}
 
 		return new UserDTO(user);
+	}
+
+	private User findUserById(Long id)
+	{
+		return userRepository.findById(id).orElseThrow(
+				() -> new NotFoundException("User does not exist!"));
+	}
+
+	@Override
+	public ErrorDTO activateUser(Long activationId) {
+		UserActivation activation = userActivationRepository.findById(activationId).orElseThrow(
+				() -> new NotFoundException("Activation with entered id does not exist!"));
+		User p = findUserById(activation.getUser().getId());
+		if (new Date().before(new Date(activation.getDate().getTime() + activation.getLife()*1000L))) {
+			p.setEnabled(true);
+			userRepository.save(p);
+			userActivationRepository.delete(activation);
+			return new ErrorDTO("Successful account activation!");
+		} else {
+			userActivationRepository.delete(activation);
+			userRepository.delete(p);
+			throw new BadRequestException("Activation expired. Register again!");
+		}
 	}
 
 	@Override
@@ -88,4 +126,29 @@ public class UserService implements IUserService, UserDetailsService {
 				.orElseThrow(() -> new UsernameNotFoundException(String.format("User with email '%s' is not found!", email)));
 	}
 
+	private void sendActivationEmail(UserActivation activation) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
+		User user = userRepository.findByEmail(activation.getUser().getEmail()).orElseThrow(()
+				-> new NotFoundException("User does not exist!"));
+		String toAddress = activation.getUser().getEmail();
+		String fromAddress = "anastasijas557@gmail.com";
+		String senderName = "CM app Support";
+		String subject = "Activate Your CM Account";
+		String content = "Hello [[name]], thank you for joining us!<br>"
+				+ "To activate your account please follow this link: "
+				+ "<a href='http://localhost:4200/activation/[[id]]'>activate</a><br>"
+				+ "The CM team.";
+
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
+
+		helper.setFrom(fromAddress, senderName);
+		helper.setTo(toAddress);
+		helper.setSubject(subject);
+
+		content = content.replace("[[name]]", user.getName() + " " + user.getSurname());
+		content = content.replace("[[id]]", activation.getId().toString());
+		helper.setText(content, true);
+
+		mailSender.send(message);
+	}
 }

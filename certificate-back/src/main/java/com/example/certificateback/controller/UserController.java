@@ -2,10 +2,7 @@ package com.example.certificateback.controller;
 
 import com.example.certificateback.configuration.KeyStoreConstants;
 import com.example.certificateback.domain.User;
-import com.example.certificateback.dto.AllDTO;
-import com.example.certificateback.dto.LoginDTO;
-import com.example.certificateback.dto.TokenStateDTO;
-import com.example.certificateback.dto.UserDTO;
+import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
@@ -78,6 +75,14 @@ public class UserController {
         AllDTO<UserDTO> allUsers = new AllDTO<>(usersDTO);
 
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
+    }
+
+    //activate user account
+    @GetMapping(value = "/activate/{activationId}")
+    public ResponseEntity<ErrorDTO> activateUser(@PathVariable int activationId)
+    {
+        ErrorDTO message = service.activateUser((long) activationId);
+        return new ResponseEntity<ErrorDTO>(message, HttpStatus.OK);
     }
 
     @GetMapping("/currentUser")
