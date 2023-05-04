@@ -127,11 +127,18 @@ button:hover {
 
 #validation {
     color: #5F92C5;
+    font-size: larger;
+}
+
+.menu-item {
+    font-size: medium;
+    margin: 0 !important;
 }
 
 #withdraw {
     width: 100px;
     color: rgba(252, 83, 83, 0.685);
+    font-size: larger;
 }
 
 .bottom-margin{

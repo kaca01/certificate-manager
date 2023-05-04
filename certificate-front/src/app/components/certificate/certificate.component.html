@@ -65,6 +65,10 @@
 <p class="bottom-margin">test</p>
 
 <footer>
-    <button id="validation">CHECK VALIDITY</button>
+    <button [matMenuTriggerFor]="aboveMenu" id="validation">CHECK VALIDITY</button>
+        <mat-menu #aboveMenu="matMenu" yPosition="above">
+            <button class="menu-item" mat-menu-item>BY ID</button>
+            <button class="menu-item" mat-menu-item>BY UPLOAD COPY</button>
+        </mat-menu>
     <button id="withdraw">WITHDRAW</button>
 </footer>
