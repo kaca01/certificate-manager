@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Certificate } from 'src/app/domains';
 import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestComponent } from '../certificate-request/certificate-request.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'certificate',
@@ -23,7 +24,7 @@ export class CertificateComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private certificateService: CertificateService, private dialog: MatDialog) {}
+  constructor(private certificateService: CertificateService, private dialog: MatDialog, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.certificateService.getAll().subscribe((res) => {
@@ -49,9 +50,28 @@ export class CertificateComponent implements OnInit {
   }
 
   getCertificate(cer : Certificate) {
-    this.selectedRowIndex=cer._id;
+    this.selectedRowIndex = this.certificates.findIndex(x => x.serialNumber == cer.serialNumber);
     this.certificate = cer;
     const Menu = document.getElementById("menu-container");
     if(Menu != null) Menu.style.display = 'none';
+  }
+
+  checkValidationById() : void {
+    if(this.selectedRowIndex === -1) 
+      this.openSnackBar("Certificate not selected!")
+    else {
+      this.certificateService.checkValidationBySerialNum(this.certificate.serialNumber).subscribe((res) => {
+        if(res) 
+          this.openSnackBar('The selected certificate is valid');
+        else
+          this.openSnackBar('The selected certificate is not valid');
+      });
+    }
+  }
+
+  openSnackBar(snackMsg : string) : void {
+    this.snackBar.open(snackMsg, "Dismiss", {
+      duration: 2000
+    });
   }
 }

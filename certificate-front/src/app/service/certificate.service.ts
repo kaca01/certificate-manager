@@ -23,4 +23,8 @@ export class CertificateService {
   getAll(): Observable<AllCertificate> {
     return this.http.get<AllCertificate>(environment.apiHost + 'api/certificates');
   }
+
+  checkValidationBySerialNum(serialNumber: string) : Observable<boolean> {
+    return this.http.get<boolean>(environment.apiHost + 'api/certificates/verify/' + serialNumber);
+  }
 }
