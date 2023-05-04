@@ -5,6 +5,7 @@ import { CertificateRequestService } from './certificate-request.service';
 import { UserService } from 'src/app/service/user.service';
 import { AllCertificate, CertificateRequest } from 'src/app/domains';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -17,13 +18,15 @@ export class CertificateRequestComponent implements OnInit {
   issuer: string = "";
   type: string = "";
 
-  constructor(private dialogRef: MatDialogRef<CertificateRequestComponent>, private certificateService: CertificateService,
+  constructor(private router: Router, private dialogRef: MatDialogRef<CertificateRequestComponent>, private certificateService: CertificateService,
               private certificateRequsetService: CertificateRequestService, private userService: UserService, private snackBar: MatSnackBar,
               @Inject(MAT_DIALOG_DATA) data: any) {
 
      }
 
   ngOnInit(): void {
+    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
+      this.router.navigate(['/welcome-page']);
     this.certificateService.getIssuers().subscribe((res)=> {
       this.issuers = res;
     });

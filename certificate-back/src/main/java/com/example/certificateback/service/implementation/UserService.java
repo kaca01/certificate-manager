@@ -137,7 +137,7 @@ public class UserService implements IUserService, UserDetailsService {
 		String content = "Hello [[name]], thank you for joining us!<br>"
 				+ "To activate your account please follow this link: "
 				+ "<a href='http://localhost:4200/activation/[[id]]'>activate</a><br>"
-				+ "The CM team.";
+				+ "The Certificate Manager team.";
 
 		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message);

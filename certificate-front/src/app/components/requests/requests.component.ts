@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { RequestService } from 'src/app/service/request.service';
 import { Request } from 'src/app/domains';
+import { UserService } from 'src/app/service/user.service';
 
 @Component({
   selector: 'app-requests',
@@ -24,9 +25,12 @@ export class RequestsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private router: Router, private requestService: RequestService) { }
+  constructor(private router: Router, private requestService: RequestService, private userService: UserService) { }
 
   ngOnInit(): void {
+    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
+      this.router.navigate(['/welcome-page']);
+
     this.requestService.selectedValue$.subscribe((value) => {
       this.valueFromCreateComponent = value;
     });

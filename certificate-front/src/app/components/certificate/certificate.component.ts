@@ -6,6 +6,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Certificate } from 'src/app/domains';
 import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestComponent } from '../certificate-request/certificate-request.component';
+import { UserService } from 'src/app/service/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'certificate',
@@ -23,9 +25,11 @@ export class CertificateComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private certificateService: CertificateService, private dialog: MatDialog) {}
+  constructor(private router: Router, private certificateService: CertificateService, private dialog: MatDialog, private userService: UserService) {}
 
   ngOnInit(): void {
+    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
+      this.router.navigate(['/welcome-page']);
     this.certificates = this.certificateService.getAll();
     this.dataSource = new MatTableDataSource<Certificate>(this.certificates);
     this.dataSource.paginator = this.paginator;
