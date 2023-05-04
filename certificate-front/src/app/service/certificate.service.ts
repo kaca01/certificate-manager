@@ -117,7 +117,7 @@ export class CertificateService {
         subject: certificateObj.subject,
         validFrom: certificateObj.validFrom,
         validTo: certificateObj.validTo,
-        type: certificateObj.type,
+        certificateType: certificateObj.type,
       };
       this.certificateList.push(certificate);
     }
@@ -133,6 +133,10 @@ export class CertificateService {
 
   getIssuers(): Observable<AllCertificate> {
     return this.http.get<AllCertificate>(environment.apiHost + "api/certificate/issuers");
+  }
+
+  getAllCerificates(): Observable<any> {
+    return this.http.get<any>(environment.apiHost + 'api/certificates');
   }
 
 }

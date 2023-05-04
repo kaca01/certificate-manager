@@ -26,15 +26,12 @@ export class CertificateComponent implements OnInit {
   constructor(private certificateService: CertificateService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.certificates = this.certificateService.getAll();
-    this.dataSource = new MatTableDataSource<Certificate>(this.certificates);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.certificateService.getAllCerificates().subscribe((res) => {
+      this.certificates = res.results;
+      this.dataSource = new MatTableDataSource<Certificate>(this.certificates);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   applyFilter(event: Event) {
