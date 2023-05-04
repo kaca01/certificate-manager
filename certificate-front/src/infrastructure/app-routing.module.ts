@@ -5,6 +5,7 @@ import { LoginComponent } from 'src/app/components/login/login.component';
 import { CertificateComponent } from 'src/app/components/certificate/certificate.component';
 import { RegistrationComponent } from 'src/app/components/registration/registration.component';
 import { RequestsComponent } from 'src/app/components/requests/requests.component';
+import { ActivationComponent } from 'src/app/components/registration/activation/activation/activation.component';
 
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'certificate', component: CertificateComponent},
   { path: 'registration', component: RegistrationComponent},
   { path: 'requests', component: RequestsComponent},
+  { path: 'activation/:id', component: ActivationComponent},
   { path: '', redirectTo: '/welcome-page', pathMatch: 'full' },
   { path: '**', component: WelcomePageComponent },
 ]

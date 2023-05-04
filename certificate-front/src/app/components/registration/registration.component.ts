@@ -18,7 +18,7 @@ export class RegistrationComponent implements OnInit {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
     repeatPassword: new FormControl('', [Validators.required]),
-    telephoneNumber: new FormControl('', [Validators.required, Validators.pattern('[- +()0-9]+')]),
+    phone: new FormControl('', [Validators.required, Validators.pattern('[- +()0-9]+')]),
     country: new FormControl('', [Validators.required]),
   
   }) ;
@@ -49,6 +49,7 @@ export class RegistrationComponent implements OnInit {
         }
       );
     }
+    else this.openSnackBar("Missing data!");
   }
 
   login() {
@@ -56,6 +57,7 @@ export class RegistrationComponent implements OnInit {
   }
 
   handleErrors(error: any) {
+    console.log(error);
     let e = JSON.parse(error.error);
     if(e.message!= null || e.message != undefined)  
     this.openSnackBar(e.message);

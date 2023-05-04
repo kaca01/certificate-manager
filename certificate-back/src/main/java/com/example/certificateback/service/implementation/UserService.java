@@ -72,9 +72,9 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public UserDTO register(UserDTO registrationDTO) {
-		this.userRepository.findByEmail(registrationDTO.getEmail()).orElseThrow(()
-				-> new BadRequestException("User with that email already exists!"));
-
+		if (this.userRepository.existsByEmail(registrationDTO.getEmail())) {
+			throw new BadRequestException("User with that email already exists!");
+		}
 		User user = new User(registrationDTO);
 		user.setEnabled(false);
 

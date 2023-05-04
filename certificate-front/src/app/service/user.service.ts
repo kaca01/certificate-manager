@@ -34,4 +34,9 @@ export class UserService {
     return this.http.post<User>(environment.apiHost + 'api/user/register', user);
   }
 
+  
+  getActivation(activationId: number): Observable<String>  {
+    return this.http.get<String>(environment.apiHost + "api/user/activate/" + activationId);
+  }
+
 }
