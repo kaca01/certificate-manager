@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Request } from 'src/app/domains';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { AllRequests, Request } from 'src/app/domains';
+import { environment } from 'src/environments/environment';
 
 const REQUESTS = [
   {
@@ -90,7 +92,7 @@ export class RequestService {
 
   private requestsList: Request[] = [];
 
-  constructor() { 
+  constructor(private http: HttpClient) { 
     for (let req of REQUESTS) {
       const request: any = {
         _id: req._id,
@@ -106,6 +108,10 @@ export class RequestService {
   
     getAllRequests(): Request[] {
       return this.requestsList;
+    }
+
+    getAll(): Observable<AllRequests> {
+      return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request');
     }
 
     add(req: any): void {

@@ -1,6 +1,7 @@
 package com.example.certificateback.dto;
 
 import com.example.certificateback.domain.CertificateRequest;
+import com.example.certificateback.domain.User;
 import com.example.certificateback.enumeration.CertificateType;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class CertificateRequestDTO {
 
     private String certificateType;
 
-    private long subject;
+    private UserDTO subject;
 
     private String refusalReason;
 
@@ -27,5 +28,6 @@ public class CertificateRequestDTO {
             this.issuer = request.getIssuer().getSerialNumber();
         this.certificateType = request.getCertificateType().toString();
         this.refusalReason = request.getRefusalReason();
+        this.subject = new UserDTO(request.getSubject());
     }
 }

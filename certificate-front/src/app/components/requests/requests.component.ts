@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { RequestService } from 'src/app/service/request.service';
-import { Request } from 'src/app/domains';
+import { CertificateRequest, Request } from 'src/app/domains';
 
 @Component({
   selector: 'app-requests',
@@ -12,13 +12,12 @@ import { Request } from 'src/app/domains';
   styleUrls: ['./requests.component.css']
 })
 export class RequestsComponent implements OnInit {
-
   selectedRowIndex : number = -1;
   displayedColumns: string[] = ['issuer', 'subject', 'type', 'status'];
-  dataSource!: MatTableDataSource<Request>;
+  dataSource!: MatTableDataSource<CertificateRequest>;
   valueFromCreateComponent = '';
 
-  all: Request[] = [];
+  all: CertificateRequest[] = [];
   private request = {} as Request;
 
   @ViewChild(MatPaginator) paginator!: any;
@@ -27,25 +26,13 @@ export class RequestsComponent implements OnInit {
   constructor(private router: Router, private requestService: RequestService) { }
 
   ngOnInit(): void {
-    this.requestService.selectedValue$.subscribe((value) => {
-      this.valueFromCreateComponent = value;
+    this.requestService.getAll().subscribe((res) => {
+      console.log(res.results);
+      this.all = res.results;
+      this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     });
-
-    this.all = this.requestService.getAllRequests();
-    this.dataSource = new MatTableDataSource<Request>(this.all);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    // this.requestService.getAllRequests().subscribe((res) => {
-    //   this.all = res.results;
-    //   this.dataSource = new MatTableDataSource<Request>(this.all);
-    //   this.dataSource.paginator = this.paginator;
-    //   this.dataSource.sort = this.sort;
-    // });
-  }
-  
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
   }
 
   applyFilter(event: Event) {

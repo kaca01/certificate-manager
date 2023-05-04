@@ -25,6 +25,11 @@ export interface Request {
   refusalReason: string;
 }
 
+export interface AllRequests {
+  totalCount: number;
+  results: CertificateRequest[];
+}
+
 export interface Certificate {
   _id: number;
   serialNumber: string;
