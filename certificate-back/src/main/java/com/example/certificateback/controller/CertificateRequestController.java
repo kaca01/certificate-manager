@@ -28,6 +28,12 @@ public class CertificateRequestController {
         return new ResponseEntity<>(service.getUserRequests(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/issuer", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<AllDTO<CertificateRequestDTO>> getRequestsBasedOnIssuer() {
+        return new ResponseEntity<>(service.getRequestsBasedOnIssuer(), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AllDTO<CertificateRequestDTO>> getAllRequests() {

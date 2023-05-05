@@ -78,6 +78,14 @@ public class CertificateRequestService implements ICertificateRequestService {
     }
 
     @Override
+    public AllDTO<CertificateRequestDTO> getRequestsBasedOnIssuer() {
+        User issuer = getLoggedUser();
+        List<CertificateRequest> certificateRequests = certificateRequestRepository.findByRequestTypeAndIssuerSubjectId
+                (RequestType.ACTIVE, issuer.getId());
+        return getRequests(certificateRequests);
+    }
+
+    @Override
     public CertificateDTO acceptRequest(Long id) {
         CertificateRequest request = certificateRequestRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("Request does not exist!"));

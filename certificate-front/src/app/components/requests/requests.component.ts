@@ -32,32 +32,15 @@ export class RequestsComponent implements OnInit {
   constructor(private requestService: RequestService, private userService: UserService, private _snackBar: MatSnackBar, private dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.whoIsUser();
-
-    if(this.user === "user") {
-
-      this.requestService.getUserRequests().subscribe((res) => {
-        for(let i = 0; i<res.totalCount; i++) {
-          res.results[i]._tableId = i+1;
-        }
-        this.all = res.results;
-        this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      });
-    }
-
-    else if(this.user === "admin") {
-      this.requestService.getAllRequests().subscribe((res) => {
-        for(let i = 0; i<res.totalCount; i++) {
-          res.results[i]._tableId = i+1;
-        }
-        this.all = res.results;
-        this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      });
-    }
+    this.requestService.getRequestsBasedOnIssuer().subscribe((res) => {
+      for(let i = 0; i<res.totalCount; i++) {
+        res.results[i]._tableId = i+1;
+      }
+      this.all = res.results;
+      this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   applyFilter(event: Event) {

@@ -21,6 +21,10 @@ export class RequestService {
     return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/admin');
   }
 
+  getRequestsBasedOnIssuer(): Observable<AllRequests> {
+    return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/issuer');
+  }
+
   accept(id: number): Observable<Certificate> {
     return this.http.put<Certificate>(environment.apiHost + 'api/certificate-request/accept/' + id.toString(), {});
   }

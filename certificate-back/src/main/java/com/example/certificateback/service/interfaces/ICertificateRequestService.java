@@ -16,4 +16,6 @@ public interface ICertificateRequestService {
     CertificateRequestDTO refuseRequest(Long id, ErrorDTO reason);
 
     public CertificateRequestDTO insert(CertificateRequestDTO certificateRequestDTO);
+
+    AllDTO<CertificateRequestDTO> getRequestsBasedOnIssuer();
 }
