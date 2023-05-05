@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AllRequests } from 'src/app/domains';
+import { AllRequests, Certificate, CertificateRequest } from 'src/app/domains';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -17,7 +17,15 @@ export class RequestService {
     return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/user');
   }
   
-    getAllRequests(): Observable<AllRequests> {
-      return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/admin');
-    }
+  getAllRequests(): Observable<AllRequests> {
+    return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/admin');
+  }
+
+  accept(id: number): Observable<Certificate> {
+    return this.http.get<Certificate>(environment.apiHost + 'api/certificate-request/accept/' + id);
+  }
+
+  refuse(id: number, reason: any): Observable<CertificateRequest> {
+    return this.http.put<CertificateRequest>(environment.apiHost + 'api/certificate-request/refuse/' + id, reason);
+  }
 }
