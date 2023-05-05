@@ -146,9 +146,9 @@ public class UserService implements IUserService, UserDetailsService {
 			throw new BadRequestException("Code is expired or not correct!");
 
 		// TODO check if this is correct
-		Password newPassword = new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword()));
-
-		passwordRepository.save(newPassword);
+		Password password = passwordRepository.save(new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword())));
+		user.getPasswords().add(password);
+		userRepository.save(user);
 	}
 
 	@Override

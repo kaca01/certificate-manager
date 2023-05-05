@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { HttpErrorResponse } from "@angular/common/http";
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, AbstractControlOptions, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router'; 
 import { ResetPassword } from 'src/app/domains';
 import { UserService } from 'src/app/service/user.service';
 import { AuthService } from 'src/app/service/auth.service';
-import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'reset-password',
@@ -20,10 +19,12 @@ export class ResetPasswordComponent {
   });
 
   resetPasswordForm = new FormGroup({
-    newPassword: new FormControl('', [Validators.required]),
-    code: new FormControl('', [Validators.required])
+    code: new FormControl('', [Validators.required]),
+    newPassword: new FormControl('', [Validators.required,  Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)]),
+    firstRepetedPassword: new FormControl('', [Validators.required,  Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)]),
+    secondRepetedPassword: new FormControl('', [Validators.required,  Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)])
   });
-
+  
   hide: boolean = true;
   isSendEmail: boolean = false;
 
@@ -31,7 +32,19 @@ export class ResetPasswordComponent {
   email: string = "";
 
   constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router,
-     private authService: AuthService) {}
+     private authService: AuthService) { }
+
+  first() : boolean {
+    if(this.resetPasswordForm.get('newPassword')!.value !== this.resetPasswordForm.get('firstRepetedPassword')!.value) 
+      return true    
+    return false
+  }
+
+  second() : boolean {
+    if(this.resetPasswordForm.get('newPassword')!.value !== this.resetPasswordForm.get('secondRepetedPassword')!.value) 
+      return true    
+    return false
+  }
 
   openSnackBar(snackMsg : string) : void {
     this._snackBar.open(snackMsg, "Dismiss", {
@@ -58,9 +71,13 @@ export class ResetPasswordComponent {
   }
 
   doResetPassword() {
+    // TODO da li moze da se posalje ako su lozinke npr 123
+
     if(this.resetPasswordForm.controls['newPassword'].value != '' && 
-        this.resetPasswordForm.controls['code'].value != '') {
+        this.resetPasswordForm.controls['code'].value != '' && !this.first() && !this.second()) {
           this.resetPassword['newPassword'] = this.resetPasswordForm.controls['newPassword']?.value!;
+          this.resetPassword['firstRepetedPassword'] = this.resetPasswordForm.controls['firstRepetedPassword']?.value!;
+          this.resetPassword['secondRepetedPassword'] = this.resetPasswordForm.controls['secondRepetedPassword']?.value!;
           this.resetPassword['code'] = this.resetPasswordForm.controls['code']?.value!;
 
           this.userService.resetPassword(this.email, this.resetPassword)
@@ -71,7 +88,7 @@ export class ResetPasswordComponent {
         this.router.navigate(['login']);
       },
         (error: HttpErrorResponse) => {
-          this.openSnackBar("Code is expired or not correct!");
+          this.openSnackBar(error.error);
       })
     }
   }
