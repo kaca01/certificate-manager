@@ -71,6 +71,7 @@ export class RequestsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
         this.selectedRowIndex = -1;
+        this.ngOnInit();
       });
   }
 
@@ -79,6 +80,7 @@ export class RequestsComponent implements OnInit {
     this.requestService.accept(this.request.id).subscribe((res: Certificate) => {
       console.log(res);
       this.openSnackBar("Request successfully accepted!");
+      this.ngOnInit();
     },
     (error) => {                 
       this.handleErrors(error);

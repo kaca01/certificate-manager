@@ -21,8 +21,8 @@ export interface CertificateRequest {
   requestType: string,
   issuer: string,
   certificateType: string,
-  subject: number,
-  refusalReason: number
+  subject: User,
+  refusalReason: string
 }
 
 export interface AllRequests {
