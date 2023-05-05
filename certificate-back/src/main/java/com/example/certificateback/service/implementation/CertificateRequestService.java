@@ -152,9 +152,8 @@ public class CertificateRequestService implements ICertificateRequestService {
 
         checkForExceptions(request);
 
-        request = certificateRequestRepository.save(request);
-
         if (role.getName().equals("ROLE_ADMIN")) {
+            request = certificateRequestRepository.save(request);
             acceptRequest(request.getId());
             request.setRequestType(RequestType.ACCEPTED);
         }
@@ -163,13 +162,14 @@ public class CertificateRequestService implements ICertificateRequestService {
             throw new BadRequestException("User can't ask for the root certificate!");
 
         else if (request.getIssuer().getSubject().getId() == user.getId()) {
+            request = certificateRequestRepository.save(request);
             acceptRequest(request.getId());
             request.setRequestType(RequestType.ACCEPTED);
         }
-//
-//        else {
-//            // TODO : here also call a function that will create certificate    ???
-//        }
+
+        else {
+            // TODO : here also call a function that will create certificate    ???
+        }
 
         request = certificateRequestRepository.save(request);
         return new CertificateRequestDTO(request);
