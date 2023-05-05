@@ -1,7 +1,9 @@
 package com.example.certificateback.controller;
 
 import com.example.certificateback.dto.AllDTO;
+import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.dto.CertificateRequestDTO;
+import com.example.certificateback.dto.ErrorDTO;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,5 +38,19 @@ public class CertificateRequestController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CertificateRequestDTO> create(@RequestBody CertificateRequestDTO certificateRequestDTO) {
         return new ResponseEntity<>(service.insert(certificateRequestDTO), HttpStatus.CREATED);
+    }
+
+    @GetMapping(value = "/accept/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<CertificateDTO> acceptRequest(@PathVariable Long id) {
+        CertificateDTO certificate = service.acceptRequest(id);
+        return new ResponseEntity<>(certificate, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/refuse/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<CertificateRequestDTO> refuseRequest(@PathVariable Long id, @RequestBody ErrorDTO reason) {
+        CertificateRequestDTO request = service.refuseRequest(id, reason);
+        return new ResponseEntity<>(request, HttpStatus.OK);
     }
 }

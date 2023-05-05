@@ -7,15 +7,18 @@ import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.dto.CertificateRequestDTO;
+import com.example.certificateback.dto.ErrorDTO;
 import com.example.certificateback.enumeration.CertificateType;
 import com.example.certificateback.enumeration.RequestType;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.exception.NotFoundException;
+import com.example.certificateback.exception.NotValidException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.ICertificateRequestRepository;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.ICertificateGeneratorService;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
+import com.example.certificateback.service.interfaces.ICertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +35,8 @@ public class CertificateRequestService implements ICertificateRequestService {
     private ICertificateRequestRepository certificateRequestRepository;
     @Autowired
     private ICertificateGeneratorService certificateGeneratorService;
+    @Autowired
+    private ICertificateService certificateService;
 
     @Autowired
     private IUserRepository userRepository;
@@ -73,13 +78,25 @@ public class CertificateRequestService implements ICertificateRequestService {
 
     @Override
     public CertificateDTO acceptRequest(Long id) {
-        //todo check validity?
         CertificateRequest request = certificateRequestRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("Request does not exist!"));
+        if (!certificateService.checkingValidation(request.getIssuer().getSerialNumber())){
+            throw new NotValidException("Issuer certificate is not valid! This request cannot be accepted.");
+        }
         request.setRequestType(RequestType.ACCEPTED);
         certificateRequestRepository.save(request);
 
         return certificateGeneratorService.createCertificate(request);
+    }
+
+    @Override
+    public CertificateRequestDTO refuseRequest(Long id, ErrorDTO reason) {
+        CertificateRequest request = certificateRequestRepository.findById(id).orElseThrow(() ->
+                new NotFoundException("Request does not exist!"));
+        request.setRequestType(RequestType.REFUSED);
+        request.setRefusalReason(reason.getMessage());
+        certificateRequestRepository.save(request);
+        return new CertificateRequestDTO(request);
     }
 
     private void checkForExceptions(CertificateRequest request) {
@@ -134,4 +151,5 @@ public class CertificateRequestService implements ICertificateRequestService {
         request = certificateRequestRepository.save(request);
         return new CertificateRequestDTO(request);
     }
+
 }
