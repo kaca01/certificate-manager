@@ -83,7 +83,7 @@ public class CertificateRequestService implements ICertificateRequestService {
                 new NotFoundException("Request does not exist!"));
         checkForExceptions(request);
         // obuhvata i provjeru validacije i withdrawn atributa
-        if (!certificateService.checkingValidation(request.getIssuer().getSerialNumber())){
+        if (request.getCertificateType() != CertificateType.ROOT && !certificateService.checkingValidation(request.getIssuer().getSerialNumber())){
             throw new NotValidException("Issuer certificate is not valid! This request cannot be accepted.");
         }
         checkForRequestExceptions(request);
@@ -109,7 +109,7 @@ public class CertificateRequestService implements ICertificateRequestService {
         if (!request.getRequestType().equals(RequestType.ACTIVE)){
             throw new NotValidException("Cannot refuse/accept request that is no longer active");
         }
-        if (!getLoggedUser().getEmail().equals(request.getIssuer().getSubject().getEmail())){
+        if (request.getCertificateType() != CertificateType.ROOT && !getLoggedUser().getEmail().equals(request.getIssuer().getSubject().getEmail())){
             throw new WrongUserException("You are not issuer of this certificate!");
         }
     }

@@ -26,11 +26,11 @@ public class ExceptionResolver {
 
     @ExceptionHandler(NotValidException.class)
     public ResponseEntity<?> notValidException(NotValidException exception) {
-        return new ResponseEntity<>(new ErrorDTO(exception.getMessage()), HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(new ErrorDTO(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(WrongUserException.class)
     public ResponseEntity<?> wrongUserException(WrongUserException exception) {
-        return new ResponseEntity<>(new ErrorDTO(exception.getMessage()), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(new ErrorDTO(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }

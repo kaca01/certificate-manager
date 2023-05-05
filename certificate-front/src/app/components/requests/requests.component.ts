@@ -7,6 +7,8 @@ import { RequestService } from 'src/app/service/request.service';
 import { Certificate, CertificateRequest } from 'src/app/domains';
 import { UserService } from 'src/app/service/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { AddReasonDialogComponent } from './add-reason-dialog/add-reason-dialog.component';
 
 @Component({
   selector: 'app-requests',
@@ -20,23 +22,20 @@ export class RequestsComponent implements OnInit {
   valueFromCreateComponent = '';
 
   all: CertificateRequest[] = [];
-  private request = {} as CertificateRequest;
+  public request = {} as CertificateRequest;
 
   user!: string;
 
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private requestService: RequestService, private userService: UserService, private _snackBar: MatSnackBar) { }
+  constructor(private requestService: RequestService, private userService: UserService, private _snackBar: MatSnackBar, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.whoIsUser();
 
     if(this.user === "user") {
       this.requestService.getUserRequests().subscribe((res) => {
-        for(let i = 0; i<res.totalCount; i++) {
-          res.results[i]._id = i+1;
-        }
         this.all = res.results;
         this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
         this.dataSource.paginator = this.paginator;
@@ -46,9 +45,6 @@ export class RequestsComponent implements OnInit {
 
     else if(this.user === "admin") {
       this.requestService.getAllRequests().subscribe((res) => {
-        for(let i = 0; i<res.totalCount; i++) {
-          res.results[i]._id = i+1;
-        }
         this.all = res.results;
         this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
         this.dataSource.paginator = this.paginator;
@@ -63,7 +59,7 @@ export class RequestsComponent implements OnInit {
   }
 
   getRequest(request : CertificateRequest) {
-    this.selectedRowIndex=request._id;
+    this.selectedRowIndex=request.id;
     this.request = request;
     const Menu = document.getElementById("menu-container");
     if(Menu != null) Menu.style.display = 'none';
@@ -71,20 +67,22 @@ export class RequestsComponent implements OnInit {
 
   refuse(){
     if (!this.checkIfSelected()) return;
-    // todo add refusal reason
-    this.requestService.refuse(this.request._id, " CHANGE THIS").subscribe((res: CertificateRequest) => {
-      console.log(res);
-      this.openSnackBar("Request successfully refused!");
-    },
-    (error) => {                 
-      this.handleErrors(error);
-      }
-    );
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = this;
+
+    const dialogRef = this.dialog.open(AddReasonDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(() => {
+        this.selectedRowIndex = -1;
+      });
   }
 
   accept(){
     if (!this.checkIfSelected()) return;
-    this.requestService.accept(this.request._id).subscribe((res: Certificate) => {
+    this.requestService.accept(this.request.id).subscribe((res: Certificate) => {
       console.log(res);
       this.openSnackBar("Request successfully accepted!");
     },
@@ -96,18 +94,22 @@ export class RequestsComponent implements OnInit {
 
   private checkIfSelected() : boolean {
     if(this.selectedRowIndex==-1){
-      this.openSnackBar("User not selected!");
+      this.openSnackBar("Request not selected!");
       return false;
     }
     return true;
   }
   
   handleErrors(error: any) {
-    console.log(error);
-    if(error.error.message!= null || error.error.message != undefined)  
-    this.openSnackBar(error.error.message);
-    else this.openSnackBar("Some error occurred");
-  }
+    if (error.error){
+      let e = error.error;
+      console.log(e);
+      if(e.message!= null || e.message != undefined)  
+          return this.openSnackBar(e.message);
+      else if(e.errors != null || e.errors != undefined)
+          return this.openSnackBar(e.errors);
+      else this.openSnackBar("Some error occurred");
+}}
 
   whoIsUser(): string {
 		if(this.userService.currentUser?.roles != undefined) {

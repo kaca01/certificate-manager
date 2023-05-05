@@ -40,7 +40,7 @@ public class CertificateRequestController {
         return new ResponseEntity<>(service.insert(certificateRequestDTO), HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/accept/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/accept/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CertificateDTO> acceptRequest(@PathVariable Long id) {
         CertificateDTO certificate = service.acceptRequest(id);

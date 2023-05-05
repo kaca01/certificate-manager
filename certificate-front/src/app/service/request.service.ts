@@ -22,10 +22,10 @@ export class RequestService {
   }
 
   accept(id: number): Observable<Certificate> {
-    return this.http.get<Certificate>(environment.apiHost + 'api/certificate-request/accept/' + id);
+    return this.http.put<Certificate>(environment.apiHost + 'api/certificate-request/accept/' + id.toString(), {});
   }
 
   refuse(id: number, reason: any): Observable<CertificateRequest> {
-    return this.http.put<CertificateRequest>(environment.apiHost + 'api/certificate-request/refuse/' + id, reason);
+    return this.http.put<CertificateRequest>(environment.apiHost + 'api/certificate-request/refuse/' + id.toString(), reason);
   }
 }

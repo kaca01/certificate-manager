@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 public class CertificateRequestDTO {
 
+    private Long id;
     private String requestType;
 
     private String issuer;  // serial number of certificate
@@ -23,6 +24,7 @@ public class CertificateRequestDTO {
     private String refusalReason;
 
     public CertificateRequestDTO(CertificateRequest request) {
+        this.id = request.getId();
         this.requestType = request.getRequestType().toString();
         if (request.getCertificateType() != CertificateType.ROOT)
             this.issuer = request.getIssuer().getSerialNumber();

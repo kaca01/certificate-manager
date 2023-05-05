@@ -16,7 +16,7 @@ export interface User {
 }
 
 export interface CertificateRequest {
-  _id: number;
+  id: number;
   requestType: string,
   issuer: string,
   certificateType: string,
@@ -41,4 +41,8 @@ export interface Certificate {
 export interface AllCertificate {
   totalCount: number;
   results: Certificate[];
+}
+
+export interface RequestReason {
+  message: string;
 }
