@@ -8,6 +8,13 @@ export interface User {
     email: string
 }
 
+export interface ResetPassword {  
+  newPassword: string,
+  firstRepetedPassword: string,
+  secondRepetedPassword: string, 
+  code: string
+}
+
 export interface CertificateRequest {
     requestType: string,
     issuer: string,

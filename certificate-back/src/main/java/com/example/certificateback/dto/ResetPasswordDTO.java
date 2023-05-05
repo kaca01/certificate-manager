@@ -7,14 +7,15 @@ import lombok.NoArgsConstructor;
 @Data
 public class ResetPasswordDTO {
     private String newPassword;
-
-    private String repeatPassword;
+    private String firstRepeatPassword;
+    private String secondRepeatPassword;
     private String code;
 
     // request
-    public ResetPasswordDTO(String newPassword, String repeatPassword,String code) {
+    public ResetPasswordDTO(String newPassword, String firstRepeatPassword, String secondRepeatPassword, String code) {
         this.newPassword = newPassword;
-        this.repeatPassword = repeatPassword;
+        this.firstRepeatPassword = firstRepeatPassword;
+        this.secondRepeatPassword = secondRepeatPassword;
         this.code = code;
     }
 }
