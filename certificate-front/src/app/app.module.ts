@@ -22,6 +22,7 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { RegistrationComponent } from './components/registration/registration.component';
 import { RequestsComponent } from './components/requests/requests.component';
 import { AddReasonDialogComponent } from './components/requests/add-reason-dialog/add-reason-dialog.component';
+import { HistoryComponent } from './components/history/history.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { AddReasonDialogComponent } from './components/requests/add-reason-dialo
     RegistrationComponent,
     RequestsComponent,
     AddReasonDialogComponent,
+    HistoryComponent,
   ],
   imports: [
     FormsModule,

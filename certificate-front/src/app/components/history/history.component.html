@@ -2,7 +2,7 @@
 
 <div id="main-container">
 
-    <P class="title">Requests from your certificates</P>
+    <P class="title">History of requests</P>
     <form>
         <input id="search" (keyup)="applyFilter($event)" placeholder="Search..." #input>
         <img id="search-icon" src="../../../assets/images/search.png">
@@ -36,7 +36,7 @@
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row" (click)="getRequest(row)" [ngClass]="{'highlightTableColor': selectedRowIndex == row._tableId}"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row"></tr>
         </table>
     </div>
 
@@ -44,10 +44,3 @@
             [pageSizeOptions]="[5, 10, 25, 100]"
             showFirstLastButtons></mat-paginator>
 </div>
-
-<p class="bottom-margin">test</p>
-
-<footer>
-    <button id="refuse" (click)="refuse()">REFUSE</button>
-    <button id="accept" (click)="accept()">ACCEPT</button>
-</footer>
