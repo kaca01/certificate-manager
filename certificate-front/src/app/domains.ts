@@ -16,6 +16,7 @@ export interface User {
 }
 
 export interface CertificateRequest {
+  _tableId: number;
   id: number;
   requestType: string,
   issuer: string,

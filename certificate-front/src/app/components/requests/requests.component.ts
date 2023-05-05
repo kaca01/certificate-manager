@@ -35,7 +35,11 @@ export class RequestsComponent implements OnInit {
     this.whoIsUser();
 
     if(this.user === "user") {
+
       this.requestService.getUserRequests().subscribe((res) => {
+        for(let i = 0; i<res.totalCount; i++) {
+          res.results[i]._tableId = i+1;
+        }
         this.all = res.results;
         this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
         this.dataSource.paginator = this.paginator;
@@ -45,6 +49,9 @@ export class RequestsComponent implements OnInit {
 
     else if(this.user === "admin") {
       this.requestService.getAllRequests().subscribe((res) => {
+        for(let i = 0; i<res.totalCount; i++) {
+          res.results[i]._tableId = i+1;
+        }
         this.all = res.results;
         this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
         this.dataSource.paginator = this.paginator;
@@ -59,7 +66,7 @@ export class RequestsComponent implements OnInit {
   }
 
   getRequest(request : CertificateRequest) {
-    this.selectedRowIndex=request.id;
+    this.selectedRowIndex=request._tableId;
     this.request = request;
     const Menu = document.getElementById("menu-container");
     if(Menu != null) Menu.style.display = 'none';
@@ -67,6 +74,10 @@ export class RequestsComponent implements OnInit {
 
   refuse(){
     if (!this.checkIfSelected()) return;
+    if (this.request.requestType != "ACTIVE"){
+      this.openSnackBar("Cannot refuse/accept request that is no longer active");
+      return;
+    }
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;

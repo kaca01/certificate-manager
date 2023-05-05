@@ -1,29 +1,25 @@
 .container {
-    margin: 10px;
+    width: 300px;
     overflow-x: hidden;
 }
 
 #title {
-    margin-top: 10%;
-    margin-left: 10%;
     font-weight: bold;
     font-size: x-large;
-    width: 10em;
 }
 
 #textarea {
     border: 1px solid gray;
     border-radius: 5px;
-    padding: 2px 0 0 5px;
-    height: 80px;
+    width: 90%;
+    height: 50px;
+    margin-top: 15px;
 }
 
 #close-dialog {
     float: right;
     width: 20px;
     height: 20px;
-    margin-right: 20px;
-    margin-top: 5%;
   }
   
 .close:hover{
@@ -33,18 +29,19 @@
 
 #btn-container {
     width: 100%;
+    text-align: center;
 }
 
 #save {
     width: 50%;
-    vertical-align: top;
+    margin-left: auto;
+    margin-right: auto;
+    align-self: center;
     margin-top: 15px;
     color: gray;
     border-radius: 5px;
     border: none;
     font-size: larger;
-    margin-left: 25%;
-    margin-bottom: 5%;
 }
 
 #save:hover{
