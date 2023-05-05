@@ -57,13 +57,9 @@ export class RegistrationComponent implements OnInit {
   }
 
   handleErrors(error: any) {
-    //todo fix this
     console.log(error);
-    let e = JSON.parse(error.error);
-    if(e.message!= null || e.message != undefined)  
-    this.openSnackBar(e.message);
-    else if(e.errors != null || e.errors != undefined)
-    this.openSnackBar(e.errors);
+    if(error.error.message!= null || error.error.message != undefined)  
+    this.openSnackBar(error.error.message);
     else this.openSnackBar("Some error occurred");
   }
 
