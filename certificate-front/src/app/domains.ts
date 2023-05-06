@@ -15,6 +15,13 @@ export interface User {
     roles: Role[]
 }
 
+export interface ResetPassword {  
+  newPassword: string,
+  firstRepetedPassword: string,
+  secondRepetedPassword: string, 
+  code: string
+}
+
 export interface CertificateRequest {
   _id: number;
   requestType: string,

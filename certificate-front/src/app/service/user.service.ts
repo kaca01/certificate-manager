@@ -3,7 +3,7 @@ import { ApiService } from './api.service';
 import { ConfigService } from './config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { User } from '../domains';
+import { ResetPassword, User } from '../domains';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -30,4 +30,19 @@ export class UserService {
     return this.http.post<any>(environment.apiHost + "api/user/login", user);
   }
 
+  sendEmail(userEmail: string): Observable<any> {
+    return this.http.get<any>(environment.apiHost + 'api/user/' + userEmail + "/resetPassword");
+  }
+
+  resetPasswordViaEmail(userEmail: string, resetPassword: ResetPassword): Observable<void> {
+    return this.http.put<void>(environment.apiHost + 'api/user/' + userEmail + "/resetPassword", resetPassword);
+  }
+
+  sendSMS(phone: string): Observable<void> {
+    return this.http.get<void>(environment.apiHost + 'api/user/' + phone + "/sendSMS");
+  }
+
+  resetPasswordViaSMS(phone: string, resetPassword: ResetPassword): Observable<void> {
+    return this.http.put<void>(environment.apiHost + 'api/user/' + phone + "/sendSMS", resetPassword);
+  }
 }
