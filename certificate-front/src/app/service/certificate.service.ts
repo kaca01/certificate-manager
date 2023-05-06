@@ -27,4 +27,8 @@ export class CertificateService {
   checkValidationBySerialNum(serialNumber: string) : Observable<boolean> {
     return this.http.get<boolean>(environment.apiHost + 'api/certificates/verify/' + serialNumber);
   }
+
+  invalidate(serialNumber: string, refusalReason: string) : Observable<Certificate> {
+    return this.http.put<Certificate>(environment.apiHost + 'api/certificates/invalidate/' + serialNumber, refusalReason);
+  }
 }

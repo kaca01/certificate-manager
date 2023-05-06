@@ -21,6 +21,7 @@ import { CertificateService } from './service/certificate.service';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { RequestsComponent } from './components/requests/requests.component';
+import { WithdrawalReasonComponent } from './components/certificate/withdrawal-reason/withdrawal-reason.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { RequestsComponent } from './components/requests/requests.component';
     NavigationComponent,
     RegistrationComponent,
     RequestsComponent,
+    WithdrawalReasonComponent,
   ],
   imports: [
     FormsModule,
