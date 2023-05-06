@@ -6,6 +6,7 @@ import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.enumeration.RequestType;
+import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.ICertificateRequestRepository;
@@ -72,6 +73,11 @@ public class CertificateService implements ICertificateService {
     public CertificateDTO invalidate(String serialNumber, String withdrawnReason) {
         Certificate certificate = certificateRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedUser = userRepository.findByEmail(authentication.getName()).orElse(null);
+        if (loggedUser != certificate.getSubject()) throw new BadRequestException("Only certificate owner can withdraw the certificate.");
+
         certificate.setWithdrawn(true);
         certificate.setWithdrawnReason(withdrawnReason);
         certificateRepository.save(certificate);
