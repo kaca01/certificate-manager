@@ -67,7 +67,8 @@ public class WebSecurityConfig {
         http.authorizeRequests()
             .antMatchers("/api/user/login").permitAll()
 			.antMatchers("/api/user/register").permitAll()
-            .antMatchers("/api/user/{email}/resetPassword").permitAll() //TODO dodati putanje kojima korisnik moze da pristupa bez autentifikacije (logovanje, registracija)
+            .antMatchers("/api/user/{email}/resetPassword").permitAll()
+            .antMatchers("/api/user/generateOTP").permitAll() //TODO dodati putanje kojima korisnik moze da pristupa bez autentifikacije (logovanje, registracija)
 
                 // for every other request the user must be authenticated
                 .anyRequest().authenticated().and()

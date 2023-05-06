@@ -1,14 +1,14 @@
 package com.example.certificateback.controller;
 
-import com.example.certificateback.configuration.KeyStoreConstants;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
-import com.example.certificateback.util.KeyStoreReader;
-import com.example.certificateback.util.KeyStoreWriter;
 import com.example.certificateback.util.TokenUtils;
+import com.twilio.Twilio;
+import com.twilio.rest.verify.v2.service.Verification;
+import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.security.Principal;
 import java.util.List;
+
+import static com.twilio.example.ValidationExample.ACCOUNT_SID;
+import static com.twilio.example.ValidationExample.AUTH_TOKEN;
 
 @RestController
 @CrossOrigin
@@ -93,6 +95,44 @@ public class UserController {
     {
         service.resetEmail(email, resetPasswordDTO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/generateOTP")
+    public ResponseEntity<String> generateOTP(){
+
+        Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
+
+        Verification verification = Verification.creator(
+                        "VA831f2696b6027535bdc7de2892d591eb", // this is your verification sid
+                        "+381621164208", //this is your Twilio verified recipient phone number
+                        "sms") // this is your channel type
+                .create();
+
+        System.out.println(verification.getStatus());
+
+//        log.info("OTP has been successfully generated, and awaits your verification {}", LocalDateTime.now());
+
+        return new ResponseEntity<>("Your OTP has been sent to your verified phone number", HttpStatus.OK);
+    }
+
+    @GetMapping("/verifyOTP")
+    public ResponseEntity<?> verifyUserOTP() throws Exception {
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+
+        try {
+
+            VerificationCheck verificationCheck = VerificationCheck.creator(
+                            "VA831f2696b6027535bdc7de2892d591eb")
+                    .setTo("+381621164208")
+                    .setCode("486578")
+                    .create();
+
+            System.out.println(verificationCheck.getStatus());
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Verification failed.", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("This user's verification has been completed successfully", HttpStatus.OK);
     }
 
     @GetMapping("/currentUser")
