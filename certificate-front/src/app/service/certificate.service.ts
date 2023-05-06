@@ -29,6 +29,7 @@ export class CertificateService {
   }
 
   invalidate(serialNumber: string, refusalReason: string) : Observable<Certificate> {
+    if (refusalReason === "") refusalReason = " ";
     return this.http.put<Certificate>(environment.apiHost + 'api/certificates/invalidate/' + serialNumber, refusalReason);
   }
 }

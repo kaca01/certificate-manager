@@ -50,4 +50,3 @@ insert into restapi.certificate_request (status, issuer_id, type, subject_id, re
 insert into restapi.certificate (type, valid_from, valid_to, subject_id, is_withdrawn, withdrawn_reason, serial_number, issuer_serial_number) values (2, '2023-05-01T00:00:00.000', '2024-05-01T00:00:00.000', 4, false, '', '-3750336939555358699', '-3360052214249816916');
 
 insert into restapi.certificate_request (status, issuer_id, type, subject_id, refusal_reason) values (0, 3, 2, 4, '');
-  

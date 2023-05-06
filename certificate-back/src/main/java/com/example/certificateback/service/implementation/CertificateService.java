@@ -78,6 +78,8 @@ public class CertificateService implements ICertificateService {
         User loggedUser = userRepository.findByEmail(authentication.getName()).orElse(null);
         if (loggedUser != certificate.getSubject()) throw new BadRequestException("Only certificate owner can withdraw the certificate.");
 
+        if (certificate.isWithdrawn()) throw new BadRequestException(("Certificate is not valid!"));
+
         certificate.setWithdrawn(true);
         certificate.setWithdrawnReason(withdrawnReason);
         certificateRepository.save(certificate);
