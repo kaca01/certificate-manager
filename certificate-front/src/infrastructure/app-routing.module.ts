@@ -6,6 +6,7 @@ import { CertificateComponent } from 'src/app/components/certificate/certificate
 import { RegistrationComponent } from 'src/app/components/registration/registration.component';
 import { RequestsComponent } from 'src/app/components/requests/requests.component';
 import { ActivationComponent } from 'src/app/components/registration/activation/activation/activation.component';
+import { ResetPasswordComponent } from 'src/app/components/reset-password/reset-password.component';
 
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'registration', component: RegistrationComponent},
   { path: 'requests', component: RequestsComponent},
   { path: 'activation/:id', component: ActivationComponent},
+  { path: 'reset-password', component: ResetPasswordComponent},
   { path: '', redirectTo: '/welcome-page', pathMatch: 'full' },
   { path: '**', component: WelcomePageComponent },
 ]

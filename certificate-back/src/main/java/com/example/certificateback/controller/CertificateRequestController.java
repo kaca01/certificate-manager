@@ -20,10 +20,16 @@ public class CertificateRequestController {
     @Autowired
     ICertificateRequestService service;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<AllDTO<CertificateRequestDTO>> get() {
-        return new ResponseEntity<>(service.get(), HttpStatus.OK);
+    @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<AllDTO<CertificateRequestDTO>> getUserRequests() {
+        return new ResponseEntity<>(service.getUserRequests(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AllDTO<CertificateRequestDTO>> getAllRequests() {
+        return new ResponseEntity<>(service.getAllRequests(), HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

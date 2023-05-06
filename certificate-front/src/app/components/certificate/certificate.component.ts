@@ -8,6 +8,7 @@ import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestComponent } from '../certificate-request/certificate-request.component';
 import { UserService } from 'src/app/service/user.service';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'certificate',
@@ -25,15 +26,20 @@ export class CertificateComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private router: Router, private certificateService: CertificateService, private dialog: MatDialog, private userService: UserService) {}
+  constructor(private certificateService: CertificateService, private dialog: MatDialog, private snackBar: MatSnackBar, private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
     if (this.userService.currentUser == undefined || this.userService.currentUser == null)
       this.router.navigate(['/welcome-page']);
-    this.certificates = this.certificateService.getAll();
-    this.dataSource = new MatTableDataSource<Certificate>(this.certificates);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.certificateService.getAll().subscribe((res) => {
+      for(let i = 0; i<res.totalCount; i++) {
+        res.results[i]._id = i+1;
+      }
+      this.certificates = res.results;
+      this.dataSource = new MatTableDataSource<Certificate>(this.certificates);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   ngAfterViewInit() {
@@ -56,23 +62,28 @@ export class CertificateComponent implements OnInit {
   }
 
   getCertificate(cer : Certificate) {
-    this.selectedRowIndex=cer._id;
+    this.selectedRowIndex = cer._id;
     this.certificate = cer;
     const Menu = document.getElementById("menu-container");
     if(Menu != null) Menu.style.display = 'none';
   }
+
+  checkValidationById() : void {
+    if(this.selectedRowIndex === -1) 
+      this.openSnackBar("Certificate not selected!")
+    else {
+      this.certificateService.checkValidationBySerialNum(this.certificate.serialNumber).subscribe((res) => {
+        if(res) 
+          this.openSnackBar('The selected certificate is valid');
+        else
+          this.openSnackBar('The selected certificate is not valid');
+      });
+    }
+  }
+
+  openSnackBar(snackMsg : string) : void {
+    this.snackBar.open(snackMsg, "Dismiss", {
+      duration: 2000
+    });
+  }
 }
-
-// export interface Certificate {
-//   _id: number;
-//   serialNumber: string;
-//   subject: string;
-//   validFrom: string;
-//   validTo: string;
-//   type: string;
-//   }
-
-// export interface AllCertificate {
-//   totalCount: number;
-//   results: Certificate[];
-// }

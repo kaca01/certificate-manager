@@ -1,14 +1,14 @@
 package com.example.certificateback.controller;
 
-import com.example.certificateback.configuration.KeyStoreConstants;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
-import com.example.certificateback.util.KeyStoreReader;
-import com.example.certificateback.util.KeyStoreWriter;
 import com.example.certificateback.util.TokenUtils;
+import com.twilio.Twilio;
+import com.twilio.rest.verify.v2.service.Verification;
+import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,9 +20,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import java.util.Arrays;
+
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.List;
+
+import static com.twilio.example.ValidationExample.ACCOUNT_SID;
+import static com.twilio.example.ValidationExample.AUTH_TOKEN;
 
 @RestController
 @CrossOrigin
@@ -83,6 +88,33 @@ public class UserController {
     {
         ErrorDTO message = service.activateUser((long) activationId);
         return new ResponseEntity<ErrorDTO>(message, HttpStatus.OK);
+    }
+    
+    // Reset password of user
+    @GetMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> sendResetEmail(@PathVariable String email) throws MessagingException, UnsupportedEncodingException {
+        service.sendResetEmail(email);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Change password of a user with the reset code
+    @PutMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> resetPassword(@PathVariable String email, @RequestBody ResetPasswordDTO resetPasswordDTO)
+    {
+        service.resetEmail(email, resetPasswordDTO);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/{phone}/sendSMS")
+    public ResponseEntity<String> sendSMS(@PathVariable String phone){
+        service.sendSMS(phone);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{phone}/sendSMS")
+    public ResponseEntity<?> checkSMS(@PathVariable String phone, @RequestBody ResetPasswordDTO resetPasswordDTO) throws Exception {
+        service.checkSMS(phone, resetPasswordDTO);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/currentUser")

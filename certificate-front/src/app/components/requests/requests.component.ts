@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { RequestService } from 'src/app/service/request.service';
-import { Request } from 'src/app/domains';
+import { CertificateRequest } from 'src/app/domains';
 import { UserService } from 'src/app/service/user.service';
 
 @Component({
@@ -13,43 +13,50 @@ import { UserService } from 'src/app/service/user.service';
   styleUrls: ['./requests.component.css']
 })
 export class RequestsComponent implements OnInit {
-
   selectedRowIndex : number = -1;
   displayedColumns: string[] = ['issuer', 'subject', 'type', 'status'];
-  dataSource!: MatTableDataSource<Request>;
+  dataSource!: MatTableDataSource<CertificateRequest>;
   valueFromCreateComponent = '';
 
-  all: Request[] = [];
-  private request = {} as Request;
+  all: CertificateRequest[] = [];
+  private request = {} as CertificateRequest;
+
+  user!: string;
 
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private router: Router, private requestService: RequestService, private userService: UserService) { }
+  constructor(private requestService: RequestService, private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
     if (this.userService.currentUser == undefined || this.userService.currentUser == null)
       this.router.navigate(['/welcome-page']);
+      
+    this.whoIsUser();
 
-    this.requestService.selectedValue$.subscribe((value) => {
-      this.valueFromCreateComponent = value;
-    });
+    if(this.user === "user") {
+      this.requestService.getUserRequests().subscribe((res) => {
+        for(let i = 0; i<res.totalCount; i++) {
+          res.results[i]._id = i+1;
+        }
+        this.all = res.results;
+        this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
+    }
 
-    this.all = this.requestService.getAllRequests();
-    this.dataSource = new MatTableDataSource<Request>(this.all);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    // this.requestService.getAllRequests().subscribe((res) => {
-    //   this.all = res.results;
-    //   this.dataSource = new MatTableDataSource<Request>(this.all);
-    //   this.dataSource.paginator = this.paginator;
-    //   this.dataSource.sort = this.sort;
-    // });
-  }
-  
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    else if(this.user === "admin") {
+      this.requestService.getAllRequests().subscribe((res) => {
+        for(let i = 0; i<res.totalCount; i++) {
+          res.results[i]._id = i+1;
+        }
+        this.all = res.results;
+        this.dataSource = new MatTableDataSource<CertificateRequest>(this.all);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
+    }
   }
 
   applyFilter(event: Event) {
@@ -57,7 +64,7 @@ export class RequestsComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  getRequest(request : Request) {
+  getRequest(request : CertificateRequest) {
     this.selectedRowIndex=request._id;
     this.request = request;
     const Menu = document.getElementById("menu-container");
@@ -71,4 +78,14 @@ export class RequestsComponent implements OnInit {
   accept(){
 
   }
+
+  whoIsUser(): string {
+		if(this.userService.currentUser?.roles != undefined) {
+			if(this.userService.currentUser?.roles.find(x => x.authority === "ROLE_USER")) 
+				return this.user = "user";
+			else if(this.userService.currentUser?.roles.find(x => x.authority === "ROLE_ADMIN")) 
+			  return this.user = "admin";
+		}
+		return this.user = "none";
+	}
 }

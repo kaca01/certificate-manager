@@ -22,6 +22,7 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { RegistrationComponent } from './components/registration/registration.component';
 import { RequestsComponent } from './components/requests/requests.component';
 import { ActivationComponent } from './components/registration/activation/activation/activation.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { ActivationComponent } from './components/registration/activation/activa
     RegistrationComponent,
     RequestsComponent,
     ActivationComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     FormsModule,

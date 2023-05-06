@@ -1,3 +1,9 @@
+export interface Role {
+  id: number,
+  name: string,
+  authority: string
+}
+
 export interface User {
     id: number,
     name: string,
@@ -5,24 +11,29 @@ export interface User {
     phone: string,
     country: string,
     password: string,
-    email: string
+    email: string,
+    roles: Role[]
+}
+
+export interface ResetPassword {  
+  newPassword: string,
+  firstRepetedPassword: string,
+  secondRepetedPassword: string, 
+  code: string
 }
 
 export interface CertificateRequest {
-    requestType: string,
-    issuer: string,
-    certificateType: string,
-    subject: number,
-    refusalReason: number
+  _id: number;
+  requestType: string,
+  issuer: string,
+  certificateType: string,
+  subject: number,
+  refusalReason: number
 }
 
-export interface Request {
-  _id: number;
-  issuer: string;
-  type: string;
-  status: string;
-  subject: User;
-  refusalReason: string;
+export interface AllRequests {
+  totalCount: number;
+  results: CertificateRequest[];
 }
 
 export interface Certificate {
@@ -31,7 +42,7 @@ export interface Certificate {
   subject: string;
   validFrom: string;
   validTo: string;
-  type: string;
+  certificateType: string;
 }
 
 export interface AllCertificate {
