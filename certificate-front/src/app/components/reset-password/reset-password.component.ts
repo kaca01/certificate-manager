@@ -25,7 +25,9 @@ export class ResetPasswordComponent {
     secondRepetedPassword: new FormControl('', [Validators.required,  Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)])
   });
   
-  hide: boolean = true;
+  hide1: boolean = true;
+  hide2: boolean = true;
+  hide3: boolean = true;
   isSendEmail: boolean = false;
 
   resetPassword = {} as ResetPassword;
@@ -71,25 +73,29 @@ export class ResetPasswordComponent {
   }
 
   doResetPassword() {
-    // TODO da li moze da se posalje ako su lozinke npr 123
-
     if(this.resetPasswordForm.controls['newPassword'].value != '' && 
-        this.resetPasswordForm.controls['code'].value != '' && !this.first() && !this.second()) {
+        this.resetPasswordForm.controls['code'].value != '' &&
+        !this.first() && 
+        !this.second()) {
+        if(this.resetPasswordForm.controls['newPassword'].errors == null) {
           this.resetPassword['newPassword'] = this.resetPasswordForm.controls['newPassword']?.value!;
           this.resetPassword['firstRepetedPassword'] = this.resetPasswordForm.controls['firstRepetedPassword']?.value!;
           this.resetPassword['secondRepetedPassword'] = this.resetPasswordForm.controls['secondRepetedPassword']?.value!;
           this.resetPassword['code'] = this.resetPasswordForm.controls['code']?.value!;
 
           this.userService.resetPassword(this.email, this.resetPassword)
-      .subscribe(
-        () => {
-        this.openSnackBar("Successfully reset password!");
-        this.authService.logout();
-        this.router.navigate(['login']);
-      },
-        (error: HttpErrorResponse) => {
-          this.openSnackBar(error.error);
-      })
+        
+        .subscribe(
+          () => {
+          this.openSnackBar("Successfully reset password!");
+          this.authService.logout();
+          this.router.navigate(['login']);
+        },
+          (error: HttpErrorResponse) => {
+            console.log(error)
+            this.openSnackBar(error.error);
+        })
+      }
     }
   }
 }

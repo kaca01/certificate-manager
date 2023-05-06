@@ -144,8 +144,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 		if(!resetPasswordDTO.getCode().equals(resetPassword.getCode()) || expiredDate.before(new Date()))
 			throw new BadRequestException("Code is expired or not correct!");
-
-		// TODO check if this is correct
+		
 		Password password = passwordRepository.save(new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword())));
 		user.getPasswords().add(password);
 		userRepository.save(user);
