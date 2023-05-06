@@ -7,7 +7,12 @@ import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.*;
 import com.example.certificateback.service.interfaces.IUserService;
+import com.twilio.Twilio;
+import com.twilio.rest.verify.v2.service.Verification;
+import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,6 +26,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+
+import static com.twilio.example.ValidationExample.ACCOUNT_SID;
+import static com.twilio.example.ValidationExample.AUTH_TOKEN;
 
 @Service
 public class UserService implements IUserService, UserDetailsService {
@@ -119,20 +127,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 		mailSender.send(message);
 
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, 7);
-		Date toDate = cal.getTime();
-
-		ResetPassword reset = resetPasswordRepository.findResetPasswordByUserId(user.getId());
-		if(reset == null) {
-			reset = new ResetPassword(user, toDate, code);
-		}
-		else {
-			reset.setExpiredDate(toDate);
-			reset.setCode(code);
-		}
-
-		resetPasswordRepository.save(reset);
+		saveResetPassword(user, code);
 	}
 
 	@Override
@@ -151,9 +146,70 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
+	public void sendSMS(String phone) {
+		User user = userRepository.findByPhone(phone).orElseThrow(() -> new NotFoundException("User does not exist!"));
+
+		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
+
+		Verification.creator(
+						"VAca2e1d4eb5f1ba4be26dc368c51754af", // this is your verification sid
+						"+381621164208", // recipient phone number
+						"sms") // this is your channel type
+				.create();
+
+		// the message code is null because there is no need to save it since it is checked automatically
+		saveResetPassword(user, null);
+	}
+
+	@Override
+	public void checkSMS(String phone, ResetPasswordDTO resetPasswordDTO) {
+		User user = userRepository.findByPhone(phone).orElseThrow(() -> new NotFoundException("User does not exist!"));
+
+		Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+
+		try {
+			VerificationCheck verificationCheck = VerificationCheck.creator(
+							"VAca2e1d4eb5f1ba4be26dc368c51754af") // pass verification SID here
+					.setTo("+381621164208")
+					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
+					.create();
+
+			System.out.println(verificationCheck.getStatus());
+
+			if(!verificationCheck.getStatus().equals("approved"))
+				throw new BadRequestException("Code is expired or not correct!");
+
+			Password password = passwordRepository.save(new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword())));
+			user.getPasswords().add(password);
+			userRepository.save(user);
+
+		} catch (Exception e) {
+			System.out.println("GRESKAAAAAAAAAAAAAAAAA");
+			throw new BadRequestException("Code is expired or not correct!");
+		}
+	}
+
+	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		return this.userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException(String.format("User with email '%s' is not found!", email)));
 	}
 
+
+	private void saveResetPassword(User user, String code) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, 7);
+		Date toDate = cal.getTime();
+
+		ResetPassword reset = resetPasswordRepository.findResetPasswordByUserId(user.getId());
+		if(reset == null) {
+			reset = new ResetPassword(user, toDate, code);
+		}
+		else {
+			reset.setExpiredDate(toDate);
+			reset.setCode(code);
+		}
+
+		resetPasswordRepository.save(reset);
+	}
 }

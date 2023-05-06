@@ -34,8 +34,15 @@ export class UserService {
     return this.http.get<any>(environment.apiHost + 'api/user/' + userEmail + "/resetPassword");
   }
 
-  resetPassword(userEmail: string, resetPassword: ResetPassword): Observable<void> {
+  resetPasswordViaEmail(userEmail: string, resetPassword: ResetPassword): Observable<void> {
     return this.http.put<void>(environment.apiHost + 'api/user/' + userEmail + "/resetPassword", resetPassword);
   }
 
+  sendSMS(phone: string): Observable<void> {
+    return this.http.get<void>(environment.apiHost + 'api/user/' + phone + "/sendSMS");
+  }
+
+  resetPasswordViaSMS(phone: string, resetPassword: ResetPassword): Observable<void> {
+    return this.http.put<void>(environment.apiHost + 'api/user/' + phone + "/sendSMS", resetPassword);
+  }
 }

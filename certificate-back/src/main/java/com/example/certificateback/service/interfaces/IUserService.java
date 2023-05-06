@@ -15,4 +15,6 @@ public interface IUserService {
     UserDTO register(UserDTO registrationDTO);
     void sendResetEmail(String email) throws MessagingException, UnsupportedEncodingException;
     void resetEmail(String email, ResetPasswordDTO resetPasswordDTO);
+    void sendSMS(String phone);
+    void checkSMS(String phone, ResetPasswordDTO resetPasswordDTO);
 }

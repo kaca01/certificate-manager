@@ -97,42 +97,16 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping(value = "/generateOTP")
-    public ResponseEntity<String> generateOTP(){
-
-        Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
-
-        Verification verification = Verification.creator(
-                        "VA831f2696b6027535bdc7de2892d591eb", // this is your verification sid
-                        "+381621164208", //this is your Twilio verified recipient phone number
-                        "sms") // this is your channel type
-                .create();
-
-        System.out.println(verification.getStatus());
-
-//        log.info("OTP has been successfully generated, and awaits your verification {}", LocalDateTime.now());
-
-        return new ResponseEntity<>("Your OTP has been sent to your verified phone number", HttpStatus.OK);
+    @GetMapping(value = "/{phone}/sendSMS")
+    public ResponseEntity<String> sendSMS(@PathVariable String phone){
+        service.sendSMS(phone);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/verifyOTP")
-    public ResponseEntity<?> verifyUserOTP() throws Exception {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-
-        try {
-
-            VerificationCheck verificationCheck = VerificationCheck.creator(
-                            "VA831f2696b6027535bdc7de2892d591eb")
-                    .setTo("+381621164208")
-                    .setCode("486578")
-                    .create();
-
-            System.out.println(verificationCheck.getStatus());
-
-        } catch (Exception e) {
-            return new ResponseEntity<>("Verification failed.", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>("This user's verification has been completed successfully", HttpStatus.OK);
+    @PutMapping("/{phone}/sendSMS")
+    public ResponseEntity<?> checkSMS(@PathVariable String phone, @RequestBody ResetPasswordDTO resetPasswordDTO) throws Exception {
+        service.checkSMS(phone, resetPasswordDTO);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/currentUser")
