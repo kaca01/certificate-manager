@@ -20,6 +20,7 @@ import com.example.certificateback.repository.*;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
+import com.twilio.rest.verify.v2.service.VerificationCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -100,10 +101,14 @@ public class UserService implements IUserService, UserDetailsService {
 
 		UserActivation activation = userActivationRepository.save(new UserActivation(user));
 
-		try {
-			sendActivationEmail(activation);
-		} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
-			throw new RuntimeException(e);
+		if(registrationDTO.getVerification().equals("email")){
+			try {
+				sendActivationEmail(activation);
+			} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
+				throw new RuntimeException(e);
+			}
+		} else{
+			sendActivationSMS(activation);
 		}
 
 		return new UserDTO(user);
@@ -197,6 +202,19 @@ public class UserService implements IUserService, UserDetailsService {
 
 		// the message code is null because there is no need to save it since it is checked automatically
 		saveResetPassword(user, null);
+	}
+
+	private void sendActivationSMS(UserActivation activation) {
+		User user = userRepository.findByPhone(activation.getUser().getPhone())
+				.orElseThrow(() -> new NotFoundException("User does not exist!"));
+
+		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
+
+		VerificationCreator v = Verification.creator(
+						"VAca2e1d4eb5f1ba4be26dc368c51754af", // this is your verification sid
+						"+381612325345", // recipient phone number
+						"sms"); // this is your channel type
+		v.create();
 	}
 
 	@Override

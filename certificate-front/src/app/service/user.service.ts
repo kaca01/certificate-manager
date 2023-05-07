@@ -30,7 +30,8 @@ export class UserService {
     return this.http.post<any>(environment.apiHost + "api/user/login", user);
   }
 
-  register(user: any): Observable<User> {
+  register(user: any, verification: String): Observable<User> {
+    user.verification = verification;
     return this.http.post<User>(environment.apiHost + 'api/user/register', user);
   }
 
