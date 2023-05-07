@@ -23,6 +23,8 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { RequestsComponent } from './components/requests/requests.component';
 import { ActivationComponent } from './components/registration/activation/activation/activation.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { AddReasonDialogComponent } from './components/requests/add-reason-dialog/add-reason-dialog.component';
+import { HistoryComponent } from './components/history/history.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,8 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     RequestsComponent,
     ActivationComponent,
     ResetPasswordComponent,
+    AddReasonDialogComponent,
+    HistoryComponent,
   ],
   imports: [
     FormsModule,

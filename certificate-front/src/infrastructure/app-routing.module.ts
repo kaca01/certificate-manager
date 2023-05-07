@@ -7,6 +7,7 @@ import { RegistrationComponent } from 'src/app/components/registration/registrat
 import { RequestsComponent } from 'src/app/components/requests/requests.component';
 import { ActivationComponent } from 'src/app/components/registration/activation/activation/activation.component';
 import { ResetPasswordComponent } from 'src/app/components/reset-password/reset-password.component';
+import { HistoryComponent } from 'src/app/components/history/history.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'requests', component: RequestsComponent},
   { path: 'activation/:id', component: ActivationComponent},
   { path: 'reset-password', component: ResetPasswordComponent},
+  { path: 'history', component: HistoryComponent},
   { path: '', redirectTo: '/welcome-page', pathMatch: 'full' },
   { path: '**', component: WelcomePageComponent },
 ]

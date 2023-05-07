@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestService } from './certificate-request.service';
 import { UserService } from 'src/app/service/user.service';
-import { AllCertificate, CertificateRequest } from 'src/app/domains';
+import { AllCertificate, CertificateRequest, User } from 'src/app/domains';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
@@ -42,7 +42,9 @@ export class CertificateRequestComponent implements OnInit {
     certifcateRequest.certificateType = this.type;
     certifcateRequest.issuer = this.issuer;
     certifcateRequest.requestType = "ACTIVE";
-    if (this.userService.currentUser?.id != undefined) certifcateRequest.subject = this.userService.currentUser?.id;
+    certifcateRequest.subject = {} as User;
+    console.log(certifcateRequest);
+    if (this.userService.currentUser?.id != undefined) certifcateRequest.subject.id = this.userService.currentUser?.id;
 
     this.certificateRequsetService.insert(certifcateRequest).subscribe((res)=> {
       this.openSnackBar("Successfully added!");

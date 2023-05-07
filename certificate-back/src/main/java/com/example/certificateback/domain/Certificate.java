@@ -30,7 +30,7 @@ public class Certificate {
     @Column(name = "valid_to", nullable = false)
     private Date validTo;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private User subject;
 
     @Column(name = "is_withdrawn", nullable = false)

@@ -23,12 +23,13 @@ export interface ResetPassword {
 }
 
 export interface CertificateRequest {
-  _id: number;
+  _tableId: number;
+  id: number;
   requestType: string,
   issuer: string,
   certificateType: string,
-  subject: number,
-  refusalReason: number
+  subject: User,
+  refusalReason: string
 }
 
 export interface AllRequests {
@@ -48,4 +49,8 @@ export interface Certificate {
 export interface AllCertificate {
   totalCount: number;
   results: Certificate[];
+}
+
+export interface RequestReason {
+  message: string;
 }

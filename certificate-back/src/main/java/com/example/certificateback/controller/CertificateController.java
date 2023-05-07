@@ -28,13 +28,6 @@ public class CertificateController {
     @Autowired
     ICertificateRequestService certificateRequestService;
 
-    @GetMapping(value = "/accept/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<CertificateDTO> acceptRequest(@PathVariable Long id) {
-        CertificateDTO certificate = certificateRequestService.acceptRequest(id);
-        return new ResponseEntity<>(certificate, HttpStatus.OK);
-    }
-
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<AllDTO<CertificateDTO>> getAllCertificates()
@@ -48,5 +41,11 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Boolean isCertificateValid(@PathVariable String serialNumber) {
         return certificateService.checkingValidation(serialNumber);
+    }
+
+    @GetMapping("/issuers")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<AllDTO<CertificateDTO>> getIssuers() {
+        return new ResponseEntity<>(certificateService.getIssuers(), HttpStatus.OK);
     }
 }
