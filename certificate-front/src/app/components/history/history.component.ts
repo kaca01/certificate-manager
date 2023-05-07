@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { CertificateRequest } from 'src/app/domains';
 import { RequestService } from 'src/app/service/request.service';
 import { UserService } from 'src/app/service/user.service';
@@ -26,9 +27,12 @@ export class HistoryComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private requestService: RequestService, private userService: UserService) { }
+  constructor(private router: Router, private requestService: RequestService, private userService: UserService) { }
 
   ngOnInit(): void {
+    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
+    this.router.navigate(['/welcome-page']);
+
     this.whoIsUser();
 
     if(this.user === "user") {
