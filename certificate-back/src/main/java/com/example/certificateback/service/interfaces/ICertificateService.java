@@ -12,5 +12,7 @@ public interface ICertificateService {
 
     Boolean checkingValidation(String serialNumber);
 
+    Boolean isValidByCopy(String path);
+
     AllDTO<CertificateDTO> getIssuers();
 }

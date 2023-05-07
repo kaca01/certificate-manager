@@ -13,6 +13,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +58,25 @@ public class CertificateService implements ICertificateService {
             return certificate.isValid() && !certificate.isWithdrawn();
 
         return false;
+    }
+
+    @Override
+    public Boolean isValidByCopy(String path) {
+        Boolean isValid = false;
+        try {
+            path = "C:\\Users\\User\\Desktop\\-1347043084476417129cert.crt";
+            FileInputStream inputStream = new FileInputStream(path);
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            X509Certificate certificate = (X509Certificate) cf.generateCertificate(inputStream);
+            inputStream.close();
+
+            System.out.println("SERIAL NUMBERRRRR");
+            System.out.println(certificate.getSerialNumber());
+            isValid = checkingValidation(certificate.getSerialNumber().toString());
+        } catch (CertificateException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        return isValid;
     }
 
     @Override
