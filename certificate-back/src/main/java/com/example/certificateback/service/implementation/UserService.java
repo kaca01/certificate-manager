@@ -1,18 +1,26 @@
 package com.example.certificateback.service.implementation;
 
-import com.example.certificateback.domain.*;
-import com.example.certificateback.dto.ResetPasswordDTO;
+import com.example.certificateback.domain.Password;
+import com.example.certificateback.domain.Role;
+import com.example.certificateback.domain.User;
+import com.example.certificateback.domain.UserActivation;
+import com.example.certificateback.dto.ErrorDTO;
 import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.exception.NotFoundException;
-import com.example.certificateback.repository.*;
+import com.example.certificateback.repository.IPasswordRepository;
+import com.example.certificateback.repository.IRoleRepository;
+import com.example.certificateback.repository.IUserActivationRepository;
+import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
+import com.example.certificateback.domain.*;
+import com.example.certificateback.dto.ResetPasswordDTO;
+import com.example.certificateback.repository.*;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,7 +30,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -74,10 +84,9 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public UserDTO register(UserDTO registrationDTO) {
-//		if (this.userRepository.findByEmail(registrationDTO.getEmail())) {
-//			throw new BadRequestException("User with that email already exists!");
-//		}
-
+		if (this.userRepository.existsByEmail(registrationDTO.getEmail())) {
+			throw new BadRequestException("User with that email already exists!");
+		}
 		User user = new User(registrationDTO);
 		user.setEnabled(false);
 
@@ -90,16 +99,45 @@ public class UserService implements IUserService, UserDetailsService {
 		user = userRepository.save(user);
 
 		UserActivation activation = userActivationRepository.save(new UserActivation(user));
-		//sendActivationEmail(activation);
+
+		try {
+			sendActivationEmail(activation);
+		} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
+			throw new RuntimeException(e);
+		}
 
 		return new UserDTO(user);
 	}
 
+	private User findUserById(Long id)
+	{
+		return userRepository.findById(id).orElseThrow(
+				() -> new NotFoundException("User does not exist!"));
+	}
+
 	@Override
-	public void sendResetEmail(String email) throws MessagingException, UnsupportedEncodingException {
+	public ErrorDTO activateUser(Long activationId) {
+		UserActivation activation = userActivationRepository.findById(activationId).orElseThrow(
+				() -> new NotFoundException("Activation with entered id does not exist!"));
+		User p = findUserById(activation.getUser().getId());
+		if (new Date().before(new Date(activation.getDate().getTime() + activation.getLife()*1000L))) {
+			p.setEnabled(true);
+			userRepository.save(p);
+			userActivationRepository.delete(activation);
+			return new ErrorDTO("Successful account activation!");
+		} else {
+			userActivationRepository.delete(activation);
+			passwordRepository.delete(p.getPasswords().get(0));
+			userRepository.delete(p);
+			throw new BadRequestException("Activation expired. Register again!");
+		}
+	}
+
+	@Override
+	public void sendResetEmail(String email) throws UnsupportedEncodingException, javax.mail.MessagingException {
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
 		// change toAddress
-		String toAddress = "anastasijas557@gmail.com";
+		String toAddress = "hristinacina@gmail.com";
 		String fromAddress = "anastasijas557@gmail.com";
 		String senderName = "Certificate Manager Support";
 		String subject = "Reset Your Password";
@@ -153,7 +191,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 		Verification.creator(
 						"VAca2e1d4eb5f1ba4be26dc368c51754af", // this is your verification sid
-						"+381621164208", // recipient phone number
+						"+381612325345", // recipient phone number
 						"sms") // this is your channel type
 				.create();
 
@@ -170,7 +208,7 @@ public class UserService implements IUserService, UserDetailsService {
 		try {
 			VerificationCheck verificationCheck = VerificationCheck.creator(
 							"VAca2e1d4eb5f1ba4be26dc368c51754af") // pass verification SID here
-					.setTo("+381621164208")
+					.setTo("+381612325345")
 					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
 					.create();
 
@@ -184,7 +222,6 @@ public class UserService implements IUserService, UserDetailsService {
 			userRepository.save(user);
 
 		} catch (Exception e) {
-			System.out.println("GRESKAAAAAAAAAAAAAAAAA");
 			throw new BadRequestException("Code is expired or not correct!");
 		}
 	}
@@ -195,7 +232,32 @@ public class UserService implements IUserService, UserDetailsService {
 				.orElseThrow(() -> new UsernameNotFoundException(String.format("User with email '%s' is not found!", email)));
 	}
 
+	private void sendActivationEmail(UserActivation activation) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
+		User user = userRepository.findByEmail(activation.getUser().getEmail()).orElseThrow(()
+				-> new NotFoundException("User does not exist!"));
+		String toAddress = activation.getUser().getEmail();
+		String fromAddress = "anastasijas557@gmail.com";
+		String senderName = "CM app Support";
+		String subject = "Activate Your CM Account";
+		String content = "Hello [[name]], thank you for joining us!<br>"
+				+ "To activate your account please follow this link: "
+				+ "<a href='http://localhost:4200/activation/[[id]]'>activate</a><br>"
+				+ "The Certificate Manager team.";
 
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
+
+		helper.setFrom(fromAddress, senderName);
+		helper.setTo(toAddress);
+		helper.setSubject(subject);
+
+		content = content.replace("[[name]]", user.getName() + " " + user.getSurname());
+		content = content.replace("[[id]]", activation.getId().toString());
+		helper.setText(content, true);
+
+		mailSender.send(message);
+	}
+	
 	private void saveResetPassword(User user, String code) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, 7);

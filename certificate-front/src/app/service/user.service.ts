@@ -30,6 +30,15 @@ export class UserService {
     return this.http.post<any>(environment.apiHost + "api/user/login", user);
   }
 
+  register(user: any): Observable<User> {
+    return this.http.post<User>(environment.apiHost + 'api/user/register', user);
+  }
+
+  
+  getActivation(activationId: number): Observable<String>  {
+    return this.http.get<String>(environment.apiHost + "api/user/activate/" + activationId);
+  }
+
   sendEmail(userEmail: string): Observable<any> {
     return this.http.get<any>(environment.apiHost + 'api/user/' + userEmail + "/resetPassword");
   }

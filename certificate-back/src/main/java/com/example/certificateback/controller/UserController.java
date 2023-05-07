@@ -82,6 +82,14 @@ public class UserController {
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
     }
 
+    //activate user account
+    @GetMapping(value = "/activate/{activationId}")
+    public ResponseEntity<ErrorDTO> activateUser(@PathVariable int activationId)
+    {
+        ErrorDTO message = service.activateUser((long) activationId);
+        return new ResponseEntity<ErrorDTO>(message, HttpStatus.OK);
+    }
+    
     // Reset password of user
     @GetMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> sendResetEmail(@PathVariable String email) throws MessagingException, UnsupportedEncodingException {

@@ -26,9 +26,12 @@ export class RequestsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private requestService: RequestService, private userService: UserService) { }
+  constructor(private requestService: RequestService, private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
+    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
+      this.router.navigate(['/welcome-page']);
+      
     this.whoIsUser();
 
     if(this.user === "user") {

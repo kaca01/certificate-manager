@@ -21,6 +21,7 @@ import { CertificateService } from './service/certificate.service';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { RequestsComponent } from './components/requests/requests.component';
+import { ActivationComponent } from './components/registration/activation/activation/activation.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 
 @NgModule({
@@ -33,6 +34,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     NavigationComponent,
     RegistrationComponent,
     RequestsComponent,
+    ActivationComponent,
     ResetPasswordComponent,
   ],
   imports: [
