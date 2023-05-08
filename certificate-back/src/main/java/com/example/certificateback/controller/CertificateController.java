@@ -6,6 +6,7 @@ import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.service.interfaces.ICertificateService;
 import com.example.certificateback.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +48,13 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<AllDTO<CertificateDTO>> getIssuers() {
         return new ResponseEntity<>(certificateService.getIssuers(), HttpStatus.OK);
+    }
+
+    //todo sa fronta da posalje putanju gdje da storuje sertifikat
+    @PutMapping(value = "download/{serialNum}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<?> downloadCertificate(@PathVariable String serialNum) {
+        certificateService.downloadCertificate(serialNum);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

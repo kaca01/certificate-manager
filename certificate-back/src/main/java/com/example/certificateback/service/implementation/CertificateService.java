@@ -8,11 +8,16 @@ import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.ICertificateService;
+import com.example.certificateback.util.KeyStoreReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,5 +65,23 @@ public class CertificateService implements ICertificateService {
         certificates.removeIf(certificate -> Objects.equals(certificate.getCertificateType(), "END"));
         AllDTO<CertificateDTO> certificatesDTO = new AllDTO<>(certificates);
         return certificatesDTO;
+    }
+
+    @Override
+    public void downloadCertificate(String serialNum) {
+        certificateRepository.findBySerialNumber(serialNum).orElseThrow(()
+                -> new NotFoundException("Certificate with that serial number does not exist"));
+
+        java.security.cert.Certificate cert = KeyStoreReader.readCertificate(serialNum);
+
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream("./src/main/resources/certificate.cer");
+            assert cert != null;
+            fos.write(cert.getEncoded());
+            fos.close();
+        } catch (CertificateEncodingException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
