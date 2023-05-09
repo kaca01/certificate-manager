@@ -29,13 +29,15 @@ export class CertificateRequestComponent implements OnInit {
       this.router.navigate(['/welcome-page']);
     this.certificateService.getIssuers().subscribe((res)=> {
       this.issuers = res;
+    }, (error) => {
+      this.openSnackBar("We had some problems with finding issuers. Please try again later.", 5000);
     });
 
   }
 
   save(): void {
-    if (this.issuer == "" || this.type == "") {
-      this.openSnackBar("No empty fields are allowed!");
+    if ((this.type != "ROOT" && this.issuer == "") || (this.type == "")) {
+      this.openSnackBar("Required fields are empty!");
       return;
     }
     let certifcateRequest: CertificateRequest = {} as CertificateRequest;
@@ -48,6 +50,9 @@ export class CertificateRequestComponent implements OnInit {
 
     this.certificateRequsetService.insert(certifcateRequest).subscribe((res)=> {
       this.openSnackBar("Successfully added!");
+    }, (error) => {
+      console.log(error);
+      this.openSnackBar(error.error.message, 5000);
     });
 
     this.dialogRef.close();
@@ -57,9 +62,9 @@ export class CertificateRequestComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  openSnackBar(snackMsg : string) : void {
+  openSnackBar(snackMsg : string, duration: number = 2000) : void {
     this.snackBar.open(snackMsg, "Dismiss", {
-      duration: 2000
+      duration: duration
     });
   }
 
