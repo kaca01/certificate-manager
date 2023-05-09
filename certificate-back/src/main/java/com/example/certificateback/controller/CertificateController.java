@@ -52,11 +52,17 @@ public class CertificateController {
         return new ResponseEntity<>(certificateService.getIssuers(), HttpStatus.OK);
     }
 
-    //todo sa fronta da posalje putanju gdje da storuje sertifikat
     @PutMapping(value = "downloadCert", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> downloadCertificate(@RequestBody DownloadDTO dto) {
         certificateService.downloadCertificate(dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(value = "downloadPk", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<?> downloadPrivateKey(@RequestBody DownloadDTO dto) {
+        certificateService.downloadPrivateKey(dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

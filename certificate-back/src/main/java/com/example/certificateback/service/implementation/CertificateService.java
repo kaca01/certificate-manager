@@ -1,5 +1,6 @@
 package com.example.certificateback.service.implementation;
 
+import com.example.certificateback.configuration.KeyStoreConstants;
 import com.example.certificateback.domain.Certificate;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
@@ -11,13 +12,13 @@ import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.ICertificateService;
 import com.example.certificateback.util.KeyStoreReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,24 @@ public class CertificateService implements ICertificateService {
             fos.write(cert.getEncoded());
             fos.close();
         } catch (CertificateEncodingException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void downloadPrivateKey(DownloadDTO dto) {
+        certificateRepository.findBySerialNumber(dto.getSerialNumber()).orElseThrow(()
+                -> new NotFoundException("Certificate with that serial number does not exist"));
+
+        PrivateKey pk = KeyStoreReader.readPrivateKey(dto.getSerialNumber(), KeyStoreConstants.ENTRY_PASSWORD);
+
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(dto.getPath() + "privateKey.p12");
+            assert pk != null;
+            fos.write(pk.getEncoded());
+            fos.close();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

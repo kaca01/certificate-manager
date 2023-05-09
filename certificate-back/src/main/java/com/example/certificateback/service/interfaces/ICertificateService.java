@@ -17,4 +17,6 @@ public interface ICertificateService {
     AllDTO<CertificateDTO> getIssuers();
 
     void downloadCertificate(DownloadDTO dto);
+
+    void downloadPrivateKey(DownloadDTO dto);
 }
