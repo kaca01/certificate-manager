@@ -20,6 +20,7 @@ import com.example.certificateback.repository.*;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
+import com.twilio.rest.verify.v2.service.VerificationCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -29,6 +30,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,6 +90,9 @@ public class UserService implements IUserService, UserDetailsService {
 		if (this.userRepository.existsByEmail(registrationDTO.getEmail())) {
 			throw new BadRequestException("User with that email already exists!");
 		}
+		if (this.userRepository.existsByPhone(registrationDTO.getPhone())) {
+			throw new BadRequestException("User with that phone number already exists!");
+		}
 		User user = new User(registrationDTO);
 		user.setEnabled(false);
 
@@ -100,10 +106,14 @@ public class UserService implements IUserService, UserDetailsService {
 
 		UserActivation activation = userActivationRepository.save(new UserActivation(user));
 
-		try {
-			sendActivationEmail(activation);
-		} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
-			throw new RuntimeException(e);
+		if(registrationDTO.getVerification().equals("email")){
+			try {
+				sendActivationEmail(activation);
+			} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
+				throw new RuntimeException(e);
+			}
+		} else{
+			sendActivationSMS(activation);
 		}
 
 		return new UserDTO(user);
@@ -197,6 +207,24 @@ public class UserService implements IUserService, UserDetailsService {
 
 		// the message code is null because there is no need to save it since it is checked automatically
 		saveResetPassword(user, null);
+	}
+
+	private void sendActivationSMS(UserActivation activation) {
+		User user = userRepository.findByPhone(activation.getUser().getPhone())
+				.orElseThrow(() -> new NotFoundException("User does not exist!"));
+
+		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID_2"), System.getenv("TWILIO_AUTH_TOKEN_2"));
+
+		String text = "Hello [[name]], thank you for joining us!\n"
+				+ "To activate your account please follow this link: "
+				+ "http://localhost:4200/activation/[[id]]'\n"
+				+ "The Certificate Manager team.";
+
+		text = text.replace("[[name]]", user.getName());
+		text = text.replace("[[id]]", activation.getId().toString());
+
+		Message.creator(new PhoneNumber("+381612325345"),
+				new PhoneNumber("+12708131194"), text).create();
 	}
 
 	@Override

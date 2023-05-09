@@ -72,6 +72,11 @@
                 <input matInput type="text" name="country" formControlName="country" />
                 <mat-error *ngIf="!registrationForm.controls['country'].valid"></mat-error>
             </mat-form-field >
+            <p>Choose an option to verify your account:</p>
+            <mat-radio-group aria-label="Select an option">
+                <mat-radio-button value="email" class="radio" (change)="radioChange($event)">Email</mat-radio-button>
+                <mat-radio-button value="phone" class="radio" (change)="radioChange($event)">Phone number</mat-radio-button>
+              </mat-radio-group>
 
             <p *ngIf="notification" [class]="notification.msgType">{{notification.msgBody}}</p>
             <button mat-raised-button color="blue" type="submit" class="reg-btn">Sign up</button>

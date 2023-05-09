@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { User } from 'src/app/domains';
@@ -26,11 +27,11 @@ export class RegistrationComponent implements OnInit {
   hide : boolean = true;
   hideAgain : boolean = true;
   notification!: DisplayMessage;
+  radio : String = '';
 
   constructor(private router: Router, private service: UserService, private _snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
-      
   }
 
   reg() {
@@ -39,10 +40,14 @@ export class RegistrationComponent implements OnInit {
         this.openSnackBar("Password is not matching!");
         return;
       }
-      this.service.register(this.registrationForm.value)
+      if (this.radio == ''){
+        this.openSnackBar("Must select an option for account verification!");
+        return;
+      }
+      this.service.register(this.registrationForm.value, this.radio)
       .subscribe((res: User) => {
         console.log(res);
-        this.notification = {msgType: 'activation', msgBody: 'Please visit your email address to activate your account!'};
+        this.notification = {msgType: 'activation', msgBody: 'Please visit your ' + this.radio + ' to activate your account!'};
       },
       (error) => {                 
         this.handleErrors(error);
@@ -50,6 +55,10 @@ export class RegistrationComponent implements OnInit {
       );
     }
     else this.openSnackBar("Missing data!");
+  }
+
+  radioChange(event: MatRadioChange) {
+    this.radio = event.value;
   }
 
   login() {
@@ -71,26 +80,19 @@ export class RegistrationComponent implements OnInit {
 
   createPasswordStrengthValidator(): ValidatorFn {
     return (control:AbstractControl) : ValidationErrors | null => {
-
         const value = control.value;
-
         if (!value) {
             return null;
         }
 
         const hasUpperCase = /[A-Z]+/.test(value);
-
         const hasLowerCase = /[a-z]+/.test(value);
-
         const hasNumeric = /[0-9]+/.test(value);
-
         const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value);
 
         const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && specialChars;
-
         return !passwordValid ? {passwordStrength:true}: null;
     }
-
   }
 
 }
@@ -98,5 +100,4 @@ export class RegistrationComponent implements OnInit {
 interface DisplayMessage {
   msgType: string;
   msgBody: string;
-
 }
