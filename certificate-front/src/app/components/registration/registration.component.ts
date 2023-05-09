@@ -47,7 +47,7 @@ export class RegistrationComponent implements OnInit {
       this.service.register(this.registrationForm.value, this.radio)
       .subscribe((res: User) => {
         console.log(res);
-        this.notification = {msgType: 'activation', msgBody: 'Please visit your email address to activate your account!'};
+        this.notification = {msgType: 'activation', msgBody: 'Please visit your ' + this.radio + ' to activate your account!'};
       },
       (error) => {                 
         this.handleErrors(error);

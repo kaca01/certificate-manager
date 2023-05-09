@@ -30,6 +30,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,6 +89,9 @@ public class UserService implements IUserService, UserDetailsService {
 	public UserDTO register(UserDTO registrationDTO) {
 		if (this.userRepository.existsByEmail(registrationDTO.getEmail())) {
 			throw new BadRequestException("User with that email already exists!");
+		}
+		if (this.userRepository.existsByPhone(registrationDTO.getPhone())) {
+			throw new BadRequestException("User with that phone number already exists!");
 		}
 		User user = new User(registrationDTO);
 		user.setEnabled(false);
@@ -208,13 +213,18 @@ public class UserService implements IUserService, UserDetailsService {
 		User user = userRepository.findByPhone(activation.getUser().getPhone())
 				.orElseThrow(() -> new NotFoundException("User does not exist!"));
 
-		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
+		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID_2"), System.getenv("TWILIO_AUTH_TOKEN_2"));
 
-		VerificationCreator v = Verification.creator(
-						"VAca2e1d4eb5f1ba4be26dc368c51754af", // this is your verification sid
-						"+381612325345", // recipient phone number
-						"sms"); // this is your channel type
-		v.create();
+		String text = "Hello [[name]], thank you for joining us!\n"
+				+ "To activate your account please follow this link: "
+				+ "http://localhost:4200/activation/[[id]]'\n"
+				+ "The Certificate Manager team.";
+
+		text = text.replace("[[name]]", user.getName());
+		text = text.replace("[[id]]", activation.getId().toString());
+
+		Message.creator(new PhoneNumber("+381612325345"),
+				new PhoneNumber("+12708131194"), text).create();
 	}
 
 	@Override
