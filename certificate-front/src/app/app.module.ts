@@ -22,6 +22,10 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { RegistrationComponent } from './components/registration/registration.component';
 import { RequestsComponent } from './components/requests/requests.component';
 import { WithdrawalReasonComponent } from './components/certificate/withdrawal-reason/withdrawal-reason.component';
+import { ActivationComponent } from './components/registration/activation/activation/activation.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { AddReasonDialogComponent } from './components/requests/add-reason-dialog/add-reason-dialog.component';
+import { HistoryComponent } from './components/history/history.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +38,10 @@ import { WithdrawalReasonComponent } from './components/certificate/withdrawal-r
     RegistrationComponent,
     RequestsComponent,
     WithdrawalReasonComponent,
+    ActivationComponent,
+    ResetPasswordComponent,
+    AddReasonDialogComponent,
+    HistoryComponent,
   ],
   imports: [
     FormsModule,

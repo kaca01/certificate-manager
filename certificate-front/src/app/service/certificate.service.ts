@@ -17,7 +17,7 @@ export class CertificateService {
   }
 
   getIssuers(): Observable<AllCertificate> {
-    return this.http.get<AllCertificate>(environment.apiHost + "api/certificate/issuers");
+    return this.http.get<AllCertificate>(environment.apiHost + "api/certificates/issuers");
   }
 
   getAll(): Observable<AllCertificate> {

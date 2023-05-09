@@ -1,6 +1,7 @@
 package com.example.certificateback.exception;
 
 import com.example.certificateback.dto.ErrorDTO;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,5 +22,15 @@ public class ExceptionResolver {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
         return new ResponseEntity<String>(exception.getMessage(), headers, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NotValidException.class)
+    public ResponseEntity<?> notValidException(NotValidException exception) {
+        return new ResponseEntity<>(new ErrorDTO(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(WrongUserException.class)
+    public ResponseEntity<?> wrongUserException(WrongUserException exception) {
+        return new ResponseEntity<>(new ErrorDTO(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }

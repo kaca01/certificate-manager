@@ -1,0 +1,50 @@
+.container {
+    width: 300px;
+    overflow-x: hidden;
+}
+
+#title {
+    font-weight: bold;
+    font-size: x-large;
+}
+
+#textarea {
+    border: 1px solid gray;
+    border-radius: 5px;
+    width: 90%;
+    height: 50px;
+    margin-top: 15px;
+}
+
+#close-dialog {
+    float: right;
+    width: 20px;
+    height: 20px;
+  }
+  
+.close:hover{
+    background-color: rgb(243, 237, 237);
+    cursor: pointer;
+}
+
+#btn-container {
+    width: 100%;
+    text-align: center;
+}
+
+#save {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    align-self: center;
+    margin-top: 15px;
+    color: gray;
+    border-radius: 5px;
+    border: none;
+    font-size: larger;
+}
+
+#save:hover{
+    background-color: rgba(233, 233, 233, 1);
+    cursor: pointer;
+}

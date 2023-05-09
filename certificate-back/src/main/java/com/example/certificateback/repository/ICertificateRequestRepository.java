@@ -5,6 +5,7 @@ import com.example.certificateback.domain.CertificateRequest;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.enumeration.CertificateType;
 import com.example.certificateback.enumeration.RequestType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,5 +18,5 @@ public interface ICertificateRequestRepository extends JpaRepository<Certificate
 
     public List<CertificateRequest> findByIssuerAndRequestType(Certificate issuer, RequestType requestType);
 
-//    public List<CertificateRequest> findByRequestTypeAndIssuer_SerialNumber(RequestType requestType, String serialNumber);
+    List<CertificateRequest> findByRequestTypeAndIssuerSubjectId(RequestType type, long id);
 }
