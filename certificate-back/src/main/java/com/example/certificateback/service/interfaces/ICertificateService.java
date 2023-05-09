@@ -13,4 +13,6 @@ public interface ICertificateService {
     Boolean checkingValidation(String serialNumber);
 
     AllDTO<CertificateDTO> getIssuers();
+
+    CertificateDTO invalidate(String serialNumber, String withdrawnReason);
 }

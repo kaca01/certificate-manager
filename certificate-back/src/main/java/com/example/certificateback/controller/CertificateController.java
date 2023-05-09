@@ -48,4 +48,11 @@ public class CertificateController {
     public ResponseEntity<AllDTO<CertificateDTO>> getIssuers() {
         return new ResponseEntity<>(certificateService.getIssuers(), HttpStatus.OK);
     }
+
+    @PutMapping(value = "/invalidate/{serialNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<CertificateDTO> invalidateCertificate(@PathVariable String serialNumber, @RequestBody String
+                                                                withdrawnReason) {
+        return new ResponseEntity<>(certificateService.invalidate(serialNumber, withdrawnReason), HttpStatus.OK);
+    }
 }

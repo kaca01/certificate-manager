@@ -9,6 +9,7 @@ import { CertificateRequestComponent } from '../certificate-request/certificate-
 import { UserService } from 'src/app/service/user.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { WithdrawalReasonComponent } from './withdrawal-reason/withdrawal-reason.component';
 
 @Component({
   selector: 'certificate',
@@ -85,5 +86,20 @@ export class CertificateComponent implements OnInit {
     this.snackBar.open(snackMsg, "Dismiss", {
       duration: 2000
     });
+  }
+
+  openWithdrawalDialog() : void {
+    if (this.selectedRowIndex === -1) {
+      this.openSnackBar("Certificate not selected!");
+      return;
+    }
+
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = this.certificate;
+    
+    this.dialog.open(WithdrawalReasonComponent, dialogConfig);
   }
 }
