@@ -1,6 +1,8 @@
 package com.example.certificateback.controller;
 
 import com.example.certificateback.dto.AllDTO;
+import com.example.certificateback.dto.CertificateRequestDTO;
+import com.example.certificateback.dto.DownloadDTO;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.service.interfaces.ICertificateService;
@@ -51,10 +53,10 @@ public class CertificateController {
     }
 
     //todo sa fronta da posalje putanju gdje da storuje sertifikat
-    @PutMapping(value = "download/{serialNum}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "downloadCert", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<?> downloadCertificate(@PathVariable String serialNum) {
-        certificateService.downloadCertificate(serialNum);
+    public ResponseEntity<?> downloadCertificate(@RequestBody DownloadDTO dto) {
+        certificateService.downloadCertificate(dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

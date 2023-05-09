@@ -4,6 +4,7 @@ import com.example.certificateback.domain.Certificate;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
+import com.example.certificateback.dto.DownloadDTO;
 import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.IUserRepository;
@@ -68,15 +69,15 @@ public class CertificateService implements ICertificateService {
     }
 
     @Override
-    public void downloadCertificate(String serialNum) {
-        certificateRepository.findBySerialNumber(serialNum).orElseThrow(()
+    public void downloadCertificate(DownloadDTO dto) {
+        certificateRepository.findBySerialNumber(dto.getSerialNumber()).orElseThrow(()
                 -> new NotFoundException("Certificate with that serial number does not exist"));
 
-        java.security.cert.Certificate cert = KeyStoreReader.readCertificate(serialNum);
+        java.security.cert.Certificate cert = KeyStoreReader.readCertificate(dto.getSerialNumber());
 
         FileOutputStream fos;
         try {
-            fos = new FileOutputStream("./src/main/resources/certificate.cer");
+            fos = new FileOutputStream(dto.getPath() + "certificate.cer");
             assert cert != null;
             fos.write(cert.getEncoded());
             fos.close();
