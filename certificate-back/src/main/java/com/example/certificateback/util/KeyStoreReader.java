@@ -59,7 +59,7 @@ public class KeyStoreReader {
         try {
             load();
             alias = alias + "cert";
-            if (keyStore.isKeyEntry(alias)) {
+            if (keyStore.isCertificateEntry(alias)) {
                 Certificate cert = keyStore.getCertificate(alias);
                 return cert;
             }

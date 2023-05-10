@@ -115,7 +115,7 @@ public class CertificateGeneratorService implements ICertificateGeneratorService
 
         DateUtil dateUtil = new DateUtil();
         Date startDate = dateUtil.generateStartTime();
-        Date endDate = dateUtil.generateEndTime(startDate);
+        Date endDate = dateUtil.generateEndTime(startDate, certificateRequest);
         String serialNumber = generateAlias(certificateRequest.getSubject());
 
         X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
