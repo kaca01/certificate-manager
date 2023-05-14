@@ -1,0 +1,38 @@
+.container {
+    width: 350px;
+}
+
+#title {
+    margin-top: 2%;
+    margin-left: 10%;
+    margin-bottom: 5%;
+    font-weight: bold;
+    font-size: x-large;
+    width: 200px;
+}
+
+#close-dialog {
+    float: right;
+    width: 20px;
+    height: 20px;
+}
+  
+.close:hover{
+    background-color: rgb(243, 237, 237);
+    cursor: pointer;
+}
+
+#file-input {
+    display: none;
+}
+
+#file-upload {
+    width: 300px;
+    margin-left: 10%;
+}
+
+#check {
+    margin-top: 5%;
+    margin-left: 80px;
+    font-weight: bold;
+}

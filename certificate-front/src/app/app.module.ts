@@ -22,6 +22,7 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { RegistrationComponent } from './components/registration/registration.component';
 import { RequestsComponent } from './components/requests/requests.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { FileUploadDialogComponent } from './components/certificate/file-upload-dialog/file-upload-dialog.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
     RegistrationComponent,
     RequestsComponent,
     ResetPasswordComponent,
+    FileUploadDialogComponent,
   ],
   imports: [
     FormsModule,
