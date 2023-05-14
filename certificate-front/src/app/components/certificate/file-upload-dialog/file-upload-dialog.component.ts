@@ -33,6 +33,8 @@ export class FileUploadDialogComponent implements OnInit {
       console.log('ressss');  
       console.log(res);
     });
+
+    this.dialogRef.close();
   }
 
   onFileSelected(event: Event) {
@@ -47,24 +49,16 @@ export class FileUploadDialogComponent implements OnInit {
         if (fileContent) {
           const byteArray = new Uint8Array(fileContent);
           this.fileAsByteArray = byteArray;
-          // this.uploadFile(byteArray);
+          // the following block of code is for updating name of file on dialog
+          this.fileName = file.name;
+          const formData = new FormData();
+          formData.append("thumbnail", file);
+          const upload$ = this.http.post("/api/thumbnail-upload", formData);
+          upload$.subscribe();
         }
       };
       reader.readAsArrayBuffer(file);
     }
-  
-    // if (file) {
-
-    //     this.fileName = file.name;
-
-    //     const formData = new FormData();
-
-    //     formData.append("thumbnail", file);
-
-    //     const upload$ = this.http.post("/api/thumbnail-upload", formData);
-
-    //     upload$.subscribe();
-    // }
   }
 
 }
