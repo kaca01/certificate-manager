@@ -15,7 +15,7 @@ export class FileUploadDialogComponent implements OnInit {
   }
 
   close(): void {
-
+    this.dialogRef.close();
   }
 
   fileName = '';
@@ -32,7 +32,17 @@ export class FileUploadDialogComponent implements OnInit {
 
   onFileSelected(event: any) {
 
-    const file:File = event.target.files[0];
+    const file: File = event.target.files[0];
+    const reader: FileReader = new FileReader();
+  
+    reader.onload = (e: any) => {
+      const fileContentArrayBuffer: ArrayBuffer = e.target.result;
+      const byteArray: Uint8Array = new Uint8Array(fileContentArrayBuffer);
+      console.log(byteArray);
+      // Use the byteArray as needed
+    };
+  
+    reader.readAsArrayBuffer(file);
 
     if (file) {
 
@@ -46,6 +56,7 @@ export class FileUploadDialogComponent implements OnInit {
 
         upload$.subscribe();
     }
+    
 }
 
 }
