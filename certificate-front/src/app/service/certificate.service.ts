@@ -28,14 +28,14 @@ export class CertificateService {
     return this.http.get<boolean>(environment.apiHost + 'api/certificates/verify/' + serialNumber);
   }
 
-  checkValidityByCopy(base64: any): Observable<boolean> {
+  checkValidityByCopy(file: Uint8Array): Observable<boolean> {
     console.log("usao u servissss");
-    const headers = new HttpHeaders()
-    .set('Content-Type', 'application/octet-stream');
+    // const headers = new HttpHeaders()
+    // .set('Content-Type', 'application/octet-stream')
     // .set('Access-Control-Allow-Origin', 'http://localhost:4200')
     // .set('Access-Control-Allow-Methods', 'GET,PUT,OPTIONS,POST')
     // .set('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin, Content-Type, Accept, Accept-Language, Origin, User-Agent');
-    return this.http.post<boolean>(environment.apiHost + 'api/certificates/verify/copy', base64);
+    return this.http.post<boolean>(environment.apiHost + 'api/certificates/verify/copy', file);
 
   }
 }

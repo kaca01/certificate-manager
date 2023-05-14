@@ -35,35 +35,36 @@ export class FileUploadDialogComponent implements OnInit {
     });
   }
 
-  onFileSelected(event: any) {
+  onFileSelected(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const files: FileList | null = inputElement.files;
 
-    const file: File = event.target.files[0];
-    const reader: FileReader = new FileReader();
-  
-    reader.onload = (e: any) => {
-      const fileContentArrayBuffer: ArrayBuffer = e.target.result;
-      this.fileAsByteArray = new Uint8Array(fileContentArrayBuffer);
-      console.log(this.fileAsByteArray);
-      const base64String = btoa(String.fromCharCode.apply(null, this.fileAsByteArray));
-      this.base64 = base64String;
-      console.log(this.base64);
-
-    };
-  
-    reader.readAsArrayBuffer(file);
-
-    if (file) {
-
-        this.fileName = file.name;
-
-        const formData = new FormData();
-
-        formData.append("thumbnail", file);
-
-        const upload$ = this.http.post("/api/thumbnail-upload", formData);
-
-        upload$.subscribe();
+    if (files && files.length > 0) {
+      const file: File = files[0];
+      const reader: FileReader = new FileReader();
+      reader.onloadend = () => {
+        const fileContent: ArrayBuffer | null = reader.result as ArrayBuffer;
+        if (fileContent) {
+          const byteArray = new Uint8Array(fileContent);
+          this.fileAsByteArray = byteArray;
+          // this.uploadFile(byteArray);
+        }
+      };
+      reader.readAsArrayBuffer(file);
     }
+  
+    // if (file) {
+
+    //     this.fileName = file.name;
+
+    //     const formData = new FormData();
+
+    //     formData.append("thumbnail", file);
+
+    //     const upload$ = this.http.post("/api/thumbnail-upload", formData);
+
+    //     upload$.subscribe();
+    // }
   }
 
 }
