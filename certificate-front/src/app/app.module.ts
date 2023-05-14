@@ -13,7 +13,7 @@ import { CertificateRequestComponent } from './components/certificate-request/ce
 import { AuthService } from './service/auth.service';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { TokenInterceptor } from './components/interceptor/TokenInterceptor';
+import { TokenInterceptor } from './components/interceptor/tokenInterceptor';
 import { ApiService } from './service/api.service';
 import { UserService } from './service/user.service';
 import { ConfigService } from './service/config.service';

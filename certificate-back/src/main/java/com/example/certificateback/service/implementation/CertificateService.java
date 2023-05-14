@@ -4,6 +4,7 @@ import com.example.certificateback.domain.Certificate;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
+import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.IUserRepository;
@@ -74,7 +75,7 @@ public class CertificateService implements ICertificateService {
             System.out.println(certificate.getSerialNumber());
             isValid = checkingValidation(certificate.getSerialNumber().toString());
         } catch (CertificateException | IOException e) {
-            throw new RuntimeException(e);
+            throw new NotFoundException("File not found!");
         }
         return isValid;
     }
