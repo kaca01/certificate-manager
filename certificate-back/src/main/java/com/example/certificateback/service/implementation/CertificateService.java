@@ -14,13 +14,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.cert.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,20 +65,25 @@ public class CertificateService implements ICertificateService {
     }
 
     @Override
-    public Boolean isValidByCopy(String path) {
-        Boolean isValid = false;
+    public Boolean isValidByCopy(byte[] file) {
+        Boolean isValid;
+        String path = "C:\\Users\\User\\Desktop\\-1347043084476417129cert.crt";
         try {
-            path = "C:\\Users\\User\\Desktop\\-1347043084476417129cert.crt";
-            FileInputStream inputStream = new FileInputStream(path);
+            file = Files.readAllBytes(Paths.get(path));
+            System.out.println("FILEEEEEE");
+            System.out.println(Arrays.toString(file));
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(file);
             X509Certificate certificate = (X509Certificate) cf.generateCertificate(inputStream);
-            inputStream.close();
 
             System.out.println("SERIAL NUMBERRRRR");
             System.out.println(certificate.getSerialNumber());
+            certificate.checkValidity();
             isValid = checkingValidation(certificate.getSerialNumber().toString());
+            inputStream.close();
         } catch (CertificateException | IOException e) {
-            throw new NotFoundException("File not found!");
+            // TODO : change this exception later
+            throw new RuntimeException(e);
         }
         return isValid;
     }

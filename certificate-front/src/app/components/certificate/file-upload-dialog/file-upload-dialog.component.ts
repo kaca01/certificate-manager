@@ -10,6 +10,8 @@ import { CertificateService } from 'src/app/service/certificate.service';
   styleUrls: ['./file-upload-dialog.component.css']
 })
 export class FileUploadDialogComponent implements OnInit {
+  private fileAsByteArray: any = {};
+  private base64: any = {};
 
   ngOnInit(): void {
   }
@@ -27,7 +29,10 @@ export class FileUploadDialogComponent implements OnInit {
     }
 
   checkValidity(): void {
-    console.log(this.fileName);
+    this.certificateService.checkValidityByCopy(this.fileAsByteArray).subscribe((res) => {
+      console.log('ressss');  
+      console.log(res);
+    });
   }
 
   onFileSelected(event: any) {
@@ -37,9 +42,12 @@ export class FileUploadDialogComponent implements OnInit {
   
     reader.onload = (e: any) => {
       const fileContentArrayBuffer: ArrayBuffer = e.target.result;
-      const byteArray: Uint8Array = new Uint8Array(fileContentArrayBuffer);
-      console.log(byteArray);
-      // Use the byteArray as needed
+      this.fileAsByteArray = new Uint8Array(fileContentArrayBuffer);
+      console.log(this.fileAsByteArray);
+      const base64String = btoa(String.fromCharCode.apply(null, this.fileAsByteArray));
+      this.base64 = base64String;
+      console.log(this.base64);
+
     };
   
     reader.readAsArrayBuffer(file);
@@ -56,7 +64,6 @@ export class FileUploadDialogComponent implements OnInit {
 
         upload$.subscribe();
     }
-    
-}
+  }
 
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -50,10 +51,11 @@ public class CertificateController {
         return certificateService.checkingValidation(serialNumber);
     }
 
-    @GetMapping("verify/copy")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public Boolean isCertificateValidByCopy(@RequestBody String path) {
-        return certificateService.isValidByCopy(path);
+    // here is not get method because, in angular, http get method does not support request body
+    @PostMapping("/verify/copy")
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Boolean isCertificateValidByCopy(@RequestBody byte[] file) {
+        return certificateService.isValidByCopy(file);
     }
 
     @GetMapping("/issuers")
