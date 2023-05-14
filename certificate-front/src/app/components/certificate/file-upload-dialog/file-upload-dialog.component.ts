@@ -32,6 +32,11 @@ export class FileUploadDialogComponent implements OnInit {
     this.certificateService.checkValidityByCopy(this.fileAsByteArray).subscribe((res) => {
       console.log('ressss');  
       console.log(res);
+      if (res) this.openSnackBar("Uploaded certificate is valid!");
+      else this.openSnackBar("Uploaded certificate is not valid!");
+    }, (error) => {
+      console.log(error);
+      this.openSnackBar(error.error.message, 5000);
     });
 
     this.dialogRef.close();
@@ -48,7 +53,15 @@ export class FileUploadDialogComponent implements OnInit {
         const fileContent: ArrayBuffer | null = reader.result as ArrayBuffer;
         if (fileContent) {
           const byteArray = new Uint8Array(fileContent);
-          this.fileAsByteArray = byteArray;
+          console.log(byteArray);
+          // converting from unsigned to signed byte array
+          const signedArray: Int8Array = new Int8Array(byteArray.length);
+          for (let i = 0; i < byteArray.length; i++) {
+            const unsignedValue = byteArray[i];
+            signedArray[i] = unsignedValue > 127 ? unsignedValue - 256 : unsignedValue;
+          }
+          this.fileAsByteArray = signedArray;
+          
           // the following block of code is for updating name of file on dialog
           this.fileName = file.name;
           const formData = new FormData();
@@ -59,6 +72,12 @@ export class FileUploadDialogComponent implements OnInit {
       };
       reader.readAsArrayBuffer(file);
     }
+  }
+
+  openSnackBar(snackMsg : string, duration: number = 2000) : void {
+    this.snackBar.open(snackMsg, "Dismiss", {
+      duration: duration
+    });
   }
 
 }
