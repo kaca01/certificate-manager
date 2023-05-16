@@ -24,6 +24,7 @@ export interface ResetPassword {
 
 export interface CertificateRequest {
   _id: number;
+  date: string;
   requestType: string,
   issuer: string,
   certificateType: string,
