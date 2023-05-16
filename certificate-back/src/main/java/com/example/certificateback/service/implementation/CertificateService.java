@@ -8,7 +8,6 @@ import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.enumeration.RequestType;
 import com.example.certificateback.exception.BadRequestException;
-import com.example.certificateback.dto.DownloadDTO;
 import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.ICertificateRequestRepository;
@@ -16,12 +15,11 @@ import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.ICertificateService;
 import com.example.certificateback.util.KeyStoreReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
@@ -120,38 +118,28 @@ public class CertificateService implements ICertificateService {
     }
 
     @Override
-    public void downloadCertificate(DownloadDTO dto) {
-        certificateRepository.findBySerialNumber(dto.getSerialNumber()).orElseThrow(()
+    public ByteArrayResource downloadCertificate(String serialNumber) {
+        certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
                 -> new NotFoundException("Certificate with that serial number does not exist"));
 
-        java.security.cert.Certificate cert = KeyStoreReader.readCertificate(dto.getSerialNumber());
+        java.security.cert.Certificate cert = KeyStoreReader.readCertificate(serialNumber);
 
-        FileOutputStream fos;
         try {
-            fos = new FileOutputStream(dto.getPath() + "certificate.cer");
             assert cert != null;
-            fos.write(cert.getEncoded());
-            fos.close();
-        } catch (CertificateEncodingException | IOException e) {
+            return new ByteArrayResource(cert.getEncoded());
+        } catch (CertificateEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void downloadPrivateKey(DownloadDTO dto) {
-        certificateRepository.findBySerialNumber(dto.getSerialNumber()).orElseThrow(()
+    public ByteArrayResource downloadPrivateKey(String serialNumber) {
+        certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
                 -> new NotFoundException("Certificate with that serial number does not exist"));
 
-        PrivateKey pk = KeyStoreReader.readPrivateKey(dto.getSerialNumber(), KeyStoreConstants.ENTRY_PASSWORD);
+        PrivateKey pk = KeyStoreReader.readPrivateKey(serialNumber, KeyStoreConstants.ENTRY_PASSWORD);
 
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(dto.getPath() + "privateKey.p12");
-            assert pk != null;
-            fos.write(pk.getEncoded());
-            fos.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        assert pk != null;
+        return new ByteArrayResource(pk.getEncoded());
     }
 }
