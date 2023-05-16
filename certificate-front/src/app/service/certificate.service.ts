@@ -32,4 +32,12 @@ export class CertificateService {
     if (refusalReason === "") refusalReason = " ";
     return this.http.put<Certificate>(environment.apiHost + 'api/certificates/invalidate/' + serialNumber, refusalReason);
   }
+
+  downloadCert(serialNumber: string) : Observable<Blob> {
+    return this.http.get(environment.apiHost + 'api/certificates/downloadCert/' + serialNumber, {responseType: 'blob'});
+  }
+
+  downloadPk(serialNumber: string) : Observable<Blob> {
+    return this.http.get(environment.apiHost + 'api/certificates/downloadPk/' + serialNumber, {responseType: 'blob'});
+  }
 }

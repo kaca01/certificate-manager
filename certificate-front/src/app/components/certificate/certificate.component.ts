@@ -18,7 +18,7 @@ import { WithdrawalReasonComponent } from './withdrawal-reason/withdrawal-reason
 })
 export class CertificateComponent implements OnInit {
   selectedRowIndex : number = -1;
-  displayedColumns: string[] = ['serial number', 'subject', 'valid from', 'valid to', 'type', 'download'];
+  displayedColumns: string[] = ['serial number', 'subject', 'valid from', 'valid to', 'type'];
   dataSource!: MatTableDataSource<Certificate>;
 
   certificates: Certificate[] = [];
@@ -101,5 +101,29 @@ export class CertificateComponent implements OnInit {
     dialogConfig.data = this.certificate;
     
     this.dialog.open(WithdrawalReasonComponent, dialogConfig);
+  }
+
+  downloadPrivateKey() : void {
+    if (this.selectedRowIndex === -1) {
+      this.openSnackBar("Certificate not selected!");
+      return;
+    }
+
+    this.certificateService.downloadPk(this.certificate.serialNumber).subscribe((res) => {
+      console.log(res);
+    });
+
+  }
+
+  downloadCertificate() : void {
+    if (this.selectedRowIndex === -1) {
+      this.openSnackBar("Certificate not selected!");
+      return;
+    }
+
+    this.certificateService.downloadCert(this.certificate.serialNumber).subscribe((res) => {
+      console.log(res);
+    });
+
   }
 }

@@ -138,6 +138,17 @@ button:hover {
     font-size: larger;
 }
 
+#download{
+    color: #96d49c;
+}
+
 .bottom-margin{
     color: white;
+    font-size: larger;
+    margin: 0;
+}
+
+.menu-item {
+    font-size: medium;
+    margin: 0 !important;
 }
