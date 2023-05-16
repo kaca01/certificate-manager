@@ -28,7 +28,7 @@ public class CertificateRequestDTO {
     private String refusalReason;
 
     public CertificateRequestDTO(CertificateRequest request) {
-        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         this.date = format.format(request.getDate());
         this.requestType = request.getRequestType().toString();
         if (request.getCertificateType() != CertificateType.ROOT)

@@ -41,7 +41,7 @@ public class CertificateRequest {
     private String refusalReason;
 
     public CertificateRequest(CertificateRequestDTO dto) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         try {
             this.setDate(formatter.parse(dto.getDate()));
         } catch (ParseException e) {
