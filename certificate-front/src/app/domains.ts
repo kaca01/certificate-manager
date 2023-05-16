@@ -49,7 +49,3 @@ export interface AllCertificate {
   totalCount: number;
   results: Certificate[];
 }
-
-export interface FileDTO {
-  bytes: string;
-}

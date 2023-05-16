@@ -67,28 +67,16 @@ public class CertificateService implements ICertificateService {
     @Override
     public Boolean isValidByCopy(byte[] file) {
         Boolean isValid;
-        String path = "C:\\Users\\User\\Desktop\\-1347043084476417129cert.crt";
         try {
-//            file = Files.readAllBytes(Paths.get(path));
-            System.out.println("FILEEEEEE");
-            System.out.println(Arrays.toString(file));
-            byte[] doubleCheck = Files.readAllBytes(Paths.get(path));
-            System.out.println("DOUBLE CHECK");
-            System.out.println(Arrays.toString(doubleCheck));
-            if (doubleCheck == file) System.out.println("THE SAME SHIT");
-
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             ByteArrayInputStream inputStream = new ByteArrayInputStream(file);
             X509Certificate certificate = (X509Certificate) cf.generateCertificate(inputStream);
 
-            System.out.println("SERIAL NUMBERRRRR");
-            System.out.println(certificate.getSerialNumber());
             certificate.checkValidity();
             isValid = checkingValidation(certificate.getSerialNumber().toString());
             inputStream.close();
         } catch (CertificateException | IOException e) {
-            // TODO : change this exception later
-            throw new RuntimeException(e);
+            throw new BadRequestException("Error occurred, please check file type and try again!");
         }
         return isValid;
     }
