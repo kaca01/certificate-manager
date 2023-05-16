@@ -5,12 +5,17 @@ import com.example.certificateback.domain.User;
 import com.example.certificateback.enumeration.CertificateType;
 import lombok.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 @Data
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CertificateRequestDTO {
+
+    private String date;
 
     private String requestType;
 
@@ -23,6 +28,8 @@ public class CertificateRequestDTO {
     private String refusalReason;
 
     public CertificateRequestDTO(CertificateRequest request) {
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        this.date = format.format(request.getDate());
         this.requestType = request.getRequestType().toString();
         if (request.getCertificateType() != CertificateType.ROOT)
             this.issuer = request.getIssuer().getSerialNumber();
