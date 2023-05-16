@@ -9,6 +9,7 @@ import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.enumeration.RequestType;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.exception.NotFoundException;
+import com.example.certificateback.exception.WrongUserException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.ICertificateRequestRepository;
 import com.example.certificateback.repository.IUserRepository;
@@ -37,6 +38,15 @@ public class CertificateService implements ICertificateService {
 
     @Autowired
     ICertificateRequestRepository certificateRequestRepository;
+
+    private User getLoggedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) throw new NotFoundException("User not found!");
+        //List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
+        return user;
+    }
 
     @Override
     public List<CertificateDTO> getAllCertificates() {
@@ -134,8 +144,12 @@ public class CertificateService implements ICertificateService {
 
     @Override
     public ByteArrayResource downloadPrivateKey(String serialNumber) {
-        certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
+        Certificate cert = certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
                 -> new NotFoundException("Certificate with that serial number does not exist"));
+
+        if( !getLoggedUser().getEmail().equals(cert.getSubject().getEmail())
+                && getLoggedUser().getRoles().get(0).getName().equals("ROLE_USER"))
+            throw  new WrongUserException("You are not owner of this certificate!");
 
         PrivateKey pk = KeyStoreReader.readPrivateKey(serialNumber, KeyStoreConstants.ENTRY_PASSWORD);
 

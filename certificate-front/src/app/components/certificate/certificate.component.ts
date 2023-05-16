@@ -110,8 +110,17 @@ export class CertificateComponent implements OnInit {
     }
 
     this.certificateService.downloadPk(this.certificate.serialNumber).subscribe((res) => {
-      console.log(res);
-    });
+      const blob = new Blob([res], {type: 'application/octet-stream'});
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = this.certificate.serialNumber + '.p12';
+      link.dispatchEvent(new MouseEvent('click'));
+    },
+    (error) => {               
+      this.openSnackBar("You are not owner of this certificate!");
+      }
+    );
 
   }
 
@@ -122,8 +131,17 @@ export class CertificateComponent implements OnInit {
     }
 
     this.certificateService.downloadCert(this.certificate.serialNumber).subscribe((res) => {
-      console.log(res);
-    });
+        const blob = new Blob([res], {type: 'application/octet-stream'});
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = this.certificate.serialNumber + '.cer';
+        link.dispatchEvent(new MouseEvent('click'));
+    },
+    (error) => {                 
+      this.openSnackBar("Some error ocurred");
+      }
+    );
 
   }
 }
