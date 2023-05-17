@@ -25,6 +25,6 @@ public class UserActivation {
     public UserActivation(User user){
         this.user = user;
         this.date = new Date();
-        this.life = 180;  //todo move to application.properties
+        this.life = 600;  //todo move to application.properties
     }
 }

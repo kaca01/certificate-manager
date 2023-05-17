@@ -28,6 +28,8 @@ public class CertificateDTO {
 
     private String serialNumber;
 
+    private String issuerSerialNumber;
+
     public CertificateDTO(Certificate certificate) {
         this.certificateType = certificate.getCertificateType().toString();
         this.validTo = certificate.getValidTo().toString();
@@ -36,6 +38,7 @@ public class CertificateDTO {
         this.isWithdrawn = certificate.isWithdrawn();
         this.withdrawnReason = certificate.getWithdrawnReason();
         this.serialNumber = certificate.getSerialNumber();
+        this.issuerSerialNumber = certificate.getIssuerSerialNumber();
     }
 
     // response

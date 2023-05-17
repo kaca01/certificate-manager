@@ -1,6 +1,8 @@
 package com.example.certificateback.util;
 
 import com.example.certificateback.configuration.KeyStoreConstants;
+import com.example.certificateback.domain.CertificateRequest;
+import com.example.certificateback.enumeration.CertificateType;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -13,9 +15,12 @@ public class DateUtil {
         return localDateTimeToDate(startOfDay);
     }
 
-    public Date generateEndTime(Date date){
+    public Date generateEndTime(Date date, CertificateRequest request){
         LocalDateTime localDateTime = dateToLocalDateTime(date);
-        LocalDateTime endTime = localDateTime.plusYears(KeyStoreConstants.CERTIFICATE_DURATION);
+        LocalDateTime endTime;
+        if(request.getCertificateType().equals(CertificateType.ROOT))
+            endTime = localDateTime.plusYears(KeyStoreConstants.ROOT_CERTIFICATE_DURATION);
+        else endTime = localDateTime.plusYears(KeyStoreConstants.CERTIFICATE_DURATION);
         return localDateTimeToDate(endTime);
     }
 

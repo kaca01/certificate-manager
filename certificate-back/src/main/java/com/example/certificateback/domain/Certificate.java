@@ -30,7 +30,7 @@ public class Certificate {
     @Column(name = "valid_to", nullable = false)
     private Date validTo;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private User subject;
 
     @Column(name = "is_withdrawn", nullable = false)
@@ -42,6 +42,9 @@ public class Certificate {
     @Column(name = "serial_number", nullable = false)
     private String serialNumber;
 
+    @Column(name = "issuer_serial_number", nullable = true)
+    private String issuerSerialNumber;
+
     public Certificate(X509Certificate xCertificate, CertificateRequest request) {
         this.serialNumber = xCertificate.getSerialNumber().toString();
         this.certificateType = request.getCertificateType();
@@ -50,6 +53,7 @@ public class Certificate {
         this.isWithdrawn = false;
         this.validFrom = xCertificate.getNotBefore();
         this.validTo = xCertificate.getNotAfter();
+        this.issuerSerialNumber = request.getIssuer().getSerialNumber();
     }
 
     public boolean isValid() {
@@ -69,5 +73,6 @@ public class Certificate {
         this.isWithdrawn = dto.isWithdrawn();
         this.withdrawnReason = dto.getWithdrawnReason();
         this.serialNumber = String.valueOf(dto.getSerialNumber());
+        this.issuerSerialNumber = dto.getIssuerSerialNumber();
     }
 }

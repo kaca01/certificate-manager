@@ -3,8 +3,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestService } from './certificate-request.service';
 import { UserService } from 'src/app/service/user.service';
-import { AllCertificate, CertificateRequest } from 'src/app/domains';
+import { AllCertificate, CertificateRequest, User } from 'src/app/domains';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -17,32 +18,41 @@ export class CertificateRequestComponent implements OnInit {
   issuer: string = "";
   type: string = "";
 
-  constructor(private dialogRef: MatDialogRef<CertificateRequestComponent>, private certificateService: CertificateService,
+  constructor(private router: Router, private dialogRef: MatDialogRef<CertificateRequestComponent>, private certificateService: CertificateService,
               private certificateRequsetService: CertificateRequestService, private userService: UserService, private snackBar: MatSnackBar,
               @Inject(MAT_DIALOG_DATA) data: any) {
 
      }
 
   ngOnInit(): void {
+    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
+      this.router.navigate(['/welcome-page']);
     this.certificateService.getIssuers().subscribe((res)=> {
       this.issuers = res;
+    }, (error) => {
+      this.openSnackBar("We had some problems with finding issuers. Please try again later.", 5000);
     });
 
   }
 
   save(): void {
-    if (this.issuer == "" || this.type == "") {
-      this.openSnackBar("No empty fields are allowed!");
+    if ((this.type != "ROOT" && this.issuer == "") || (this.type == "")) {
+      this.openSnackBar("Required fields are empty!");
       return;
     }
     let certifcateRequest: CertificateRequest = {} as CertificateRequest;
     certifcateRequest.certificateType = this.type;
     certifcateRequest.issuer = this.issuer;
     certifcateRequest.requestType = "ACTIVE";
-    if (this.userService.currentUser?.id != undefined) certifcateRequest.subject = this.userService.currentUser?.id;
+    certifcateRequest.subject = {} as User;
+    console.log(certifcateRequest);
+    if (this.userService.currentUser?.id != undefined) certifcateRequest.subject.id = this.userService.currentUser?.id;
 
     this.certificateRequsetService.insert(certifcateRequest).subscribe((res)=> {
       this.openSnackBar("Successfully added!");
+    }, (error) => {
+      console.log(error);
+      this.openSnackBar(error.error.message, 5000);
     });
 
     this.dialogRef.close();
@@ -52,9 +62,9 @@ export class CertificateRequestComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  openSnackBar(snackMsg : string) : void {
+  openSnackBar(snackMsg : string, duration: number = 2000) : void {
     this.snackBar.open(snackMsg, "Dismiss", {
-      duration: 2000
+      duration: duration
     });
   }
 

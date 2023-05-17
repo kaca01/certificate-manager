@@ -28,7 +28,7 @@ public class CertificateRequest {
     @Column(name = "status", nullable = false)
     private RequestType requestType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Certificate issuer;
 
     @Column(name = "type", nullable = false)

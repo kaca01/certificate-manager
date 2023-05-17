@@ -124,6 +124,22 @@ mat-label {
     font-size: small;
 }
 
+.radio{
+    margin-left: 70px;
+    margin-bottom: 35px;
+}
+
+.error{
+    color: red;
+    margin-top: 0 !important;
+}
+
+.activation {
+    width: 100%;
+    color: #5F92C5;
+    margin-bottom: 15px;
+  }
+
 #button {
     width: fit-content;
     text-align: center;

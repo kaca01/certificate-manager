@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 @AllArgsConstructor
 public class CertificateRequestDTO {
 
+    private Long id;
+  
     private String date;
 
     private String requestType;
@@ -28,6 +30,7 @@ public class CertificateRequestDTO {
     private String refusalReason;
 
     public CertificateRequestDTO(CertificateRequest request) {
+        this.id = request.getId();
         DateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         this.date = format.format(request.getDate());
         this.requestType = request.getRequestType().toString();

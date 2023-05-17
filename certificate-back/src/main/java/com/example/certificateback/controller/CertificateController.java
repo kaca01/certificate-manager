@@ -1,11 +1,14 @@
 package com.example.certificateback.controller;
 
 import com.example.certificateback.dto.AllDTO;
+import com.example.certificateback.dto.CertificateRequestDTO;
+import com.example.certificateback.dto.DownloadDTO;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.service.interfaces.ICertificateService;
 import com.example.certificateback.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +30,6 @@ public class CertificateController {
 
     @Autowired
     ICertificateRequestService certificateRequestService;
-
-    @GetMapping(value = "/accept/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<CertificateDTO> acceptRequest(@PathVariable Long id) {
-        CertificateDTO certificate = certificateRequestService.acceptRequest(id);
-        return new ResponseEntity<>(certificate, HttpStatus.OK);
-    }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -76,5 +72,26 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<AllDTO<CertificateDTO>> getIssuers() {
         return new ResponseEntity<>(certificateService.getIssuers(), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/invalidate/{serialNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<CertificateDTO> invalidateCertificate(@PathVariable String serialNumber, @RequestBody String
+                                                                withdrawnReason) {
+        return new ResponseEntity<>(certificateService.invalidate(serialNumber, withdrawnReason), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "downloadCert", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<?> downloadCertificate(@RequestBody DownloadDTO dto) {
+        certificateService.downloadCertificate(dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(value = "downloadPk", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<?> downloadPrivateKey(@RequestBody DownloadDTO dto) {
+        certificateService.downloadPrivateKey(dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

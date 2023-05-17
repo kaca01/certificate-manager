@@ -6,8 +6,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Certificate } from 'src/app/domains';
 import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestComponent } from '../certificate-request/certificate-request.component';
+import { UserService } from 'src/app/service/user.service';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FileUploadDialogComponent } from './file-upload-dialog/file-upload-dialog.component';
+import { WithdrawalReasonComponent } from './withdrawal-reason/withdrawal-reason.component';
 
 @Component({
   selector: 'certificate',
@@ -25,9 +28,11 @@ export class CertificateComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private certificateService: CertificateService, private dialog: MatDialog, private snackBar: MatSnackBar) {}
+  constructor(private certificateService: CertificateService, private dialog: MatDialog, private snackBar: MatSnackBar, private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
+    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
+      this.router.navigate(['/welcome-page']);
     this.certificateService.getAll().subscribe((res) => {
       for(let i = 0; i<res.totalCount; i++) {
         res.results[i]._id = i+1;
@@ -37,6 +42,11 @@ export class CertificateComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   applyFilter(event: Event) {
@@ -86,5 +96,20 @@ export class CertificateComponent implements OnInit {
     this.snackBar.open(snackMsg, "Dismiss", {
       duration: 2000
     });
+  }
+
+  openWithdrawalDialog() : void {
+    if (this.selectedRowIndex === -1) {
+      this.openSnackBar("Certificate not selected!");
+      return;
+    }
+
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = this.certificate;
+    
+    this.dialog.open(WithdrawalReasonComponent, dialogConfig);
   }
 }
