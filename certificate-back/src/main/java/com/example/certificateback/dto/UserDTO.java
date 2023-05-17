@@ -16,6 +16,7 @@ public class UserDTO {
 
     private String password;
     private String email;
+    private String verification;
 
     public UserDTO(User dto){
         this.country = dto.getCountry();

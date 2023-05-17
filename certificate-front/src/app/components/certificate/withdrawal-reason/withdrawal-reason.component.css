@@ -1,0 +1,47 @@
+.container {
+    width: 400px;
+}
+
+#title {
+    margin-top: 1%;
+    margin-left: 10%;
+    font-weight: bold;
+    font-size: x-large;
+    width: 350px;
+    padding: 2px;
+}
+
+#close-dialog {
+    float: right;
+    width: 20px;
+    height: 20px;
+  }
+  
+.close:hover{
+    background-color: rgb(243, 237, 237);
+    cursor: pointer;
+}
+
+mat-form-field {
+    margin-top: 2em;
+    margin-left: 18%;
+    width: 250px;
+}
+
+#withdraw {
+    width: 50%;
+    height: 2em;
+    vertical-align: top;
+    margin-top: 15px;
+    color: gray;
+    border-radius: 5px;
+    border: none;
+    font-size: larger;
+    margin-left: 24%;
+    margin-bottom: 4%;
+}
+
+#withdraw:hover{
+    background-color: rgba(233, 233, 233, 1);
+    cursor: pointer;
+}

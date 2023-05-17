@@ -10,8 +10,6 @@ import lombok.*;
 import java.util.Date;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CertificateDTO {
@@ -22,8 +20,6 @@ public class CertificateDTO {
 
     private String validFrom;
 
-    private String issueDate;
-
     private UserDTO subject;
 
     private boolean isWithdrawn;
@@ -32,22 +28,26 @@ public class CertificateDTO {
 
     private String serialNumber;
 
+    private String issuerSerialNumber;
+
     public CertificateDTO(Certificate certificate) {
         this.certificateType = certificate.getCertificateType().toString();
         this.validTo = certificate.getValidTo().toString();
         this.validFrom = certificate.getValidFrom().toString();
-        this.issueDate =  certificate.getIssue_date().toString();
         this.subject = new UserDTO(certificate.getSubject());
         this.isWithdrawn = certificate.isWithdrawn();
         this.withdrawnReason = certificate.getWithdrawnReason();
         this.serialNumber = certificate.getSerialNumber();
+        this.issuerSerialNumber = certificate.getIssuerSerialNumber();
     }
 
     // response
-    public CertificateDTO(Date issueDate, User user, CertificateType type, String serialNum) {
-        this.issueDate =  issueDate.toString();
+    public CertificateDTO(Date validTo, Date validFrom, User user, CertificateType type, String serialNum) {
+        this.validTo = validTo.toString();
+        this.validFrom =  validFrom.toString();
         this.subject = new UserDTO(user);
         this.certificateType = type.toString();
         this.serialNumber = serialNum;
     }
+
 }

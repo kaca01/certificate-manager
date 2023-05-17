@@ -13,7 +13,7 @@ import { CertificateRequestComponent } from './components/certificate-request/ce
 import { AuthService } from './service/auth.service';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { TokenInterceptor } from './components/interceptor/TokenInterceptor';
+import { TokenInterceptor } from './components/interceptor/tokenInterceptor';
 import { ApiService } from './service/api.service';
 import { UserService } from './service/user.service';
 import { ConfigService } from './service/config.service';
@@ -21,6 +21,12 @@ import { CertificateService } from './service/certificate.service';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { RequestsComponent } from './components/requests/requests.component';
+import { WithdrawalReasonComponent } from './components/certificate/withdrawal-reason/withdrawal-reason.component';
+import { ActivationComponent } from './components/registration/activation/activation/activation.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { FileUploadDialogComponent } from './components/certificate/file-upload-dialog/file-upload-dialog.component';
+import { AddReasonDialogComponent } from './components/requests/add-reason-dialog/add-reason-dialog.component';
+import { HistoryComponent } from './components/history/history.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +38,12 @@ import { RequestsComponent } from './components/requests/requests.component';
     NavigationComponent,
     RegistrationComponent,
     RequestsComponent,
+    WithdrawalReasonComponent,
+    ActivationComponent,
+    ResetPasswordComponent,
+    FileUploadDialogComponent,
+    AddReasonDialogComponent,
+    HistoryComponent,
   ],
   imports: [
     FormsModule,

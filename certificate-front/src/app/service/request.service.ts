@@ -1,85 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Request } from 'src/app/domains';
-
-const REQUESTS = [
-  {
-    _id: 1,
-    issuer: "MilicaBojic23",
-    type: "INTERMEDIATE",
-    status: "ACTIVE",
-    subject: {
-      _id: 1,
-      name: "Jovana",
-      surname: "Gordanic",
-      email: "joca@gmail.com",
-      country: "Siberia",
-      phone: "+381672233"
-    },
-    refusalReason: "",
-  },
-  {
-    _id: 2,
-    issuer: "MilicaBojic33",
-    type: "ROOT",
-    status: "ACTIVE",
-    subject: {
-      _id: 2,
-      name: "Stefanija",
-      surname: "Djuric",
-      email: "stefanka@gmail.com",
-      country: "Mongolia",
-      phone: "+381672233"
-    },
-    refusalReason: "",
-  },
-  {
-    _id: 3,
-    issuer: "MilicaBojic44",
-    type: "INTERMEDIATE",
-    status: "REFUSED",
-    subject: {
-      _id: 3,
-      name: "Milunka",
-      surname: "Jaksic",
-      email: "mili@gmail.com",
-      country: "Nigeria",
-      phone: "+381672233"
-    },
-    refusalReason: "User was spaming",
-  },
-  {
-    _id: 4,
-    issuer: "MilicaBojic55",
-    type: "END",
-    status: "ACCEPTED",
-    subject: {
-      _id: 4,
-      name: "Miki",
-      surname: "Mikic",
-      email: "miki@gmail.com",
-      country: "Russia",
-      phone: "+381672233"
-    },
-    refusalReason: "",
-  },
-  {
-    _id: 5,
-    issuer: "MilicaBojic18",
-    type: "END",
-    status: "REFUSED",
-    subject: {
-      _id: 5,
-      name: "Aco",
-      surname: "Acic",
-      email: "acke@gmail.com",
-      country: "Angola",
-      phone: "+381672233"
-    },
-    refusalReason: "User was spaming",
-  }
-];
-
+import { BehaviorSubject, Observable } from 'rxjs';
+import { AllRequests, Certificate, CertificateRequest } from 'src/app/domains';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -88,27 +11,25 @@ export class RequestService {
   private value$ = new BehaviorSubject<any>({});
   selectedValue$ = this.value$.asObservable();
 
-  private requestsList: Request[] = [];
+  constructor(private http: HttpClient) { }
 
-  constructor() { 
-    for (let req of REQUESTS) {
-      const request: any = {
-        _id: req._id,
-        issuer: req.issuer,
-        type: req.type,
-        status: req.status,
-        subject: req.subject.name + " " + req.subject.surname,
-        refusalReason: req.refusalReason,
-      };
-      this.requestsList.push(request);
-    }
+  getUserRequests(): Observable<AllRequests> {
+    return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/user');
   }
   
-    getAllRequests(): Request[] {
-      return this.requestsList;
-    }
+  getAllRequests(): Observable<AllRequests> {
+    return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/admin');
+  }
 
-    add(req: any): void {
-      this.requestsList.push(req);
-    }
+  getRequestsBasedOnIssuer(): Observable<AllRequests> {
+    return this.http.get<AllRequests>(environment.apiHost + 'api/certificate-request/issuer');
+  }
+
+  accept(id: number): Observable<Certificate> {
+    return this.http.put<Certificate>(environment.apiHost + 'api/certificate-request/accept/' + id.toString(), {});
+  }
+
+  refuse(id: number, reason: any): Observable<CertificateRequest> {
+    return this.http.put<CertificateRequest>(environment.apiHost + 'api/certificate-request/refuse/' + id.toString(), reason);
+  }
 }
