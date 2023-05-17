@@ -1,8 +1,6 @@
 package com.example.certificateback.controller;
 
 import com.example.certificateback.dto.AllDTO;
-import com.example.certificateback.dto.CertificateRequestDTO;
-import com.example.certificateback.dto.DownloadDTO;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.service.interfaces.ICertificateService;
@@ -81,17 +79,17 @@ public class CertificateController {
         return new ResponseEntity<>(certificateService.invalidate(serialNumber, withdrawnReason), HttpStatus.OK);
     }
 
-    @PutMapping(value = "downloadCert", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "downloadCert/{serialNumber}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<?> downloadCertificate(@RequestBody DownloadDTO dto) {
-        certificateService.downloadCertificate(dto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> downloadCertificate(@PathVariable String serialNumber) {
+        ByteArrayResource file = certificateService.downloadCertificate(serialNumber);
+        return new ResponseEntity<>(file, HttpStatus.OK);
     }
 
-    @PutMapping(value = "downloadPk", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "downloadPk/{serialNumber}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<?> downloadPrivateKey(@RequestBody DownloadDTO dto) {
-        certificateService.downloadPrivateKey(dto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> downloadPrivateKey(@PathVariable String serialNumber) {
+        ByteArrayResource file = certificateService.downloadPrivateKey(serialNumber);
+        return new ResponseEntity<>(file, HttpStatus.OK);
     }
 }

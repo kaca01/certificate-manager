@@ -19,7 +19,7 @@ import { WithdrawalReasonComponent } from './withdrawal-reason/withdrawal-reason
 })
 export class CertificateComponent implements OnInit {
   selectedRowIndex : number = -1;
-  displayedColumns: string[] = ['serial number', 'subject', 'valid from', 'valid to', 'type', 'download'];
+  displayedColumns: string[] = ['serial number', 'subject', 'valid from', 'valid to', 'type'];
   dataSource!: MatTableDataSource<Certificate>;
 
   certificates: Certificate[] = [];
@@ -111,5 +111,47 @@ export class CertificateComponent implements OnInit {
     dialogConfig.data = this.certificate;
     
     this.dialog.open(WithdrawalReasonComponent, dialogConfig);
+  }
+
+  downloadPrivateKey() : void {
+    if (this.selectedRowIndex === -1) {
+      this.openSnackBar("Certificate not selected!");
+      return;
+    }
+
+    this.certificateService.downloadPk(this.certificate.serialNumber).subscribe((res) => {
+      const blob = new Blob([res], {type: 'application/octet-stream'});
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = this.certificate.serialNumber + '.p12';
+      link.dispatchEvent(new MouseEvent('click'));
+    },
+    (error) => {               
+      this.openSnackBar("You are not owner of this certificate!");
+      }
+    );
+
+  }
+
+  downloadCertificate() : void {
+    if (this.selectedRowIndex === -1) {
+      this.openSnackBar("Certificate not selected!");
+      return;
+    }
+
+    this.certificateService.downloadCert(this.certificate.serialNumber).subscribe((res) => {
+        const blob = new Blob([res], {type: 'application/octet-stream'});
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = this.certificate.serialNumber + '.cer';
+        link.dispatchEvent(new MouseEvent('click'));
+    },
+    (error) => {                 
+      this.openSnackBar("Some error ocurred");
+      }
+    );
+
   }
 }

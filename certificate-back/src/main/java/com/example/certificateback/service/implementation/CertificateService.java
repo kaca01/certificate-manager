@@ -8,14 +8,15 @@ import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.enumeration.RequestType;
 import com.example.certificateback.exception.BadRequestException;
-import com.example.certificateback.dto.DownloadDTO;
 import com.example.certificateback.exception.NotFoundException;
+import com.example.certificateback.exception.WrongUserException;
 import com.example.certificateback.repository.ICertificateRepository;
 import com.example.certificateback.repository.ICertificateRequestRepository;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.ICertificateService;
 import com.example.certificateback.util.KeyStoreReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,15 @@ public class CertificateService implements ICertificateService {
 
     @Autowired
     ICertificateRequestRepository certificateRequestRepository;
+
+    private User getLoggedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) throw new NotFoundException("User not found!");
+        //List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
+        return user;
+    }
 
     @Override
     public List<CertificateDTO> getAllCertificates() {
@@ -144,38 +154,32 @@ public class CertificateService implements ICertificateService {
     }
 
     @Override
-    public void downloadCertificate(DownloadDTO dto) {
-        certificateRepository.findBySerialNumber(dto.getSerialNumber()).orElseThrow(()
+    public ByteArrayResource downloadCertificate(String serialNumber) {
+        certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
                 -> new NotFoundException("Certificate with that serial number does not exist"));
 
-        java.security.cert.Certificate cert = KeyStoreReader.readCertificate(dto.getSerialNumber());
+        java.security.cert.Certificate cert = KeyStoreReader.readCertificate(serialNumber);
 
-        FileOutputStream fos;
         try {
-            fos = new FileOutputStream(dto.getPath() + "certificate.cer");
             assert cert != null;
-            fos.write(cert.getEncoded());
-            fos.close();
-        } catch (CertificateEncodingException | IOException e) {
+            return new ByteArrayResource(cert.getEncoded());
+        } catch (CertificateEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void downloadPrivateKey(DownloadDTO dto) {
-        certificateRepository.findBySerialNumber(dto.getSerialNumber()).orElseThrow(()
+    public ByteArrayResource downloadPrivateKey(String serialNumber) {
+        Certificate cert = certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
                 -> new NotFoundException("Certificate with that serial number does not exist"));
 
-        PrivateKey pk = KeyStoreReader.readPrivateKey(dto.getSerialNumber(), KeyStoreConstants.ENTRY_PASSWORD);
+        if( !getLoggedUser().getEmail().equals(cert.getSubject().getEmail())
+                && getLoggedUser().getRoles().get(0).getName().equals("ROLE_USER"))
+            throw  new WrongUserException("You are not owner of this certificate!");
 
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(dto.getPath() + "privateKey.p12");
-            assert pk != null;
-            fos.write(pk.getEncoded());
-            fos.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        PrivateKey pk = KeyStoreReader.readPrivateKey(serialNumber, KeyStoreConstants.ENTRY_PASSWORD);
+
+        assert pk != null;
+        return new ByteArrayResource(pk.getEncoded());
     }
 }

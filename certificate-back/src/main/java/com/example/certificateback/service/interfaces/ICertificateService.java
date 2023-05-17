@@ -1,9 +1,7 @@
 package com.example.certificateback.service.interfaces;
 
-import com.example.certificateback.domain.Certificate;
 import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
-import com.example.certificateback.dto.DownloadDTO;
 import org.springframework.core.io.ByteArrayResource;
 
 import java.util.List;
@@ -20,7 +18,7 @@ public interface ICertificateService {
 
     CertificateDTO invalidate(String serialNumber, String withdrawnReason);
     
-    void downloadCertificate(DownloadDTO dto);
+    ByteArrayResource downloadCertificate(String seralNumber);
 
-    void downloadPrivateKey(DownloadDTO dto);
+    ByteArrayResource downloadPrivateKey(String serialNumber);
 }
