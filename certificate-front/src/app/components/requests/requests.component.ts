@@ -17,7 +17,7 @@ import { AddReasonDialogComponent } from './add-reason-dialog/add-reason-dialog.
 })
 export class RequestsComponent implements OnInit {
   selectedRowIndex : number = -1;
-  displayedColumns: string[] = ['issuer', 'subject', 'type', 'status'];
+  displayedColumns: string[] = ['date', 'issuer', 'subject', 'type', 'status'];
   dataSource!: MatTableDataSource<CertificateRequest>;
   valueFromCreateComponent = '';
 

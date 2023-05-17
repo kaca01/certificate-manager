@@ -20,11 +20,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.cert.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
-import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,6 +73,23 @@ public class CertificateService implements ICertificateService {
             return certificate.isValid() && !certificate.isWithdrawn();
 
         return false;
+    }
+
+    @Override
+    public Boolean isValidByCopy(byte[] file) {
+        Boolean isValid;
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(file);
+            X509Certificate certificate = (X509Certificate) cf.generateCertificate(inputStream);
+
+            certificate.checkValidity();
+            isValid = checkingValidation(certificate.getSerialNumber().toString());
+            inputStream.close();
+        } catch (CertificateException | IOException e) {
+            throw new BadRequestException("Error occurred, please check file type and try again!");
+        }
+        return isValid;
     }
 
     @Override

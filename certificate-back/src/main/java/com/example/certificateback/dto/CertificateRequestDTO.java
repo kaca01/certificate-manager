@@ -5,6 +5,9 @@ import com.example.certificateback.domain.User;
 import com.example.certificateback.enumeration.CertificateType;
 import lombok.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 @Data
 @Getter
 @Setter
@@ -13,6 +16,9 @@ import lombok.*;
 public class CertificateRequestDTO {
 
     private Long id;
+  
+    private String date;
+
     private String requestType;
 
     private String issuer;  // serial number of certificate
@@ -25,6 +31,8 @@ public class CertificateRequestDTO {
 
     public CertificateRequestDTO(CertificateRequest request) {
         this.id = request.getId();
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        this.date = format.format(request.getDate());
         this.requestType = request.getRequestType().toString();
         if (request.getCertificateType() != CertificateType.ROOT)
             this.issuer = request.getIssuer().getSerialNumber();

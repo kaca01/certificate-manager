@@ -9,6 +9,7 @@ import { CertificateRequestComponent } from '../certificate-request/certificate-
 import { UserService } from 'src/app/service/user.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { FileUploadDialogComponent } from './file-upload-dialog/file-upload-dialog.component';
 import { WithdrawalReasonComponent } from './withdrawal-reason/withdrawal-reason.component';
 
 @Component({
@@ -60,6 +61,15 @@ export class CertificateComponent implements OnInit {
     dialogConfig.autoFocus = true;
     
     this.dialog.open(CertificateRequestComponent, dialogConfig);
+  }
+
+  openFileUploadDialog() : void {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    
+    this.dialog.open(FileUploadDialogComponent, dialogConfig);
   }
 
   getCertificate(cer : Certificate) {

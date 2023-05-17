@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Certificate, AllCertificate } from '../domains';
@@ -28,8 +28,16 @@ export class CertificateService {
     return this.http.get<boolean>(environment.apiHost + 'api/certificates/verify/' + serialNumber);
   }
 
+  checkValidityByCopy(file: Int8Array): Observable<boolean> {
+    const headers = new HttpHeaders()
+    .set('Content-Type', 'application/json;charset=utf-8');
+    let bytes = file.toString();
+    return this.http.post<boolean>(environment.apiHost + 'api/certificates/verify/copy', bytes);
+
+  }
+
   invalidate(serialNumber: string, refusalReason: string) : Observable<Certificate> {
-    if (refusalReason === "") refusalReason = " ";
-    return this.http.put<Certificate>(environment.apiHost + 'api/certificates/invalidate/' + serialNumber, refusalReason);
+      if (refusalReason === "") refusalReason = " ";
+      return this.http.put<Certificate>(environment.apiHost + 'api/certificates/invalidate/' + serialNumber, refusalReason);
   }
 }

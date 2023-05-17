@@ -14,6 +14,8 @@ public interface ICertificateService {
 
     Boolean checkingValidation(String serialNumber);
 
+    Boolean isValidByCopy(byte[] file);
+
     AllDTO<CertificateDTO> getIssuers();
 
     CertificateDTO invalidate(String serialNumber, String withdrawnReason);

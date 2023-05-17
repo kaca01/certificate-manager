@@ -46,6 +46,28 @@ public class CertificateController {
         return certificateService.checkingValidation(serialNumber);
     }
 
+    // here is not get method because, in angular, http get method does not support request body
+    @PostMapping(value = "/verify/copy")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Boolean isCertificateValidByCopy(@RequestBody String file) {
+        String[] parts = file.split(",");
+
+        byte[] byteArray = new byte[parts.length];
+
+        for (int i = 0; i < parts.length; i++) {
+            int intValue = Integer.parseInt(parts[i]);
+
+            // Perform range check
+            if (intValue < Byte.MIN_VALUE || intValue > Byte.MAX_VALUE) {
+                throw new IllegalArgumentException("Value out of range: " + intValue);
+            }
+
+            byteArray[i] = (byte) intValue;
+        }
+
+        return certificateService.isValidByCopy(byteArray);
+    }
+
     @GetMapping("/issuers")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<AllDTO<CertificateDTO>> getIssuers() {
