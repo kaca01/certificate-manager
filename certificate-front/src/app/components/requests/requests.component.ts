@@ -14,7 +14,7 @@ import { UserService } from 'src/app/service/user.service';
 })
 export class RequestsComponent implements OnInit {
   selectedRowIndex : number = -1;
-  displayedColumns: string[] = ['id', 'date', 'issuer', 'subject', 'type', 'status'];
+  displayedColumns: string[] = ['date', 'issuer', 'subject', 'type', 'status'];
   dataSource!: MatTableDataSource<CertificateRequest>;
   valueFromCreateComponent = '';
 
