@@ -30,9 +30,6 @@ export class HistoryComponent implements OnInit {
   constructor(private router: Router, private requestService: RequestService, private userService: UserService) { }
 
   ngOnInit(): void {
-    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
-    this.router.navigate(['/welcome-page']);
-
     this.whoIsUser();
 
     if(this.user === "user") {
@@ -57,6 +54,8 @@ export class HistoryComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       });
+    } else{
+      this.router.navigate(["welcome-page"]);
     }
   }
 

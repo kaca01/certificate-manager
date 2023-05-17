@@ -30,8 +30,6 @@ export class CertificateComponent implements OnInit {
   constructor(private certificateService: CertificateService, private dialog: MatDialog, private snackBar: MatSnackBar, private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
-    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
-      this.router.navigate(['/welcome-page']);
     this.certificateService.getAll().subscribe((res) => {
       for(let i = 0; i<res.totalCount; i++) {
         res.results[i]._id = i+1;
