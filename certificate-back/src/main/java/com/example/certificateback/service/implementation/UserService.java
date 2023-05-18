@@ -20,7 +20,6 @@ import com.example.certificateback.repository.*;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
-import com.twilio.rest.verify.v2.service.VerificationCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -57,10 +56,6 @@ public class UserService implements IUserService, UserDetailsService {
 	IResetPasswordRepository resetPasswordRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
-	@Autowired
-	private RoleService roleService;
-
 	@Autowired
 	private JavaMailSender mailSender;
 
@@ -147,7 +142,7 @@ public class UserService implements IUserService, UserDetailsService {
 	public void sendResetEmail(String email) throws UnsupportedEncodingException, javax.mail.MessagingException {
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
 		// change toAddress
-		String toAddress = "hristinacina@gmail.com";
+		String toAddress = "anastasijas557@gmail.com";
 		String fromAddress = "anastasijas557@gmail.com";
 		String senderName = "Certificate Manager Support";
 		String subject = "Reset Your Password";
@@ -188,6 +183,8 @@ public class UserService implements IUserService, UserDetailsService {
 		if(!resetPasswordDTO.getCode().equals(resetPassword.getCode()) || expiredDate.before(new Date()))
 			throw new BadRequestException("Code is expired or not correct!");
 
+		this.isPreviousPassword(user, resetPasswordDTO.getNewPassword());
+
 		Password password = passwordRepository.save(new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword())));
 		user.getPasswords().add(password);
 		userRepository.save(user);
@@ -201,7 +198,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 		Verification.creator(
 						"VAca2e1d4eb5f1ba4be26dc368c51754af", // this is your verification sid
-						"+381612325345", // recipient phone number
+						"+381621164208", // recipient phone number
 						"sms") // this is your channel type
 				.create();
 
@@ -236,14 +233,16 @@ public class UserService implements IUserService, UserDetailsService {
 		try {
 			VerificationCheck verificationCheck = VerificationCheck.creator(
 							"VAca2e1d4eb5f1ba4be26dc368c51754af") // pass verification SID here
-					.setTo("+381612325345")
+					.setTo("+381621164208")
 					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
 					.create();
 
 			System.out.println(verificationCheck.getStatus());
 
-			if(!verificationCheck.getStatus().equals("approved"))
+			if (!verificationCheck.getStatus().equals("approved"))
 				throw new BadRequestException("Code is expired or not correct!");
+
+			this.isPreviousPassword(user, resetPasswordDTO.getNewPassword());
 
 			Password password = passwordRepository.save(new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword())));
 			user.getPasswords().add(password);
@@ -284,6 +283,14 @@ public class UserService implements IUserService, UserDetailsService {
 		helper.setText(content, true);
 
 		mailSender.send(message);
+	}
+
+	private void isPreviousPassword(User user, String password) {
+		for (Password p: user.getPasswords()) {
+			System.out.println(passwordEncoder.matches(password, p.getPassword()));
+			if(passwordEncoder.matches(password, p.getPassword()))
+				throw new BadRequestException("Password must be unique!");
+		}
 	}
 	
 	private void saveResetPassword(User user, String code) {

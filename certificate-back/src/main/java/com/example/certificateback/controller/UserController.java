@@ -121,7 +121,7 @@ public class UserController {
     }
 
     @PutMapping("/{phone}/sendSMS")
-    public ResponseEntity<?> checkSMS(@PathVariable String phone, @RequestBody ResetPasswordDTO resetPasswordDTO) throws Exception {
+    public ResponseEntity<?> checkSMS(@PathVariable String phone, @RequestBody ResetPasswordDTO resetPasswordDTO) {
         service.checkSMS(phone, resetPasswordDTO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpErrorResponse } from "@angular/common/http";
-import { AbstractControl, AbstractControlOptions, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router'; 
 import { ResetPassword } from 'src/app/domains';
@@ -101,7 +101,6 @@ export class ResetPasswordComponent {
 
           console.log(this.email)
           if(this.email.includes('@')) {
-            console.log('proslo prvo')
             this.userService.resetPasswordViaEmail(this.email, this.resetPassword).subscribe(
               () => {
               this.openSnackBar("Successfully reset password!");
@@ -115,7 +114,6 @@ export class ResetPasswordComponent {
           }
             
           else {
-            console.log('proslo drugo')
             this.userService.resetPasswordViaSMS(this.email, this.resetPassword).subscribe(
               () => {
               this.openSnackBar("Successfully reset password!");
