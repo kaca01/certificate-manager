@@ -10,11 +10,11 @@ insert into restapi.user (email, name, surname, phone, country, enabled) values
 insert into restapi.password (password, last_password_reset_date, user_id) values
     ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-01-01T12:33:24.893', 1);
 insert into restapi.password (password, last_password_reset_date, user_id) values
-    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-01-01T12:33:24.893', 2);
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-05-01T12:33:24.893', 2);
 insert into restapi.password (password, last_password_reset_date, user_id) values
-    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-01-01T12:33:24.893', 3);
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-05-01T12:33:24.893', 3);
 insert into restapi.password (password, last_password_reset_date, user_id) values
-    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-01-01T12:33:24.893', 4);
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-05-01T12:33:24.893', 4);
 
 insert into restapi.role (name) values ('ROLE_USER');
 insert into restapi.role (name) values ('ROLE_ADMIN');
