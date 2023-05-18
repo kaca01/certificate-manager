@@ -70,9 +70,6 @@ export class ResetPasswordComponent {
         this.userService.sendEmail(this.email).subscribe((res:any) => {
           this.openSnackBar("A verification code has been sent to your email!");
           this.checkEmail();
-        },
-          (error: HttpErrorResponse) => {
-            this.openSnackBar(error.error);
         })
       }
       else {
@@ -80,9 +77,6 @@ export class ResetPasswordComponent {
         this.userService.sendSMS(this.email).subscribe((res:any) => {
           this.openSnackBar("A verification code has been sent to your mobile!");
           this.checkEmail();
-        },
-          (error: HttpErrorResponse) => {
-            this.openSnackBar(error.error);
         })
       }
     }
