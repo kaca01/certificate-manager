@@ -33,8 +33,11 @@ export class ResetPasswordComponent {
   resetPassword = {} as ResetPassword;
   email: string = "";
 
-  constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router,
-     private authService: AuthService) { }
+  expiredPassword: boolean = false;
+
+  constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router, private authService: AuthService) {
+    this.expiredPassword = userService.isExpiredPassword();
+  }
 
   first() : boolean {
     if(this.resetPasswordForm.get('newPassword')!.value !== this.resetPasswordForm.get('firstRepetedPassword')!.value) 

@@ -43,8 +43,14 @@ export class LoginComponent implements OnInit {
         },
     error => {
       console.log(error);
-      this.submitted = false;
-      this.notification = {msgType: 'error', msgBody: 'Incorrect username or password'};
+      if(error.error['message'] == "Password has expired!") {
+        this.userService.setExpiredPassword(true);
+        this.router.navigate(['/reset-password']);
+      }
+      else {
+        this.submitted = false;
+        this.notification = {msgType: 'error', msgBody: 'Incorrect username or password'};
+      }
     });
   } 
 
