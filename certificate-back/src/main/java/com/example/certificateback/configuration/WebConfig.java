@@ -19,14 +19,14 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**").allowedOrigins("http://localhost:4200");
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new HandlerInterceptorAdapter() {
-            @Override
-            public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-                response.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-                return true;
-            }
-        });
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(new HandlerInterceptorAdapter() {
+//            @Override
+//            public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+//                response.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+//                return true;
+//            }
+//        });
+//    }
 }
