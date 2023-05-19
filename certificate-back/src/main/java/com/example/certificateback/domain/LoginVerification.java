@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Random;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,15 +21,20 @@ public class LoginVerification {
     @OneToOne(fetch = FetchType.EAGER)
     private User user;
 
-    @Column(name = "expired_date", nullable = false)
-    private Date expiredDate;
+    @Column(name = "date", nullable = false)
+    private Date date;
+
+    @Column(name = "life", nullable = false)
+    private int life;
 
     @Column(name = "code")
     private String code;
 
-    public LoginVerification(User user, Date expiredDate, String code) {
+    public LoginVerification(User user) {
+        int number = new Random().nextInt(999999);
+        this.code = String.format("%06d", number);
         this.user = user;
-        this.expiredDate = expiredDate;
-        this.code = code;
+        this.date = new Date();
+        this.life = 180;
     }
 }

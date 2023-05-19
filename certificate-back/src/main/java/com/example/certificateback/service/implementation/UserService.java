@@ -5,6 +5,7 @@ import com.example.certificateback.domain.Role;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.domain.UserActivation;
 import com.example.certificateback.dto.ErrorDTO;
+import com.example.certificateback.dto.LoginDTO;
 import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.exception.NotFoundException;
@@ -55,6 +56,8 @@ public class UserService implements IUserService, UserDetailsService {
 	private IRoleRepository roleRepository;
 	@Autowired
 	IResetPasswordRepository resetPasswordRepository;
+	@Autowired
+	ILoginVerificationRepository loginVerificationRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -209,24 +212,6 @@ public class UserService implements IUserService, UserDetailsService {
 		saveResetPassword(user, null);
 	}
 
-	private void sendActivationSMS(UserActivation activation) {
-		User user = userRepository.findByPhone(activation.getUser().getPhone())
-				.orElseThrow(() -> new NotFoundException("User does not exist!"));
-
-		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID_2"), System.getenv("TWILIO_AUTH_TOKEN_2"));
-
-		String text = "Hello [[name]], thank you for joining us!\n"
-				+ "To activate your account please follow this link: "
-				+ "http://localhost:4200/activation/[[id]]'\n"
-				+ "The Certificate Manager team.";
-
-		text = text.replace("[[name]]", user.getName());
-		text = text.replace("[[id]]", activation.getId().toString());
-
-		Message.creator(new PhoneNumber("+381612325345"),
-				new PhoneNumber("+12708131194"), text).create();
-	}
-
 	@Override
 	public void checkSMS(String phone, ResetPasswordDTO resetPasswordDTO) {
 		User user = userRepository.findByPhone(phone).orElseThrow(() -> new NotFoundException("User does not exist!"));
@@ -255,9 +240,66 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
+	public void checkLogin(LoginDTO loginDTO) {
+		// i treba sacuvati LoginVerification u bazu
+		User user = userRepository.findByEmail(loginDTO.getEmail()).get();
+		LoginVerification loginVerification = loginVerificationRepository.save(new LoginVerification(user));
+		if(loginDTO.getVerification().equals("email")){
+			try {
+				sendLoginEmail(loginVerification);
+			} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
+				throw new RuntimeException(e);
+			}
+		} else{
+			sendLoginSMS(loginVerification);
+		}
+	}
+
+	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		return this.userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException(String.format("User with email '%s' is not found!", email)));
+	}
+
+	private void sendLoginSMS(LoginVerification verification) {
+		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID_2"), System.getenv("TWILIO_AUTH_TOKEN_2"));
+
+		String text = "Hello [[name]], !\n"
+				+ "Your login verification code is: \n "
+				+ "[[code]]'\n"
+				+ "Thank you, \n"
+				+ "Your Certificate Manager Team.";
+
+		text = text.replace("[[name]]", verification.getUser().getName()) + " " + verification.getUser().getSurname();
+		text = text.replace("[[code]]", verification.getCode());
+
+		Message.creator(new PhoneNumber("+381612325345"),
+				new PhoneNumber("+12708131194"), text).create();
+	}
+
+	private void sendLoginEmail(LoginVerification verification) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
+		String toAddress = verification.getUser().getEmail();
+		String fromAddress = "anastasijas557@gmail.com";
+		String senderName = "CM app Support";
+		String subject = "Verify login";
+		String content = "Hi [[name]],<br>"
+				+ "Your login verification code is:<br>"
+				+ "<h2>[[code]]</h2>"
+				+ "Thank you,<br>"
+				+ "Your Certificate Manager Team.";
+
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
+
+		helper.setFrom(fromAddress, senderName);
+		helper.setTo(toAddress);
+		helper.setSubject(subject);
+
+		content = content.replace("[[name]]", verification.getUser().getName() + " " + verification.getUser().getSurname());
+		content = content.replace("[[code]]", verification.getCode());
+		helper.setText(content, true);
+
+		mailSender.send(message);
 	}
 
 	private void sendActivationEmail(UserActivation activation) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
@@ -284,6 +326,24 @@ public class UserService implements IUserService, UserDetailsService {
 		helper.setText(content, true);
 
 		mailSender.send(message);
+	}
+
+	private void sendActivationSMS(UserActivation activation) {
+		User user = userRepository.findByPhone(activation.getUser().getPhone())
+				.orElseThrow(() -> new NotFoundException("User does not exist!"));
+
+		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID_2"), System.getenv("TWILIO_AUTH_TOKEN_2"));
+
+		String text = "Hello [[name]], thank you for joining us!\n"
+				+ "To activate your account please follow this link: "
+				+ "http://localhost:4200/activation/[[id]]'\n"
+				+ "The Certificate Manager team.";
+
+		text = text.replace("[[name]]", user.getName());
+		text = text.replace("[[id]]", activation.getId().toString());
+
+		Message.creator(new PhoneNumber("+381612325345"),
+				new PhoneNumber("+12708131194"), text).create();
 	}
 	
 	private void saveResetPassword(User user, String code) {

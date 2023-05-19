@@ -53,12 +53,12 @@ public class UserController {
 
     @PostMapping(value = "/checkLogin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> checkLogin(@RequestBody LoginDTO loginDTO) {
-        User check = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
-        if(!check.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), check.getPassword()))
+        User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
+        if(!user.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
             throw new BadRequestException("Wrong username or password!");
 
-        //todo pozvati servis gdje na osnovu verification tipa saljemo ili mail ili poruku
-        // i treba sacuvati LoginVerification u bazu
+        service.checkLogin(loginDTO);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

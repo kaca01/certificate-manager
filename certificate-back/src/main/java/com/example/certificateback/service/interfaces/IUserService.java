@@ -2,6 +2,7 @@ package com.example.certificateback.service.interfaces;
 
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.ErrorDTO;
+import com.example.certificateback.dto.LoginDTO;
 import com.example.certificateback.dto.ResetPasswordDTO;
 import com.example.certificateback.dto.UserDTO;
 
@@ -19,4 +20,6 @@ public interface IUserService {
     void resetEmail(String email, ResetPasswordDTO resetPasswordDTO);
     void sendSMS(String phone);
     void checkSMS(String phone, ResetPasswordDTO resetPasswordDTO);
+
+    void checkLogin(LoginDTO loginDTO);
 }
