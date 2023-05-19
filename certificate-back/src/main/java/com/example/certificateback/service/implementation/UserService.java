@@ -141,9 +141,6 @@ public class UserService implements IUserService, UserDetailsService {
 						"anastasijas557@gmail.com", // recipient email address
 						"email") // this is your channel type
 				.create();
-
-		// the message code is null because there is no need to save it since it is checked automatically
-		saveResetPassword(user);
 	}
 
 	@Override
@@ -179,9 +176,6 @@ public class UserService implements IUserService, UserDetailsService {
 						"+381621164208", // recipient phone number
 						"sms") // this is your channel type
 				.create();
-
-		// the message code is null because there is no need to save it since it is checked automatically
-		saveResetPassword(user);
 	}
 
 	private void sendActivationSMS(UserActivation activation) {
@@ -273,23 +267,6 @@ public class UserService implements IUserService, UserDetailsService {
 			if(passwordEncoder.matches(password, p.getPassword()))
 				throw new BadRequestException("Password must be unique!");
 		}
-	}
-	
-	private void saveResetPassword(User user) {
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, 7);
-		Date toDate = cal.getTime();
-
-		ResetPassword reset = resetPasswordRepository.findResetPasswordByUserId(user.getId());
-		if(reset == null) {
-			reset = new ResetPassword(user, toDate, null);
-		}
-		else {
-			reset.setExpiredDate(toDate);
-			reset.setCode(null);
-		}
-
-		resetPasswordRepository.save(reset);
 	}
 
 	// This class handles the dynamic data for the template
