@@ -63,23 +63,22 @@ export class ResetPasswordComponent {
   }
 
   sendCode() : void {
+    const phoneRegex = new RegExp('[- +()0-9]+');
+    const emailRegex = new RegExp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
     if(this.emailForm.controls['email'].value != '') {
       this.email = this.emailForm.controls['email']?.value!;
-      if(this.email.includes('@')) {
-        console.log("prvooooooo")
-        this.userService.sendEmail(this.email).subscribe((res:any) => {
-          this.openSnackBar("A verification code has been sent to your email!");
-          this.checkEmail();
-        })
-      }
+      if(!emailRegex.test(this.email) && !phoneRegex.test(this.email))
+        this.openSnackBar("Invalid email/phone format");
       else {
-        console.log("drugooooooooooo")
-        this.userService.sendSMS(this.email).subscribe((res:any) => {
-          this.openSnackBar("A verification code has been sent to your mobile!");
-          this.checkEmail();
-        })
-      }
-    }
+        if(emailRegex.test(this.email)) 
+          this.userService.sendEmail(this.email).subscribe()
+        else 
+          this.userService.sendSMS(this.email).subscribe()
+        this.openSnackBar("A verification code has been sent!");
+        this.checkEmail();
+      }   
+    }      
   }
 
   doResetPassword() : void {
