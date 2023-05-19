@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void { 
     this.authService.logout();
     this.submitted = false;
+    this.radio = 'email';
   }
 
   login(): void { 
@@ -43,7 +44,8 @@ export class LoginComponent implements OnInit {
     this.userService.checkLogin(this.loginForm.value, this.radio)
     .subscribe(data => {
         console.log('email/sms successfully sent');
-        this.notification;
+        this.radio = 'email';
+        this.notification = {msgType: '', msgBody: ''};
         this.submitted = true;
         },
     error => {
@@ -68,7 +70,8 @@ export class LoginComponent implements OnInit {
         },
         error => {
           console.log(error);
-          // open snackbar with message Code not valid!  is that ok???
+          this.handleErrors(error);
+          this.submitted = false;
         });
   }
 
@@ -78,6 +81,13 @@ export class LoginComponent implements OnInit {
 
   radioChange(event: MatRadioChange) {
     this.radio = event.value;
+  }
+
+  handleErrors(error: any) {
+    console.log(error);
+    if(error.error.message!= null || error.error.message != undefined)  
+    this.openSnackBar(error.error.message);
+    else this.openSnackBar("Some error occurred");
   }
 
   openSnackBar(snackMsg : string) : void {

@@ -266,11 +266,15 @@ public class UserService implements IUserService, UserDetailsService {
 		LoginVerification verification = loginVerificationRepository.findByUserEmail(loginDTO.getEmail()).
 				orElseThrow(() -> new NotFoundException(String.format("User with email '%s' is not found!", loginDTO.getEmail())));
 
-		if (new Date().before(new Date(verification.getDate().getTime() + verification.getLife()*1000L))) {
-			loginVerificationRepository.delete(verification);
-		} else {
+		if (!new Date().before(new Date(verification.getDate().getTime() + verification.getLife()*1000L))) {
 			loginVerificationRepository.delete(verification);
 			throw new BadRequestException("Verification time expired. Login again!");
+		}
+		else if (!verification.getCode().equals(loginDTO.getVerification())){
+			loginVerificationRepository.delete(verification);
+			throw new BadRequestException("Code not correct. Login again!");
+		}else{
+			loginVerificationRepository.delete(verification);
 		}
 	}
 
