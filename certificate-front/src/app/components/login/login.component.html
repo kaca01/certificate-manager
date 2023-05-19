@@ -1,7 +1,7 @@
 <div class="background">
     <img src="../../assets/images/close.png" id="bg-close-img" class="close" [routerLink]="['/welcome-page']"/>
   
-    <mat-card>
+    <mat-card *ngIf="!submitted">
       <mat-card-content>
 
         <div id="card-header">

@@ -51,11 +51,23 @@ public class UserController {
         return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TokenStateDTO> login(@RequestBody LoginDTO loginDTO) {
+    @PostMapping(value = "/checkLogin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> checkLogin(@RequestBody LoginDTO loginDTO) {
         User check = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
         if(!check.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), check.getPassword()))
             throw new BadRequestException("Wrong username or password!");
+
+        //todo pozvati servis gdje na osnovu verification tipa saljemo ili mail ili poruku
+        // i treba sacuvati LoginVerification u bazu
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //todo check da li ce sa fronta ostati popunjeno loginForm iako je sakriveno
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TokenStateDTO> login(@RequestBody LoginDTO loginDTO) {
+
+        //todo provjeriti code iz verification sa bazom (potraziti kako je Tasija uradila)
+        // todo sta ako promasi kod?
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(), loginDTO.getPassword()));
@@ -70,7 +82,6 @@ public class UserController {
         return new ResponseEntity<>(new TokenStateDTO(access, expiresIn), HttpStatus.OK);
     }
 
-    // todo check if this works
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AllDTO<UserDTO>> getUsers()

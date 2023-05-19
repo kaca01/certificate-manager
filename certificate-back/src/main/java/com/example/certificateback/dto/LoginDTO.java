@@ -1,20 +1,17 @@
 package com.example.certificateback.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 // A DTO for login
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoginDTO {
 
     private String email;
     private String password;
+    private String verification;
 
-    public LoginDTO() {
-        super();
-    }
-
-    public LoginDTO(String email, String password) {
-        this.setEmail(email);
-        this.setPassword(password);
-    }
 }

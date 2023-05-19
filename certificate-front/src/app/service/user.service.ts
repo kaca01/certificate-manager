@@ -28,7 +28,7 @@ export class UserService {
 
   checkLogin(user:any, radio: String) : Observable<any>{
     user.verification = radio;
-    return this.http.post<any>(environment.apiHost + "api/user/login", user);
+    return this.http.post<any>(environment.apiHost + "api/user/checkLogin", user);
   }
 
   login(user:any, code: String) : Observable<any>{
