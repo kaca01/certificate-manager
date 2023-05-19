@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 import { UserService } from 'src/app/service/user.service';
@@ -24,7 +25,7 @@ export class LoginComponent implements OnInit {
 
   radio : String = '';
   code: String = '';
-  constructor(private router : Router, private userService: UserService, private authService: AuthService) {}
+  constructor(private router : Router, private userService: UserService, private authService: AuthService, private _snackBar: MatSnackBar) {}
 
   ngOnInit(): void { 
     this.authService.logout();
@@ -32,12 +33,18 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void { 
-    this.notification;
-    this.submitted = true;
+    console.log('login button pressed');
+
+    if (this.radio == ''){
+      this.openSnackBar("Must select an option for login verification!");
+      return;
+    }
 
     this.userService.checkLogin(this.loginForm.value, this.radio)
     .subscribe(data => {
-        
+        console.log('email/sms successfully sent');
+        this.notification;
+        this.submitted = true;
         },
     error => {
       console.log(error);
@@ -71,6 +78,12 @@ export class LoginComponent implements OnInit {
 
   radioChange(event: MatRadioChange) {
     this.radio = event.value;
+  }
+
+  openSnackBar(snackMsg : string) : void {
+    this._snackBar.open(snackMsg, "Dismiss", {
+      duration: 2000
+    });
   }
 }
 

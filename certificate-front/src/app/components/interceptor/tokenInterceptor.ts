@@ -28,7 +28,8 @@ export class TokenInterceptor implements HttpInterceptor {
         if (error.error instanceof ErrorEvent) {
         } else {
           if (error.status === 401) { 
-            this.openSnackBar("Session expired!");
+            if (localStorage.getItem("jwt"))
+              this.openSnackBar("Session expired!");
             this.router.navigate(['/login']);
           }
         }

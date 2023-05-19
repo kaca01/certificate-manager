@@ -56,7 +56,6 @@
     </mat-card>
 
     <!--email verification-->
-
     <mat-card *ngIf="submitted" id="verification">
       <mat-card-content>
           <div id="verificationHeader">
@@ -64,11 +63,11 @@
           </div>    
     
           <div class="email-input">
-              <p>A verification code has been sent to your {{radio}}</p>
+              <p>A verification code has been sent!</p>
               <mat-form-field class="full-width" appearance="outline">
                   <mat-label>Code</mat-label>
-                  <input type="text" name="verificationCode" matInput #code [(ngModel)]="code" maxlength="6" placeholder="Ex. 941305" required>
-                  <mat-hint align="end">{{code.value.length}}/6</mat-hint>
+                  <input type="text" name="verificationCode" matInput #inputCode [(ngModel)]="code" maxlength="6" placeholder="Ex. 941305" required>
+                  <mat-hint align="end">{{inputCode.value.length}}/6</mat-hint>
               </mat-form-field>
           </div>
           <button mat-raised-button class="reg-btn" id="verify" (click)="confirmLogin()">CONFIRM</button>

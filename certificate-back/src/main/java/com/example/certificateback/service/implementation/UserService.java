@@ -241,7 +241,13 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public void checkLogin(LoginDTO loginDTO) {
-		// i treba sacuvati LoginVerification u bazu
+		//brisanje svih dosadasnjih za korisnika (zato da bi uvijek postojao jedan ili nijedan u bazi)
+		List<LoginVerification>  all = loginVerificationRepository.findAll();
+		for (LoginVerification v : all){
+			if (v.getUser().getEmail().equals(loginDTO.getEmail()))
+				loginVerificationRepository.delete(v);
+		}
+
 		User user = userRepository.findByEmail(loginDTO.getEmail()).get();
 		LoginVerification loginVerification = loginVerificationRepository.save(new LoginVerification(user));
 		if(loginDTO.getVerification().equals("email")){
@@ -256,6 +262,19 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
+	public void confirmLogin(LoginDTO loginDTO) {
+		LoginVerification verification = loginVerificationRepository.findByUserEmail(loginDTO.getEmail()).
+				orElseThrow(() -> new NotFoundException(String.format("User with email '%s' is not found!", loginDTO.getEmail())));
+
+		if (new Date().before(new Date(verification.getDate().getTime() + verification.getLife()*1000L))) {
+			loginVerificationRepository.delete(verification);
+		} else {
+			loginVerificationRepository.delete(verification);
+			throw new BadRequestException("Verification time expired. Login again!");
+		}
+	}
+
+	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		return this.userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException(String.format("User with email '%s' is not found!", email)));
@@ -264,13 +283,13 @@ public class UserService implements IUserService, UserDetailsService {
 	private void sendLoginSMS(LoginVerification verification) {
 		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID_2"), System.getenv("TWILIO_AUTH_TOKEN_2"));
 
-		String text = "Hello [[name]], !\n"
-				+ "Your login verification code is: \n "
-				+ "[[code]]'\n"
+		String text = "Hello [[name]], \n"
+				+ "Your login verification code is:\n "
+				+ "[[code]]\n"
 				+ "Thank you, \n"
 				+ "Your Certificate Manager Team.";
 
-		text = text.replace("[[name]]", verification.getUser().getName()) + " " + verification.getUser().getSurname();
+		text = text.replace("[[name]]", verification.getUser().getName());
 		text = text.replace("[[code]]", verification.getCode());
 
 		Message.creator(new PhoneNumber("+381612325345"),
@@ -278,7 +297,7 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	private void sendLoginEmail(LoginVerification verification) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
-		String toAddress = verification.getUser().getEmail();
+		String toAddress = "hristinacina@gmail.com";
 		String fromAddress = "anastasijas557@gmail.com";
 		String senderName = "CM app Support";
 		String subject = "Verify login";

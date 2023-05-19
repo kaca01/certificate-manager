@@ -22,4 +22,6 @@ public interface IUserService {
     void checkSMS(String phone, ResetPasswordDTO resetPasswordDTO);
 
     void checkLogin(LoginDTO loginDTO);
+
+    void confirmLogin(LoginDTO loginDTO);
 }

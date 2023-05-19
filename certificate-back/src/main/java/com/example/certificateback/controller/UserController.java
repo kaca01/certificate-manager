@@ -1,5 +1,6 @@
 package com.example.certificateback.controller;
 
+import com.example.certificateback.domain.LoginVerification;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 import static com.twilio.example.ValidationExample.ACCOUNT_SID;
@@ -66,7 +68,7 @@ public class UserController {
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TokenStateDTO> login(@RequestBody LoginDTO loginDTO) {
 
-        //todo provjeriti code iz verification sa bazom (potraziti kako je Tasija uradila)
+        service.confirmLogin(loginDTO);
         // todo sta ako promasi kod?
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
