@@ -13,6 +13,8 @@ import com.example.certificateback.repository.IRoleRepository;
 import com.example.certificateback.repository.IUserActivationRepository;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sendgrid.*;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import com.example.certificateback.domain.*;
 import com.example.certificateback.dto.ResetPasswordDTO;
@@ -21,8 +23,6 @@ import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,9 +35,9 @@ import com.twilio.type.PhoneNumber;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+import java.io.IOException;
 
 import static com.twilio.example.ValidationExample.ACCOUNT_SID;
 import static com.twilio.example.ValidationExample.AUTH_TOKEN;
@@ -56,8 +56,6 @@ public class UserService implements IUserService, UserDetailsService {
 	IResetPasswordRepository resetPasswordRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	@Autowired
-	private JavaMailSender mailSender;
 
 	@Override
 	public User findByEmail(String email) throws UsernameNotFoundException {
@@ -145,7 +143,7 @@ public class UserService implements IUserService, UserDetailsService {
 				.create();
 
 		// the message code is null because there is no need to save it since it is checked automatically
-		saveResetPassword(user, null);
+		saveResetPassword(user);
 	}
 
 	@Override
@@ -183,7 +181,7 @@ public class UserService implements IUserService, UserDetailsService {
 				.create();
 
 		// the message code is null because there is no need to save it since it is checked automatically
-		saveResetPassword(user, null);
+		saveResetPassword(user);
 	}
 
 	private void sendActivationSMS(UserActivation activation) {
@@ -243,27 +241,31 @@ public class UserService implements IUserService, UserDetailsService {
 	private void sendActivationEmail(UserActivation activation) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
 		User user = userRepository.findByEmail(activation.getUser().getEmail()).orElseThrow(()
 				-> new NotFoundException("User does not exist!"));
-		String toAddress = activation.getUser().getEmail();
-		String fromAddress = "anastasijas557@gmail.com";
-		String senderName = "CM app Support";
-		String subject = "Activate Your CM Account";
-		String content = "Hello [[name]], thank you for joining us!<br>"
-				+ "To activate your account please follow this link: "
-				+ "<a href='http://localhost:4200/activation/[[id]]'>activate</a><br>"
-				+ "The Certificate Manager team.";
 
-		MimeMessage message = mailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message);
+		Email from = new Email("savic.sv7.2020@uns.ac.rs");
+		Email to = new Email(activation.getUser().getEmail());
+		Mail mail = new Mail();
+		// we create an object of our static class feel free to change the class on its own file
+		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
+		personalization.addTo(to);
+		mail.setFrom(from);
+		mail.setSubject("Activate Your CM Account");
+		personalization.addDynamicTemplateData("user", user.getName() + " " + user.getSurname());
+		personalization.addDynamicTemplateData("link", "http://localhost:4200/activation/"+activation.getId().toString());
+		mail.addPersonalization(personalization);
+		mail.setTemplateId("d-1753ed2fbd874302b80910e8ad3b9186");
+		// this is the api key
+		SendGrid sg = new SendGrid("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");
+		Request request = new Request();
 
-		helper.setFrom(fromAddress, senderName);
-		helper.setTo(toAddress);
-		helper.setSubject(subject);
-
-		content = content.replace("[[name]]", user.getName() + " " + user.getSurname());
-		content = content.replace("[[id]]", activation.getId().toString());
-		helper.setText(content, true);
-
-		mailSender.send(message);
+		try {
+			request.setMethod(Method.POST);
+			request.setEndpoint("mail/send");
+			request.setBody(mail.build());
+			sg.api(request);
+		} catch (IOException ex) {
+			System.out.println(ex);
+		}
 	}
 
 	private void isPreviousPassword(User user, String password) {
@@ -273,20 +275,45 @@ public class UserService implements IUserService, UserDetailsService {
 		}
 	}
 	
-	private void saveResetPassword(User user, String code) {
+	private void saveResetPassword(User user) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, 7);
 		Date toDate = cal.getTime();
 
 		ResetPassword reset = resetPasswordRepository.findResetPasswordByUserId(user.getId());
 		if(reset == null) {
-			reset = new ResetPassword(user, toDate, code);
+			reset = new ResetPassword(user, toDate, null);
 		}
 		else {
 			reset.setExpiredDate(toDate);
-			reset.setCode(code);
+			reset.setCode(null);
 		}
 
 		resetPasswordRepository.save(reset);
+	}
+
+	// This class handles the dynamic data for the template
+	private static class DynamicTemplatePersonalization extends Personalization {
+
+		@JsonProperty(value = "dynamic_template_data")
+		private Map<String, String> dynamic_template_data;
+
+		@JsonProperty("dynamic_template_data")
+		public Map<String, String> getDynamicTemplateData() {
+			if (dynamic_template_data == null) {
+				return Collections.<String, String>emptyMap();
+			}
+			return dynamic_template_data;
+		}
+
+		public void addDynamicTemplateData(String key, String value) {
+			if (dynamic_template_data == null) {
+				dynamic_template_data = new HashMap<String, String>();
+				dynamic_template_data.put(key, value);
+			} else {
+				dynamic_template_data.put(key, value);
+			}
+		}
+
 	}
 }

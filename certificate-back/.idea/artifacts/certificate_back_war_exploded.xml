@@ -52,6 +52,9 @@
           <element id="library" level="project" name="Maven: org.yaml:snakeyaml:1.30" />
           <element id="library" level="project" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:2.3.3" />
           <element id="library" level="project" name="Maven: jakarta.activation:jakarta.activation-api:1.2.2" />
+          <element id="library" level="project" name="Maven: org.mockito:mockito-core:4.5.1" />
+          <element id="library" level="project" name="Maven: net.bytebuddy:byte-buddy-agent:1.12.18" />
+          <element id="library" level="project" name="Maven: org.objenesis:objenesis:3.2" />
           <element id="library" level="project" name="Maven: org.springframework:spring-core:5.3.23" />
           <element id="library" level="project" name="Maven: org.springframework:spring-jcl:5.3.23" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-web:2.7.5" />
@@ -94,6 +97,8 @@
           <element id="library" level="project" name="Maven: javax.xml.bind:jaxb-api:2.3.1" />
           <element id="library" level="project" name="Maven: javax.activation:javax.activation-api:1.2.0" />
           <element id="library" level="project" name="Maven: org.json:json:20220320" />
+          <element id="library" level="project" name="Maven: com.sendgrid:sendgrid-java:4.0.1" />
+          <element id="library" level="project" name="Maven: com.sendgrid:java-http-client:4.1.0" />
         </element>
       </element>
       <element id="directory" name="META-INF">
