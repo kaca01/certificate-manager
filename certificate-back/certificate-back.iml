@@ -98,9 +98,9 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-params:5.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-engine:5.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-engine:1.8.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:4.5.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy-agent:1.12.18" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.mockito:mockito-core:4.5.1" level="project" />
+    <orderEntry type="library" name="Maven: net.bytebuddy:byte-buddy-agent:1.12.18" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.objenesis:objenesis:3.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-junit-jupiter:4.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.skyscreamer:jsonassert:1.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.vaadin.external.google:android-json:0.0.20131108.vaadin1" level="project" />
@@ -149,5 +149,7 @@
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.3.1" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:javax.activation-api:1.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20220320" level="project" />
+    <orderEntry type="library" name="Maven: com.sendgrid:sendgrid-java:4.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.sendgrid:java-http-client:4.1.0" level="project" />
   </component>
 </module>

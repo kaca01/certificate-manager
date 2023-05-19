@@ -14,6 +14,8 @@ import com.example.certificateback.repository.IRoleRepository;
 import com.example.certificateback.repository.IUserActivationRepository;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sendgrid.*;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import com.example.certificateback.domain.*;
 import com.example.certificateback.dto.ResetPasswordDTO;
@@ -34,6 +36,7 @@ import org.springframework.stereotype.Service;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -251,12 +254,8 @@ public class UserService implements IUserService, UserDetailsService {
 		User user = userRepository.findByEmail(loginDTO.getEmail()).get();
 		LoginVerification loginVerification = loginVerificationRepository.save(new LoginVerification(user));
 		if(loginDTO.getVerification().equals("email")){
-			try {
-				sendLoginEmail(loginVerification);
-			} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
-				throw new RuntimeException(e);
-			}
-		} else{
+			sendLoginEmail(loginVerification);
+		} else {
 			sendLoginSMS(loginVerification);
 		}
 	}
@@ -300,29 +299,31 @@ public class UserService implements IUserService, UserDetailsService {
 				new PhoneNumber("+12708131194"), text).create();
 	}
 
-	private void sendLoginEmail(LoginVerification verification) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
-		String toAddress = "hristinacina@gmail.com";
-		String fromAddress = "anastasijas557@gmail.com";
-		String senderName = "CM app Support";
-		String subject = "Verify login";
-		String content = "Hi [[name]],<br>"
-				+ "Your login verification code is:<br>"
-				+ "<h2>[[code]]</h2>"
-				+ "Thank you,<br>"
-				+ "Your Certificate Manager Team.";
+	private void sendLoginEmail(LoginVerification verification) {
+		Email from = new Email("savic.sv7.2020@uns.ac.rs");
+		Email to = new Email("anastasijas557@gmail.com");
+		Mail mail = new Mail();
+		// we create an object of our static class feel free to change the class on its own file
+		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
+		personalization.addTo(to);
+		mail.setFrom(from);
+		mail.setSubject("Verify login");
+		personalization.addDynamicTemplateData("user", verification.getUser().getName() + " " + verification.getUser().getSurname());
+		personalization.addDynamicTemplateData("code", verification.getCode());
+		mail.addPersonalization(personalization);
+		mail.setTemplateId("d-e1877410ec904fe3ae55af39bb917368");
+		// this is the api key
+		SendGrid sg = new SendGrid("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");
+		Request request = new Request();
 
-		MimeMessage message = mailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message);
-
-		helper.setFrom(fromAddress, senderName);
-		helper.setTo(toAddress);
-		helper.setSubject(subject);
-
-		content = content.replace("[[name]]", verification.getUser().getName() + " " + verification.getUser().getSurname());
-		content = content.replace("[[code]]", verification.getCode());
-		helper.setText(content, true);
-
-		mailSender.send(message);
+		try {
+			request.setMethod(Method.POST);
+			request.setEndpoint("mail/send");
+			request.setBody(mail.build());
+			sg.api(request);
+		} catch (IOException ex) {
+			System.out.println(ex);
+		}
 	}
 
 	private void sendActivationEmail(UserActivation activation) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
@@ -384,5 +385,30 @@ public class UserService implements IUserService, UserDetailsService {
 		}
 
 		resetPasswordRepository.save(reset);
+	}
+
+	// This class handles the dynamic data for the template
+	private static class DynamicTemplatePersonalization extends Personalization {
+
+		@JsonProperty(value = "dynamic_template_data")
+		private Map<String, String> dynamic_template_data;
+
+		@JsonProperty("dynamic_template_data")
+		public Map<String, String> getDynamicTemplateData() {
+			if (dynamic_template_data == null) {
+				return Collections.<String, String>emptyMap();
+			}
+			return dynamic_template_data;
+		}
+
+		public void addDynamicTemplateData(String key, String value) {
+			if (dynamic_template_data == null) {
+				dynamic_template_data = new HashMap<String, String>();
+				dynamic_template_data.put(key, value);
+			} else {
+				dynamic_template_data.put(key, value);
+			}
+		}
+
 	}
 }
