@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpErrorResponse } from "@angular/common/http";
-import { AbstractControl, AbstractControlOptions, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router'; 
 import { ResetPassword } from 'src/app/domains';
@@ -33,8 +33,11 @@ export class ResetPasswordComponent {
   resetPassword = {} as ResetPassword;
   email: string = "";
 
-  constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router,
-     private authService: AuthService) { }
+  expiredPassword: boolean = false;
+
+  constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router, private authService: AuthService) {
+    this.expiredPassword = userService.isExpiredPassword();
+  }
 
   first() : boolean {
     if(this.resetPasswordForm.get('newPassword')!.value !== this.resetPasswordForm.get('firstRepetedPassword')!.value) 
@@ -60,29 +63,22 @@ export class ResetPasswordComponent {
   }
 
   sendCode() : void {
+    const phoneRegex = new RegExp('[- +()0-9]+');
+    const emailRegex = new RegExp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
     if(this.emailForm.controls['email'].value != '') {
       this.email = this.emailForm.controls['email']?.value!;
-      if(this.email.includes('@')) {
-        console.log("prvooooooo")
-        this.userService.sendEmail(this.email).subscribe((res:any) => {
-          this.openSnackBar("A verification code has been sent to your email!");
-          this.checkEmail();
-        },
-          (error: HttpErrorResponse) => {
-            this.openSnackBar(error.error);
-        })
-      }
+      if(!emailRegex.test(this.email) && !phoneRegex.test(this.email))
+        this.openSnackBar("Invalid email/phone format");
       else {
-        console.log("drugooooooooooo")
-        this.userService.sendSMS(this.email).subscribe((res:any) => {
-          this.openSnackBar("A verification code has been sent to your mobile!");
-          this.checkEmail();
-        },
-          (error: HttpErrorResponse) => {
-            this.openSnackBar(error.error);
-        })
-      }
-    }
+        if(emailRegex.test(this.email)) 
+          this.userService.sendEmail(this.email).subscribe()
+        else 
+          this.userService.sendSMS(this.email).subscribe()
+        this.openSnackBar("A verification code has been sent!");
+        this.checkEmail();
+      }   
+    }      
   }
 
   doResetPassword() : void {
@@ -98,7 +94,6 @@ export class ResetPasswordComponent {
 
           console.log(this.email)
           if(this.email.includes('@')) {
-            console.log('proslo prvo')
             this.userService.resetPasswordViaEmail(this.email, this.resetPassword).subscribe(
               () => {
               this.openSnackBar("Successfully reset password!");
@@ -112,7 +107,6 @@ export class ResetPasswordComponent {
           }
             
           else {
-            console.log('proslo drugo')
             this.userService.resetPasswordViaSMS(this.email, this.resetPassword).subscribe(
               () => {
               this.openSnackBar("Successfully reset password!");

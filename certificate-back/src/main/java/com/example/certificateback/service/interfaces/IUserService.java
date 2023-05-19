@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public interface IUserService {
-    User findById(Long id);
     User findByEmail(String username);
     List<UserDTO> findAll ();
     UserDTO register(UserDTO registrationDTO);

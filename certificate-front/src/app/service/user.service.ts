@@ -13,6 +13,8 @@ export class UserService {
 
   public currentUser : User | null = null;
 
+  private _expiredPassword = false;
+
   constructor(
     private apiService: ApiService,
     private config: ConfigService,
@@ -24,6 +26,14 @@ export class UserService {
         this.currentUser = user;
         return user;
     }));
+  }
+
+  isExpiredPassword() : boolean {
+    return this._expiredPassword;
+  }
+
+  setExpiredPassword(expiredPassword: boolean) {
+    this._expiredPassword = expiredPassword;
   }
 
   login(user:any) : Observable<any>{

@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.twilio.example.ValidationExample.ACCOUNT_SID;
@@ -56,6 +58,13 @@ public class UserController {
         User check = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
         if(!check.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), check.getPassword()))
             throw new BadRequestException("Wrong username or password!");
+
+        // checking password expiring
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(check.getLastPasswordResetDate());
+        calendar.add(Calendar.DAY_OF_YEAR, 60);
+        if(calendar.getTime().before(new Date()))
+            throw new BadRequestException("Password has expired!");
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(), loginDTO.getPassword()));
@@ -112,7 +121,7 @@ public class UserController {
     }
 
     @PutMapping("/{phone}/sendSMS")
-    public ResponseEntity<?> checkSMS(@PathVariable String phone, @RequestBody ResetPasswordDTO resetPasswordDTO) throws Exception {
+    public ResponseEntity<?> checkSMS(@PathVariable String phone, @RequestBody ResetPasswordDTO resetPasswordDTO) {
         service.checkSMS(phone, resetPasswordDTO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
