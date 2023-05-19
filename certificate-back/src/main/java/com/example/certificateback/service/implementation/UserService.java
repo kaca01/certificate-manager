@@ -66,11 +66,6 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
-	public User findById(Long id) throws AccessDeniedException {
-		return userRepository.findById(id).orElseGet(null);
-	}
-
-	@Override
 	public List<UserDTO> findAll() throws AccessDeniedException {
 		List<User> users = userRepository.findAll();
 		List<UserDTO> usersDTO = new ArrayList<>();
@@ -139,55 +134,41 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
-	public void sendResetEmail(String email) throws UnsupportedEncodingException, javax.mail.MessagingException {
+	public void sendResetEmail(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
-		// change toAddress
-		String toAddress = "anastasijas557@gmail.com";
-		String fromAddress = "anastasijas557@gmail.com";
-		String senderName = "Certificate Manager Support";
-		String subject = "Reset Your Password";
-		String content = "Hi [[name]], let's reset your password.<br>"
-				+ "Your verification code is:<br>"
-				+ "<h2>[[code]]</h2>"
-				+ "Thank you,<br>"
-				+ "Your Certificate Manager Team.";
 
-		MimeMessage message = mailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message);
+		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
-		helper.setFrom(fromAddress, senderName);
-		helper.setTo(toAddress);
-		helper.setSubject(subject);
+		Verification.creator("VAca2e1d4eb5f1ba4be26dc368c51754af", // this is your verification sid
+						"anastasijas557@gmail.com", // recipient email address
+						"email") // this is your channel type
+				.create();
 
-		content = content.replace("[[name]]", user.getName() + " " + user.getSurname());
-
-		Random rnd = new Random();
-		int number = rnd.nextInt(999999);
-		String code = String.format("%06d", number);
-		content = content.replace("[[code]]", code);
-
-		helper.setText(content, true);
-
-		mailSender.send(message);
-
-		saveResetPassword(user, code);
+		// the message code is null because there is no need to save it since it is checked automatically
+		saveResetPassword(user, null);
 	}
 
 	@Override
 	public void resetEmail(String email, ResetPasswordDTO resetPasswordDTO) {
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
 
-		ResetPassword resetPassword = resetPasswordRepository.findResetPasswordByUserId(user.getId());
-		Date expiredDate = resetPassword.getExpiredDate();
+		Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
-		if(!resetPasswordDTO.getCode().equals(resetPassword.getCode()) || expiredDate.before(new Date()))
+		try {
+			VerificationCheck.creator("VAca2e1d4eb5f1ba4be26dc368c51754af") // pass verification SID here
+					.setTo("anastasijas557@gmail.com")
+					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
+					.create();
+
+			this.isPreviousPassword(user, resetPasswordDTO.getNewPassword());
+
+			Password password = passwordRepository.save(new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword())));
+			user.getPasswords().add(password);
+			userRepository.save(user);
+
+		} catch (Exception e) {
 			throw new BadRequestException("Code is expired or not correct!");
-
-		this.isPreviousPassword(user, resetPasswordDTO.getNewPassword());
-
-		Password password = passwordRepository.save(new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword())));
-		user.getPasswords().add(password);
-		userRepository.save(user);
+		}
 	}
 
 	@Override
@@ -196,8 +177,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
-		Verification.creator(
-						"VAca2e1d4eb5f1ba4be26dc368c51754af", // this is your verification sid
+		Verification.creator("VAca2e1d4eb5f1ba4be26dc368c51754af", // this is your verification sid
 						"+381621164208", // recipient phone number
 						"sms") // this is your channel type
 				.create();
@@ -230,14 +210,15 @@ public class UserService implements IUserService, UserDetailsService {
 
 		Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
+		System.out.println(resetPasswordDTO.getCode());
+
 		try {
-			VerificationCheck verificationCheck = VerificationCheck.creator(
-							"VAca2e1d4eb5f1ba4be26dc368c51754af") // pass verification SID here
+			VerificationCheck verificationCheck = VerificationCheck.creator("VAca2e1d4eb5f1ba4be26dc368c51754af") // pass verification SID here
 					.setTo("+381621164208")
 					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
 					.create();
 
-			System.out.println(verificationCheck.getStatus());
+			System.out.println(verificationCheck);
 
 			if (!verificationCheck.getStatus().equals("approved"))
 				throw new BadRequestException("Code is expired or not correct!");
@@ -249,7 +230,7 @@ public class UserService implements IUserService, UserDetailsService {
 			userRepository.save(user);
 
 		} catch (Exception e) {
-			throw new BadRequestException("Code is expired or not correct!");
+			throw new BadRequestException("Verification failed.");
 		}
 	}
 
@@ -287,7 +268,6 @@ public class UserService implements IUserService, UserDetailsService {
 
 	private void isPreviousPassword(User user, String password) {
 		for (Password p: user.getPasswords()) {
-			System.out.println(passwordEncoder.matches(password, p.getPassword()));
 			if(passwordEncoder.matches(password, p.getPassword()))
 				throw new BadRequestException("Password must be unique!");
 		}
