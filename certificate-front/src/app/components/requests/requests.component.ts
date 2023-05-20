@@ -32,9 +32,6 @@ export class RequestsComponent implements OnInit {
   constructor(private router: Router, private requestService: RequestService, private userService: UserService, private _snackBar: MatSnackBar, private dialog: MatDialog) { }
 
   ngOnInit(): void {
-    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
-      this.router.navigate(['/welcome-page']);
-
     this.requestService.getRequestsBasedOnIssuer().subscribe((res) => {
       for(let i = 0; i<res.totalCount; i++) {
         res.results[i]._tableId = i+1;

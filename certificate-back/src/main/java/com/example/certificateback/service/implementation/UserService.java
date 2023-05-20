@@ -1,17 +1,12 @@
 package com.example.certificateback.service.implementation;
 
-import com.example.certificateback.domain.Password;
-import com.example.certificateback.domain.Role;
-import com.example.certificateback.domain.User;
-import com.example.certificateback.domain.UserActivation;
+import com.example.certificateback.domain.*;
 import com.example.certificateback.dto.ErrorDTO;
+import com.example.certificateback.dto.LoginDTO;
 import com.example.certificateback.dto.UserDTO;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.exception.NotFoundException;
-import com.example.certificateback.repository.IPasswordRepository;
-import com.example.certificateback.repository.IRoleRepository;
-import com.example.certificateback.repository.IUserActivationRepository;
-import com.example.certificateback.repository.IUserRepository;
+import com.example.certificateback.repository.*;
 import com.example.certificateback.service.interfaces.IUserService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sendgrid.*;
@@ -30,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +46,8 @@ public class UserService implements IUserService, UserDetailsService {
 	private IPasswordRepository passwordRepository;
 	@Autowired
 	private IRoleRepository roleRepository;
+	@Autowired
+	ILoginVerificationRepository loginVerificationRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -134,7 +132,7 @@ public class UserService implements IUserService, UserDetailsService {
 		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
 		Verification.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2", // this is your verification sid
-						"anastasijas557+123@gmail.com", // recipient email address
+						"hristinacina@gmail.com", // recipient email address
 						"email") // this is your channel type
 				.create();
 	}
@@ -149,7 +147,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 		try {
 			VerificationCheck.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2") // pass verification SID here
-					.setTo("anastasijas557+123@gmail.com")
+					.setTo("hristinacina@gmail.com")
 					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
 					.create();
 
@@ -172,24 +170,6 @@ public class UserService implements IUserService, UserDetailsService {
 						"+381621164208", // recipient phone number
 						"sms") // this is your channel type
 				.create();
-	}
-
-	private void sendActivationSMS(UserActivation activation) {
-		User user = userRepository.findByPhone(activation.getUser().getPhone())
-				.orElseThrow(() -> new NotFoundException("User does not exist!"));
-
-		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID_2"), System.getenv("TWILIO_AUTH_TOKEN_2"));
-
-		String text = "Hello [[name]], thank you for joining us!\n"
-				+ "To activate your account please follow this link: "
-				+ "http://localhost:4200/activation/[[id]]'\n"
-				+ "The Certificate Manager team.";
-
-		text = text.replace("[[name]]", user.getName());
-		text = text.replace("[[id]]", activation.getId().toString());
-
-		Message.creator(new PhoneNumber("+381612325345"),
-				new PhoneNumber("+12708131194"), text).create();
 	}
 
 	@Override
@@ -216,9 +196,87 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	@Override
+	public void checkLogin(LoginDTO loginDTO) {
+		//brisanje svih dosadasnjih za korisnika (zato da bi uvijek postojao jedan ili nijedan u bazi)
+		List<LoginVerification>  all = loginVerificationRepository.findAll();
+		for (LoginVerification v : all){
+			if (v.getUser().getEmail().equals(loginDTO.getEmail()))
+				loginVerificationRepository.delete(v);
+		}
+
+		User user = userRepository.findByEmail(loginDTO.getEmail()).get();
+		LoginVerification loginVerification = loginVerificationRepository.save(new LoginVerification(user));
+		if(loginDTO.getVerification().equals("email")){
+			sendLoginEmail(loginVerification);
+		} else {
+			sendLoginSMS(loginVerification);
+		}
+	}
+
+	@Override
+	public void confirmLogin(LoginDTO loginDTO) {
+		LoginVerification verification = loginVerificationRepository.findByUserEmail(loginDTO.getEmail()).
+				orElseThrow(() -> new NotFoundException(String.format("User with email '%s' is not found!", loginDTO.getEmail())));
+
+		if (!new Date().before(new Date(verification.getDate().getTime() + verification.getLife()*1000L))) {
+			loginVerificationRepository.delete(verification);
+			throw new BadRequestException("Verification time expired. Login again!");
+		}
+		else if (!verification.getCode().equals(loginDTO.getVerification())){
+			loginVerificationRepository.delete(verification);
+			throw new BadRequestException("Code not correct. Login again!");
+		}else{
+			loginVerificationRepository.delete(verification);
+		}
+	}
+
+	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		return this.userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException(String.format("User with email '%s' is not found!", email)));
+	}
+
+	private void sendLoginSMS(LoginVerification verification) {
+		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID_2"), System.getenv("TWILIO_AUTH_TOKEN_2"));
+
+		String text = "Hello [[name]], \n"
+				+ "Your login verification code is:\n "
+				+ "[[code]]\n"
+				+ "Thank you, \n"
+				+ "Your Certificate Manager Team.";
+
+		text = text.replace("[[name]]", verification.getUser().getName());
+		text = text.replace("[[code]]", verification.getCode());
+
+		Message.creator(new PhoneNumber("+381612325345"),
+				new PhoneNumber("+12708131194"), text).create();
+	}
+
+	private void sendLoginEmail(LoginVerification verification) {
+		Email from = new Email("savic.sv7.2020@uns.ac.rs");
+		Email to = new Email("hristinacina@gmail.com");
+		Mail mail = new Mail();
+		// we create an object of our static class feel free to change the class on its own file
+		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
+		personalization.addTo(to);
+		mail.setFrom(from);
+		mail.setSubject("Verify login");
+		personalization.addDynamicTemplateData("user", verification.getUser().getName() + " " + verification.getUser().getSurname());
+		personalization.addDynamicTemplateData("code", verification.getCode());
+		mail.addPersonalization(personalization);
+		mail.setTemplateId("d-e1877410ec904fe3ae55af39bb917368");
+		// this is the api key
+		SendGrid sg = new SendGrid("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");
+		Request request = new Request();
+
+		try {
+			request.setMethod(Method.POST);
+			request.setEndpoint("mail/send");
+			request.setBody(mail.build());
+			sg.api(request);
+		} catch (IOException ex) {
+			System.out.println(ex);
+		}
 	}
 
 	private void sendActivationEmail(UserActivation activation) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
@@ -226,7 +284,7 @@ public class UserService implements IUserService, UserDetailsService {
 				-> new NotFoundException("User does not exist!"));
 
 		Email from = new Email("savic.sv7.2020@uns.ac.rs");
-		Email to = new Email(activation.getUser().getEmail());
+		Email to = new Email("hristinacina@gmail.com");
 		Mail mail = new Mail();
 		// we create an object of our static class feel free to change the class on its own file
 		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
@@ -249,6 +307,24 @@ public class UserService implements IUserService, UserDetailsService {
 		} catch (IOException ex) {
 			System.out.println(ex);
 		}
+	}
+
+	private void sendActivationSMS(UserActivation activation) {
+		User user = userRepository.findByPhone(activation.getUser().getPhone())
+				.orElseThrow(() -> new NotFoundException("User does not exist!"));
+
+		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID_2"), System.getenv("TWILIO_AUTH_TOKEN_2"));
+
+		String text = "Hello [[name]], thank you for joining us!\n"
+				+ "To activate your account please follow this link: "
+				+ "http://localhost:4200/activation/[[id]]'\n"
+				+ "The Certificate Manager team.";
+
+		text = text.replace("[[name]]", user.getName());
+		text = text.replace("[[id]]", activation.getId().toString());
+
+		Message.creator(new PhoneNumber("+381612325345"),
+				new PhoneNumber("+12708131194"), text).create();
 	}
 
 	private void isPreviousPassword(User user, String password) {

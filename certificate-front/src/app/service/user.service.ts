@@ -36,7 +36,13 @@ export class UserService {
     this._expiredPassword = expiredPassword;
   }
 
-  login(user:any) : Observable<any>{
+  checkLogin(user:any, radio: String) : Observable<any>{
+    user.verification = radio;
+    return this.http.post<any>(environment.apiHost + "api/user/checkLogin", user);
+  }
+
+  login(user:any, code: String) : Observable<any>{
+    user.verification = code;
     return this.http.post<any>(environment.apiHost + "api/user/login", user);
   }
 

@@ -1,5 +1,6 @@
 package com.example.certificateback.controller;
 
+import com.example.certificateback.domain.LoginVerification;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
@@ -53,18 +54,28 @@ public class UserController {
         return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TokenStateDTO> login(@RequestBody LoginDTO loginDTO) {
-        User check = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
-        if(!check.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), check.getPassword()))
+    @PostMapping(value = "/checkLogin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> checkLogin(@RequestBody LoginDTO loginDTO) {
+        User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
+        if(!user.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
             throw new BadRequestException("Wrong username or password!");
 
         // checking password expiring
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(check.getLastPasswordResetDate());
+        calendar.setTime(user.getLastPasswordResetDate());
         calendar.add(Calendar.DAY_OF_YEAR, 60);
         if(calendar.getTime().before(new Date()))
             throw new BadRequestException("Password has expired!");
+
+        service.checkLogin(loginDTO);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TokenStateDTO> login(@RequestBody LoginDTO loginDTO) {
+
+        service.confirmLogin(loginDTO);
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(), loginDTO.getPassword()));
@@ -79,7 +90,6 @@ public class UserController {
         return new ResponseEntity<>(new TokenStateDTO(access, expiresIn), HttpStatus.OK);
     }
 
-    // todo check if this works
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AllDTO<UserDTO>> getUsers()
