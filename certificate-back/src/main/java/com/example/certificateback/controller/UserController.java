@@ -51,7 +51,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/checkLogin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> checkLogin(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> checkLogin(@RequestBody LoginDTO loginDTO) {
         User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
         if(!user.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
             throw new BadRequestException("Wrong username or password!");
@@ -64,8 +64,9 @@ public class UserController {
             throw new BadRequestException("Password has expired!");
 
         String token = activeSessions.hasSession(user.getEmail());
-        if (token != null){
-            activeSessions.isTokenValid(token, user);
+        if (token != null && activeSessions.isTokenValid(token, user)){
+            // return active session and skip verification
+            return new ResponseEntity<>(new TokenStateDTO(token, tokenUtils.getExpiredIn()), HttpStatus.OK);
         }
 
         service.checkLogin(loginDTO);
@@ -87,6 +88,7 @@ public class UserController {
         User user = (User) authentication.getPrincipal();
         String access = tokenUtils.generateToken(user.getEmail());
         int expiresIn = tokenUtils.getExpiredIn();
+        activeSessions.addSession(access, loginDTO.getEmail());
 
         return new ResponseEntity<>(new TokenStateDTO(access, expiresIn), HttpStatus.OK);
     }

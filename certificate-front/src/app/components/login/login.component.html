@@ -15,7 +15,7 @@
           <div class="title">Login</div>
         </div>  
   
-        <form *ngIf="!submitted" name="loginForm" [formGroup]="loginForm" (ngSubmit)="login()">
+        <form *ngIf="!submitted" name="loginForm" [formGroup]="loginForm" (ngSubmit)="checkLogin()">
   
           <p *ngIf="notification" [class]="notification.msgType">{{notification.msgBody}}</p>
   

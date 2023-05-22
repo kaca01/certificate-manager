@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
     this.radio = 'email';
   }
 
-  login(): void { 
+  checkLogin(): void { 
     console.log('login button pressed');
 
     if (this.radio == ''){
@@ -43,11 +43,15 @@ export class LoginComponent implements OnInit {
 
     this.userService.checkLogin(this.loginForm.value, this.radio)
     .subscribe(data => {
-        console.log('email/sms successfully sent');
-        this.radio = 'email';
-        this.notification = {msgType: '', msgBody: ''};
-        this.submitted = true;
-        },
+      if (data != null){
+        this.login(data);
+        return;
+      }
+      console.log('email/sms successfully sent');
+      this.radio = 'email';
+      this.notification = {msgType: '', msgBody: ''};
+      this.submitted = true;
+    },
     error => {
       console.log(error);
       if(error.error['message'] == "Password has expired!") {
@@ -64,21 +68,25 @@ export class LoginComponent implements OnInit {
   confirmLogin(){
     this.userService.login(this.loginForm.value, this.code)
     .subscribe(data => {
-        localStorage.setItem("jwt", data.accessToken);
-        this.authService.setToken(data.accessToken);
-      
-      console.log('Login success');
-        this.userService.getMyInfo().subscribe((res:any) => {
-          if(this.userService.currentUser != null) {
-            this.router.navigate(['/certificate']);
-          }
-          });
+        this.login(data)
         },
         error => {
           console.log(error);
           this.handleErrors(error);
           this.submitted = false;
         });
+  }
+
+  login(data : any){
+    localStorage.setItem("jwt", data.accessToken);
+    this.authService.setToken(data.accessToken);
+      
+    console.log('Login success');
+    this.userService.getMyInfo().subscribe((res:any) => {
+      if(this.userService.currentUser != null) {
+        this.router.navigate(['/certificate']);
+      }
+    });
   }
 
   register() {
