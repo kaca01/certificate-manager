@@ -1,5 +1,6 @@
 package com.example.certificateback.domain;
 
+import com.example.certificateback.configuration.ApplicationConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,6 @@ public class LoginVerification {
         this.code = String.format("%06d", number);
         this.user = user;
         this.date = new Date();
-        this.life = 180;
+        this.life = ApplicationConstants.LOGIN_VERIFICATION_LIFE_IN_SECONDS;
     }
 }
