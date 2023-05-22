@@ -150,6 +150,16 @@ public class TokenUtils {
 			&& !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate())); // after creating token, user is not changed password
 	}
 
+	public Boolean checkTokenForActiveSession(String token, User user) {
+		final String username = getUsernameFromToken(token);
+		final Date created = getIssuedAtDateFromToken(token);
+
+		// The token is valid when:
+		return (username != null // email is not null
+				&& username.equals(user.getEmail()) // email from the token is equal with email in database
+				&& !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate())); // after creating token, user is not changed password
+	}
+
 	private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
 		return (lastPasswordReset != null && created.before(lastPasswordReset));
 	}

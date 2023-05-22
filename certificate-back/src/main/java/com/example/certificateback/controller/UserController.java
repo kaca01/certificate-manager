@@ -1,15 +1,12 @@
 package com.example.certificateback.controller;
 
-import com.example.certificateback.domain.LoginVerification;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
+import com.example.certificateback.security.ActiveSessions;
 import com.example.certificateback.service.interfaces.IUserService;
 import com.example.certificateback.util.TokenUtils;
-import com.twilio.Twilio;
-import com.twilio.rest.verify.v2.service.Verification;
-import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,9 +26,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static com.twilio.example.ValidationExample.ACCOUNT_SID;
-import static com.twilio.example.ValidationExample.AUTH_TOKEN;
-
 @RestController
 @CrossOrigin
 @RequestMapping("/api/user")
@@ -47,6 +41,8 @@ public class UserController {
     AuthenticationManager authenticationManager;
     @Autowired
     BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    ActiveSessions activeSessions;
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
@@ -66,6 +62,11 @@ public class UserController {
         calendar.add(Calendar.DAY_OF_YEAR, 60);
         if(calendar.getTime().before(new Date()))
             throw new BadRequestException("Password has expired!");
+
+        String token = activeSessions.hasSession(user.getEmail());
+        if (token != null){
+            activeSessions.isTokenValid(token, user);
+        }
 
         service.checkLogin(loginDTO);
 
