@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "https://localhost:4200")
 @RequestMapping("/api/certificate-request")
 public class CertificateRequestController {
 
