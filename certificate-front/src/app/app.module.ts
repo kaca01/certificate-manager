@@ -27,6 +27,8 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { FileUploadDialogComponent } from './components/certificate/file-upload-dialog/file-upload-dialog.component';
 import { AddReasonDialogComponent } from './components/requests/add-reason-dialog/add-reason-dialog.component';
 import { HistoryComponent } from './components/history/history.component';
+import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
+import { recaptcha } from 'src/environments/environment.prod';
 
 @NgModule({
   declarations: [
@@ -53,12 +55,17 @@ import { HistoryComponent } from './components/history/history.component';
     MaterialModule,
     ReactiveFormsModule,
     HttpClientModule,
+    RecaptchaV3Module,
   ],
   providers: [
   {
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptor,
-    multi: true
+    multi: true,
+  },
+  {
+    provide: RECAPTCHA_V3_SITE_KEY,
+    useValue: recaptcha.siteKey,
   },
     AuthService,
     ApiService,

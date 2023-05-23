@@ -7,6 +7,11 @@ export const environment = {
   apiHost: 'https://localhost:8081/',
 };
 
+export const recaptcha = {
+  siteKey: '6Lc1FjImAAAAAOMubmSe-P5JhZDNA7MsFhzva_pE',
+};
+
+
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.

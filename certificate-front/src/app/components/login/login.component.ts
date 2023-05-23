@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { AuthService } from 'src/app/service/auth.service';
 import { UserService } from 'src/app/service/user.service';
 
@@ -25,7 +26,8 @@ export class LoginComponent implements OnInit {
 
   radio : String = '';
   code: String = '';
-  constructor(private router : Router, private userService: UserService, private authService: AuthService, private _snackBar: MatSnackBar) {}
+  constructor(private router : Router, private userService: UserService, private authService: AuthService, 
+    private _snackBar: MatSnackBar, private recaptchaV3Service: ReCaptchaV3Service) {}
 
   ngOnInit(): void { 
     this.authService.logout();
@@ -40,6 +42,11 @@ export class LoginComponent implements OnInit {
       this.openSnackBar("Must select an option for login verification!");
       return;
     }
+    
+    this.recaptchaV3Service.execute('importantAction')
+    .subscribe((token: string) => {
+      console.log(`Token [${token}] generated`);
+    });
 
     this.userService.checkLogin(this.loginForm.value, this.radio)
     .subscribe(data => {
