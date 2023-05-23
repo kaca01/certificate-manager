@@ -30,6 +30,20 @@ export class AuthService {
       }));
   }
 
+  checkUserSession(){
+    if (localStorage.getItem("jwt") != null && (this.userService.currentUser == null || this.userService.currentUser == undefined)){
+      const token = localStorage.getItem("jwt");
+      this.setToken(token);
+      
+      console.log('Login success');
+      this.userService.getMyInfo().subscribe((res:any) => {
+        if(this.userService.currentUser != null) {
+          this.router.navigate(['/certificate']);
+        }
+      })
+    }
+  }
+
   logout() {
     this.userService.currentUser = null;
     localStorage.removeItem("jwt");

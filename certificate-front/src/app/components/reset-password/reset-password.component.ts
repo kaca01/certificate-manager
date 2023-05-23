@@ -37,6 +37,7 @@ export class ResetPasswordComponent {
 
   constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router, private authService: AuthService) {
     this.expiredPassword = userService.isExpiredPassword();
+    this.authService.logout();
   }
 
   first() : boolean {

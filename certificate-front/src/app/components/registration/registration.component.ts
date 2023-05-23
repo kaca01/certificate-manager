@@ -4,6 +4,7 @@ import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { User } from 'src/app/domains';
+import { AuthService } from 'src/app/service/auth.service';
 import { UserService } from 'src/app/service/user.service';
 
 @Component({
@@ -29,9 +30,10 @@ export class RegistrationComponent implements OnInit {
   notification!: DisplayMessage;
   radio : String = '';
 
-  constructor(private router: Router, private service: UserService, private _snackBar: MatSnackBar) {}
+  constructor(private router: Router, private service: UserService, private _snackBar: MatSnackBar,  private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.authService.checkUserSession();
   }
 
   reg() {

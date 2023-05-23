@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FileUploadDialogComponent } from './file-upload-dialog/file-upload-dialog.component';
 import { WithdrawalReasonComponent } from './withdrawal-reason/withdrawal-reason.component';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'certificate',
@@ -28,9 +29,11 @@ export class CertificateComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private certificateService: CertificateService, private dialog: MatDialog, private snackBar: MatSnackBar, private router: Router, private userService: UserService) {}
+  constructor(private certificateService: CertificateService, private dialog: MatDialog, private snackBar: MatSnackBar, 
+    private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.authService.checkUserSession();
     this.certificateService.getAll().subscribe((res) => {
       for(let i = 0; i<res.totalCount; i++) {
         res.results[i]._id = i+1;
