@@ -119,7 +119,8 @@ public class CertificateRequestService implements ICertificateRequestService {
         if (!request.getRequestType().equals(RequestType.ACTIVE)){
             throw new NotValidException("Cannot refuse/accept request that is no longer active");
         }
-        if (request.getCertificateType() != CertificateType.ROOT && !getLoggedUser().getEmail().equals(request.getIssuer().getSubject().getEmail())){
+        if (request.getCertificateType() != CertificateType.ROOT && !getLoggedUser().getEmail().equals(request.getIssuer().getSubject().getEmail())
+        && !getLoggedUser().getRoles().get(0).getName().equals("ROLE_ADMIN")){
             throw new WrongUserException("You are not issuer of this certificate!");
         }
     }
