@@ -1,5 +1,6 @@
 package com.example.certificateback.controller;
 
+import com.example.certificateback.configuration.ApplicationConstants;
 import com.example.certificateback.domain.LoginVerification;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
@@ -63,7 +64,7 @@ public class UserController {
         // checking password expiring
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(user.getLastPasswordResetDate());
-        calendar.add(Calendar.DAY_OF_YEAR, 60);
+        calendar.add(Calendar.DAY_OF_YEAR, ApplicationConstants.RESET_PASSWORD_TIMEOUT_IN_DAYS);
         if(calendar.getTime().before(new Date()))
             throw new BadRequestException("Password has expired!");
 
