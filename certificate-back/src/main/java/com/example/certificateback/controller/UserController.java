@@ -11,6 +11,8 @@ import com.example.certificateback.util.TokenUtils;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,6 +51,8 @@ public class UserController {
     @Autowired
     BCryptPasswordEncoder passwordEncoder;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
         UserDTO user = service.register(userDTO);
@@ -75,7 +79,7 @@ public class UserController {
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TokenStateDTO> login(@RequestBody LoginDTO loginDTO) {
-
+        logger.info("User is trying to log in.");
         service.confirmLogin(loginDTO);
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -88,6 +92,7 @@ public class UserController {
         String access = tokenUtils.generateToken(user.getEmail());
         int expiresIn = tokenUtils.getExpiredIn();
 
+        logger.info("User logged in successfully.");
         return new ResponseEntity<>(new TokenStateDTO(access, expiresIn), HttpStatus.OK);
     }
 
