@@ -58,7 +58,7 @@
 <footer>
     <button class="validation" (click)="checkValidationById()">CHECK VALIDITY BY ID</button>
     <button class="validation" (click)="openFileUploadDialog()">CHECK VALIDITY BY COPY</button>
-    <button id="withdraw" (click)="openWithdrawalDialog()">INVOKE</button>
+    <button id="withdraw" (click)="openWithdrawalDialog()">REVOKE</button>
     <button [matMenuTriggerFor]="aboveMenu" id="download">DOWNLOAD</button>
     <mat-menu #aboveMenu="matMenu" yPosition="above">
         <button class="menu-item" mat-menu-item (click)="downloadPrivateKey()">PRIVATE KEY</button>

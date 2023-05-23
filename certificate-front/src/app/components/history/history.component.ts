@@ -15,7 +15,7 @@ import { UserService } from 'src/app/service/user.service';
 export class HistoryComponent implements OnInit {
 
   selectedRowIndex : number = -1;
-  displayedColumns: string[] = ['issuer', 'subject', 'type', 'status'];
+  displayedColumns: string[] = ['issuer', 'date', 'subject', 'type', 'status'];
   dataSource!: MatTableDataSource<CertificateRequest>;
   valueFromCreateComponent = '';
 

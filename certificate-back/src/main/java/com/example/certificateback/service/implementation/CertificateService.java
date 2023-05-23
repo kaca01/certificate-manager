@@ -117,7 +117,7 @@ public class CertificateService implements ICertificateService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loggedUser = userRepository.findByEmail(authentication.getName()).orElse(null);
-        if (loggedUser != certificate.getSubject()) throw new BadRequestException("Only certificate owner can withdraw the certificate.");
+        if (loggedUser != certificate.getSubject()) throw new BadRequestException("Only certificate owner can revoke the certificate.");
 
         if (certificate.isWithdrawn()) throw new BadRequestException(("Certificate is not valid!"));
 
@@ -133,7 +133,7 @@ public class CertificateService implements ICertificateService {
     private void invalidateChildren(Certificate certificate) {
         if (!certificate.isWithdrawn()) {
             certificate.setWithdrawn(true);
-            certificate.setWithdrawnReason("Issuer is withdrawn. This is refused by the system.");
+            certificate.setWithdrawnReason("Issuer is revoked. This is refused by the system.");
             certificateRepository.save(certificate);
         }
 
@@ -143,7 +143,7 @@ public class CertificateService implements ICertificateService {
 
         for (CertificateRequest request : activeRequests) {
             request.setRequestType(RequestType.REFUSED);
-            request.setRefusalReason("Issuer is withdrawn. This is refused by the system.");
+            request.setRefusalReason("Issuer is revoked. This is refused by the system.");
             certificateRequestRepository.save(request);
         }
 

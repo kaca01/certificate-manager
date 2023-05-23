@@ -33,7 +33,7 @@ import static com.twilio.example.ValidationExample.ACCOUNT_SID;
 import static com.twilio.example.ValidationExample.AUTH_TOKEN;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "https://localhost:4200")
 @RequestMapping("/api/user")
 public class UserController {
 
