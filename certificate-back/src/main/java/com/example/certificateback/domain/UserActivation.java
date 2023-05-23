@@ -1,5 +1,6 @@
 package com.example.certificateback.domain;
 
+import com.example.certificateback.configuration.ApplicationConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,6 @@ public class UserActivation {
     public UserActivation(User user){
         this.user = user;
         this.date = new Date();
-        this.life = 600;  //todo move to application.properties
+        this.life = ApplicationConstants.USER_ACTIVATION_LIFE_IN_SECONDS;
     }
 }

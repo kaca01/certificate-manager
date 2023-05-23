@@ -22,8 +22,9 @@ public class TokenUtils {
 	@Value("somesecret")
 	public String SECRET;
 
-	// 30 minutes
-	@Value("1800000")
+	// 7 days
+	// write 1800 for test purposes
+	@Value("604800000")
 	private int EXPIRES_IN;
 	
 	// header name
