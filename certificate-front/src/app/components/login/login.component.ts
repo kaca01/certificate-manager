@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
     
     this.recaptchaV3Service.execute('importantAction')
     .subscribe((token: string) => {
-      console.log(`Token [${token}] generated`);
+      console.log(`Token generated`);
       this.userService.checkLogin(this.loginForm.value, this.radio, token)
       .subscribe(data => {
         console.log('email/sms successfully sent');

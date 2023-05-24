@@ -51,7 +51,7 @@ export class RegistrationComponent implements OnInit {
 
       this.recaptchaV3Service.execute('importantAction')
       .subscribe((token: string) => {
-        console.log(`Token [${token}] generated`);
+        console.log(`Token generated`);
         this.service.register(this.registrationForm.value, this.radio, token)
         .subscribe((res: User) => {
           console.log(res);

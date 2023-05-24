@@ -76,7 +76,7 @@ export class ResetPasswordComponent {
       else {
         this.recaptchaV3Service.execute('importantAction')
         .subscribe((token: string) => {
-          console.log(`Token [${token}] generated`);
+          console.log(`Token generated`);
           if(emailRegex.test(this.email)) 
           this.userService.sendEmail(this.email, token).subscribe()
           else 
