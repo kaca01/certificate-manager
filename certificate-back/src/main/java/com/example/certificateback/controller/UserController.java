@@ -54,7 +54,10 @@ public class UserController {
     BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO, @RequestHeader("recaptcha") String recaptcha) {
+
+        recaptchaService.checkResponse(recaptcha);
+
         UserDTO user = service.register(userDTO);
         return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
@@ -67,6 +70,8 @@ public class UserController {
         User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
         if(!user.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
             throw new BadRequestException("Wrong username or password!");
+
+        if (!user.isEnabled()) throw new BadRequestException("Wrong username or password!");
 
         // checking password expiring
         Calendar calendar = Calendar.getInstance();

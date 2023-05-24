@@ -1,11 +1,8 @@
 package com.example.certificateback.service.implementation;
 
-import com.example.certificateback.configuration.RecaptchaProperties;
 import com.example.certificateback.dto.RecaptchaResponse;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,9 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.ServletException;
-import java.io.IOException;
 
 @Service
 public class RecaptchaService {
@@ -25,6 +19,8 @@ public class RecaptchaService {
     private String secretKey;
     @Value("${google.recaptcha.url}")
     private String verifyUrl;
+    @Value("${google.recaptcha.score-threshold}")
+    private String threshold;
 
     public void checkResponse(String recaptcha) {
 
@@ -32,12 +28,15 @@ public class RecaptchaService {
 
         if(!recaptchaResponse.getSuccess()) {
             LOG.info("Invalid reCAPTCHA token");
-            System.out.println("recaptcha token not valid");
             throw new BadCredentialsException("Invalid reCaptcha token");
         }
-        else System.out.println("recaptcha token is valid");
+        else System.out.println("reCaptcha token is valid");
 
-        //todo add score check
+        if(recaptchaResponse.getScore() <= Double.parseDouble(this.threshold)){
+            LOG.info("reCaptcha response: bot spotted");
+            throw new BadCredentialsException("reCaptcha response: bot spotted");
+        }
+        else System.out.println("reCaptcha response: user is not a bot.");
     }
 
     private RecaptchaResponse validateToken(String recaptchaToken) {

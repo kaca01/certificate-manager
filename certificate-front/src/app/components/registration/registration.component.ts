@@ -3,6 +3,7 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn,
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { User } from 'src/app/domains';
 import { AuthService } from 'src/app/service/auth.service';
 import { UserService } from 'src/app/service/user.service';
@@ -30,7 +31,8 @@ export class RegistrationComponent implements OnInit {
   notification!: DisplayMessage;
   radio : String = '';
 
-  constructor(private router: Router, private service: UserService, private _snackBar: MatSnackBar,  private authService: AuthService) {}
+  constructor(private router: Router, private service: UserService, private _snackBar: MatSnackBar, 
+     private authService: AuthService, private recaptchaV3Service: ReCaptchaV3Service) {}
 
   ngOnInit(): void {
     this.authService.checkUserSession();
@@ -46,15 +48,20 @@ export class RegistrationComponent implements OnInit {
         this.openSnackBar("Must select an option for account verification!");
         return;
       }
-      this.service.register(this.registrationForm.value, this.radio)
-      .subscribe((res: User) => {
-        console.log(res);
-        this.notification = {msgType: 'activation', msgBody: 'Please go to your ' + this.radio + ' to activate your account!'};
-      },
-      (error) => {                 
-        this.handleErrors(error);
-        }
-      );
+
+      this.recaptchaV3Service.execute('importantAction')
+      .subscribe((token: string) => {
+        console.log(`Token [${token}] generated`);
+        this.service.register(this.registrationForm.value, this.radio, token)
+        .subscribe((res: User) => {
+          console.log(res);
+          this.notification = {msgType: 'activation', msgBody: 'Please go to your ' + this.radio + ' to activate your account!'};
+        },
+        (error) => {                 
+          this.handleErrors(error);
+          }
+        );
+      });
     }
     else this.openSnackBar("Missing data!");
   }

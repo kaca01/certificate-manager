@@ -292,7 +292,7 @@ public class UserService implements IUserService, UserDetailsService {
 		mail.setFrom(from);
 		mail.setSubject("Activate Your CM Account");
 		personalization.addDynamicTemplateData("user", user.getName() + " " + user.getSurname());
-		personalization.addDynamicTemplateData("link", "http://localhost:4200/activation/"+activation.getId().toString());
+		personalization.addDynamicTemplateData("link", "https://localhost:4200/activation/"+activation.getId().toString());
 		mail.addPersonalization(personalization);
 		mail.setTemplateId("d-1753ed2fbd874302b80910e8ad3b9186");
 		// this is the api key
@@ -317,7 +317,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 		String text = "Hello [[name]], thank you for joining us!\n"
 				+ "To activate your account please follow this link: "
-				+ "http://localhost:4200/activation/[[id]]'\n"
+				+ "https://localhost:4200/activation/[[id]]'\n"
 				+ "The Certificate Manager team.";
 
 		text = text.replace("[[name]]", user.getName());
