@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { ConfigService } from './config.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { ResetPassword, User } from '../domains';
 import { environment } from 'src/environments/environment';
@@ -36,9 +36,13 @@ export class UserService {
     this._expiredPassword = expiredPassword;
   }
 
-  checkLogin(user:any, radio: String) : Observable<any>{
+  checkLogin(user:any, radio: String, token: string) : Observable<any>{
     user.verification = radio;
-    return this.http.post<any>(environment.apiHost + "api/user/checkLogin", user);
+    const headers = new HttpHeaders({
+      'recaptcha': token,
+      'Content-Type': 'application/json'
+    });
+    return this.http.post<any>(environment.apiHost + "api/user/checkLogin", user, {headers});
   }
 
   login(user:any, code: String) : Observable<any>{

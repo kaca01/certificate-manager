@@ -151,5 +151,6 @@
     <orderEntry type="library" name="Maven: org.json:json:20220320" level="project" />
     <orderEntry type="library" name="Maven: com.sendgrid:sendgrid-java:4.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.sendgrid:java-http-client:4.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-configuration-processor:2.7.5" level="project" />
   </component>
 </module>

@@ -46,25 +46,24 @@ export class LoginComponent implements OnInit {
     this.recaptchaV3Service.execute('importantAction')
     .subscribe((token: string) => {
       console.log(`Token [${token}] generated`);
-    });
-
-    this.userService.checkLogin(this.loginForm.value, this.radio)
-    .subscribe(data => {
+      this.userService.checkLogin(this.loginForm.value, this.radio, token)
+      .subscribe(data => {
         console.log('email/sms successfully sent');
         this.radio = 'email';
         this.notification = {msgType: '', msgBody: ''};
         this.submitted = true;
         },
-    error => {
-      console.log(error);
-      if(error.error['message'] == "Password has expired!") {
-        this.userService.setExpiredPassword(true);
-        this.router.navigate(['/reset-password']);
-      }
-      else {
-        this.submitted = false;
-        this.notification = {msgType: 'error', msgBody: 'Incorrect username or password'};
-      }
+      error => {
+        console.log(error);
+        if(error.error['message'] == "Password has expired!") {
+          this.userService.setExpiredPassword(true);
+          this.router.navigate(['/reset-password']);
+        }
+        else {
+          this.submitted = false;
+          this.notification = {msgType: 'error', msgBody: 'Incorrect username or password'};
+        }
+      });
     });
   } 
 

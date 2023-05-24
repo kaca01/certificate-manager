@@ -6,12 +6,14 @@ import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
+import com.example.certificateback.service.implementation.RecaptchaService;
 import com.example.certificateback.service.interfaces.IUserService;
 import com.example.certificateback.util.TokenUtils;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,8 @@ import static com.twilio.example.ValidationExample.AUTH_TOKEN;
 public class UserController {
 
     @Autowired
+    RecaptchaService recaptchaService;
+    @Autowired
     IUserService service;
     @Autowired
     IUserRepository userRepository;
@@ -56,7 +60,10 @@ public class UserController {
     }
 
     @PostMapping(value = "/checkLogin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> checkLogin(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Void> checkLogin(@RequestBody LoginDTO loginDTO, @RequestHeader("recaptcha") String recaptcha) {
+
+        recaptchaService.checkResponse(recaptcha);
+
         User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
         if(!user.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
             throw new BadRequestException("Wrong username or password!");
