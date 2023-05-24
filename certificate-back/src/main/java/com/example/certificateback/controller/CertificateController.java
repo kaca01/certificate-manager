@@ -5,6 +5,8 @@ import com.example.certificateback.service.interfaces.ICertificateRequestService
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.service.interfaces.ICertificateService;
 import com.example.certificateback.service.interfaces.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -29,18 +31,24 @@ public class CertificateController {
     @Autowired
     ICertificateRequestService certificateRequestService;
 
+    private static final Logger logger = LoggerFactory.getLogger(CertificateController.class);
+
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<AllDTO<CertificateDTO>> getAllCertificates()
     {
+        logger.info("Getting all certificates.");
         List<CertificateDTO> certificatesDTO = certificateService.getAllCertificates();
         AllDTO<CertificateDTO> allMyCertificates = new AllDTO<>(certificatesDTO);
+        logger.info("All certificates returned.");
         return new ResponseEntity<>(allMyCertificates, HttpStatus.OK);
     }
 
     @GetMapping("/verify/{serialNumber}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Boolean isCertificateValid(@PathVariable String serialNumber) {
+        logger.info("Checking certificate validation by serial number.");
         return certificateService.checkingValidation(serialNumber);
     }
 
@@ -63,12 +71,14 @@ public class CertificateController {
             byteArray[i] = (byte) intValue;
         }
 
+        logger.info("Checking certificate validation by copy.");
         return certificateService.isValidByCopy(byteArray);
     }
 
     @GetMapping("/issuers")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<AllDTO<CertificateDTO>> getIssuers() {
+        logger.info("System returned issuers.");
         return new ResponseEntity<>(certificateService.getIssuers(), HttpStatus.OK);
     }
 
@@ -76,6 +86,7 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CertificateDTO> invalidateCertificate(@PathVariable String serialNumber, @RequestBody String
                                                                 withdrawnReason) {
+        logger.info("The certificate has been revoked.");
         return new ResponseEntity<>(certificateService.invalidate(serialNumber, withdrawnReason), HttpStatus.OK);
     }
 
@@ -83,6 +94,7 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> downloadCertificate(@PathVariable String serialNumber) {
         ByteArrayResource file = certificateService.downloadCertificate(serialNumber);
+        logger.info("The certificate has been downloaded.");
         return new ResponseEntity<>(file, HttpStatus.OK);
     }
 
@@ -90,6 +102,7 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> downloadPrivateKey(@PathVariable String serialNumber) {
         ByteArrayResource file = certificateService.downloadPrivateKey(serialNumber);
+        logger.info("The key has been downloaded.");
         return new ResponseEntity<>(file, HttpStatus.OK);
     }
 }
