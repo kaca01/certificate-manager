@@ -6,6 +6,7 @@ import { UserService } from 'src/app/service/user.service';
 import { AllCertificate, CertificateRequest, User } from 'src/app/domains';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
 
 
 @Component({
@@ -20,7 +21,7 @@ export class CertificateRequestComponent implements OnInit {
 
   constructor(private router: Router, private dialogRef: MatDialogRef<CertificateRequestComponent>, private certificateService: CertificateService,
               private certificateRequsetService: CertificateRequestService, private userService: UserService, private snackBar: MatSnackBar,
-              @Inject(MAT_DIALOG_DATA) data: any) {
+              private recaptchaV3Service: ReCaptchaV3Service, @Inject(MAT_DIALOG_DATA) data: any) {
 
      }
 
@@ -48,11 +49,15 @@ export class CertificateRequestComponent implements OnInit {
     console.log(certifcateRequest);
     if (this.userService.currentUser?.id != undefined) certifcateRequest.subject.id = this.userService.currentUser?.id;
 
-    this.certificateRequsetService.insert(certifcateRequest).subscribe((res)=> {
-      this.openSnackBar("Successfully added!");
-    }, (error) => {
-      console.log(error);
-      this.openSnackBar(error.error.message, 5000);
+    this.recaptchaV3Service.execute('importantAction')
+    .subscribe((token: string) => {
+      console.log(`Token generated`);
+      this.certificateRequsetService.insert(certifcateRequest, token).subscribe((res)=> {
+        this.openSnackBar("Successfully added!");
+      }, (error) => {
+        console.log(error);
+        this.openSnackBar(error.error.message, 5000);
+      });
     });
 
     this.dialogRef.close();
