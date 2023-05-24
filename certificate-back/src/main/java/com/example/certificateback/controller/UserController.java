@@ -124,7 +124,9 @@ public class UserController {
     
     // Reset password of user
     @GetMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> sendResetEmail(@PathVariable String email) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity<Void> sendResetEmail(@PathVariable String email, @RequestHeader("recaptcha") String recaptcha)
+            throws MessagingException, UnsupportedEncodingException {
+        recaptchaService.checkResponse(recaptcha);
         service.sendResetEmail(email);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -138,7 +140,8 @@ public class UserController {
     }
 
     @GetMapping(value = "/{phone}/sendSMS")
-    public ResponseEntity<String> sendSMS(@PathVariable String phone){
+    public ResponseEntity<String> sendSMS(@PathVariable String phone, @RequestHeader("recaptcha") String recaptcha){
+        recaptchaService.checkResponse(recaptcha);
         service.sendSMS(phone);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

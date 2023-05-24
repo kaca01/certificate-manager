@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ResetPassword } from 'src/app/domains';
 import { UserService } from 'src/app/service/user.service';
 import { AuthService } from 'src/app/service/auth.service';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
 
 @Component({
   selector: 'reset-password',
@@ -35,7 +36,8 @@ export class ResetPasswordComponent {
 
   expiredPassword: boolean = false;
 
-  constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router, private authService: AuthService) {
+  constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router, 
+    private authService: AuthService, private recaptchaV3Service: ReCaptchaV3Service) {
     this.expiredPassword = userService.isExpiredPassword();
     this.authService.logout();
   }
@@ -72,12 +74,16 @@ export class ResetPasswordComponent {
       if(!emailRegex.test(this.email) && !phoneRegex.test(this.email))
         this.openSnackBar("Invalid email/phone format");
       else {
-        if(emailRegex.test(this.email)) 
-          this.userService.sendEmail(this.email).subscribe()
-        else 
-          this.userService.sendSMS(this.email).subscribe()
-        this.openSnackBar("A verification code has been sent!");
-        this.checkEmail();
+        this.recaptchaV3Service.execute('importantAction')
+        .subscribe((token: string) => {
+          console.log(`Token [${token}] generated`);
+          if(emailRegex.test(this.email)) 
+          this.userService.sendEmail(this.email, token).subscribe()
+          else 
+            this.userService.sendSMS(this.email, token).subscribe()
+          this.openSnackBar("A verification code has been sent!");
+          this.checkEmail();
+        });
       }   
     }      
   }

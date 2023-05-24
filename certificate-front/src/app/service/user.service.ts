@@ -64,16 +64,24 @@ export class UserService {
     return this.http.get<String>(environment.apiHost + "api/user/activate/" + activationId);
   }
 
-  sendEmail(userEmail: string): Observable<any> {
-    return this.http.get<any>(environment.apiHost + 'api/user/' + userEmail + "/resetPassword");
+  sendEmail(userEmail: string, token: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'recaptcha': token,
+      'Content-Type': 'application/json'
+    });
+    return this.http.get<any>(environment.apiHost + 'api/user/' + userEmail + "/resetPassword", {headers});
   }
 
   resetPasswordViaEmail(userEmail: string, resetPassword: ResetPassword): Observable<void> {
     return this.http.put<void>(environment.apiHost + 'api/user/' + userEmail + "/resetPassword", resetPassword);
   }
 
-  sendSMS(phone: string): Observable<void> {
-    return this.http.get<void>(environment.apiHost + 'api/user/' + phone + "/sendSMS");
+  sendSMS(phone: string, token: string): Observable<void> {
+    const headers = new HttpHeaders({
+      'recaptcha': token,
+      'Content-Type': 'application/json'
+    });
+    return this.http.get<void>(environment.apiHost + 'api/user/' + phone + "/sendSMS", {headers});
   }
 
   resetPasswordViaSMS(phone: string, resetPassword: ResetPassword): Observable<void> {
