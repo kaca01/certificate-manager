@@ -55,25 +55,31 @@ public class UserController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
+        logger.info("User is trying to create new account.");
         UserDTO user = service.register(userDTO);
+        logger.info("Request submitted successfully.");
         return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
 
     @PostMapping(value = "/checkLogin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> checkLogin(@RequestBody LoginDTO loginDTO) {
         User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
-        if(!user.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
+        if(!user.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+            logger.error("Wrong username or password!");
             throw new BadRequestException("Wrong username or password!");
+        }
 
         // checking password expiring
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(user.getLastPasswordResetDate());
         calendar.add(Calendar.DAY_OF_YEAR, ApplicationConstants.RESET_PASSWORD_TIMEOUT_IN_DAYS);
-        if(calendar.getTime().before(new Date()))
+        if(calendar.getTime().before(new Date())) {
+            logger.error("Password has expired!");
             throw new BadRequestException("Password has expired!");
-
+        }
+        logger.info("Validating login...");
         service.checkLogin(loginDTO);
-
+        logger.info("Login validation successful.");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -111,14 +117,18 @@ public class UserController {
     @GetMapping(value = "/activate/{activationId}")
     public ResponseEntity<ErrorDTO> activateUser(@PathVariable int activationId)
     {
+        logger.info("Trying to activate account.");
         ErrorDTO message = service.activateUser((long) activationId);
+        logger.info("Account activation successful.");
         return new ResponseEntity<ErrorDTO>(message, HttpStatus.OK);
     }
     
     // Reset password of user
     @GetMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> sendResetEmail(@PathVariable String email) throws MessagingException, UnsupportedEncodingException {
+        logger.info("Trying to send code for reset password via mail.");
         service.sendResetEmail(email);
+        logger.info("Reset password mail sent successfully.");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -126,19 +136,25 @@ public class UserController {
     @PutMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> resetPassword(@PathVariable String email, @RequestBody ResetPasswordDTO resetPasswordDTO)
     {
+        logger.info("Trying to send code via mail for password change.");
         service.resetEmail(email, resetPasswordDTO);
+        logger.info("Code sent successfully.");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(value = "/{phone}/sendSMS")
     public ResponseEntity<String> sendSMS(@PathVariable String phone){
+        logger.info("Trying to send mail via SMS.");
         service.sendSMS(phone);
+        logger.info("SMS send successfully.");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{phone}/sendSMS")
     public ResponseEntity<?> checkSMS(@PathVariable String phone, @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        logger.info("Trying to verify code.");
         service.checkSMS(phone, resetPasswordDTO);
+        logger.info("Verification successful.");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

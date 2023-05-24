@@ -132,7 +132,7 @@ public class UserService implements IUserService, UserDetailsService {
 		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
 		Verification.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2", // this is your verification sid
-						"hristinacina@gmail.com", // recipient email address
+						"kvucic6@gmail.com", // recipient email address
 						"email") // this is your channel type
 				.create();
 	}
@@ -147,7 +147,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 		try {
 			VerificationCheck.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2") // pass verification SID here
-					.setTo("hristinacina@gmail.com")
+					.setTo("kvucic6@gmail.com")
 					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
 					.create();
 
@@ -167,7 +167,7 @@ public class UserService implements IUserService, UserDetailsService {
 		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
 		Verification.creator("VAe0c3ba1e13e3da10bd89949823f7715a", // this is your verification sid
-						"+381621164208", // recipient phone number
+						"+381621444147", // recipient phone number
 						"sms") // this is your channel type
 				.create();
 	}
@@ -254,7 +254,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 	private void sendLoginEmail(LoginVerification verification) {
 		Email from = new Email("savic.sv7.2020@uns.ac.rs");
-		Email to = new Email("hristinacina@gmail.com");
+		Email to = new Email("kvucic6@gmail.com");
 		Mail mail = new Mail();
 		// we create an object of our static class feel free to change the class on its own file
 		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
@@ -284,7 +284,7 @@ public class UserService implements IUserService, UserDetailsService {
 				-> new NotFoundException("User does not exist!"));
 
 		Email from = new Email("savic.sv7.2020@uns.ac.rs");
-		Email to = new Email("hristinacina@gmail.com");
+		Email to = new Email("kvucic6@gmail.com");
 		Mail mail = new Mail();
 		// we create an object of our static class feel free to change the class on its own file
 		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
