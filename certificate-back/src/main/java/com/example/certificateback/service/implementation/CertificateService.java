@@ -15,6 +15,8 @@ import com.example.certificateback.repository.ICertificateRequestRepository;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.ICertificateService;
 import com.example.certificateback.util.KeyStoreReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.core.Authentication;
@@ -22,17 +24,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.cert.*;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,6 +42,9 @@ public class CertificateService implements ICertificateService {
 
     @Autowired
     ICertificateRequestRepository certificateRequestRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(CertificateService.class);
+
 
     private User getLoggedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -76,17 +74,27 @@ public class CertificateService implements ICertificateService {
 
     @Override
     public Boolean checkingValidation(String serialNumber) {
-        Certificate certificate = certificateRepository.findBySerialNumber(serialNumber)
-                .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
+        try {
+            Certificate certificate = certificateRepository.findBySerialNumber(serialNumber)
+                    .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
 
-        if(certificate != null)
-            return certificate.isValid() && !certificate.isWithdrawn();
+            if (certificate != null) {
+                logger.info("Validation result returned.");
+                return certificate.isValid() && !certificate.isWithdrawn();
+            }
 
-        return false;
+            logger.info("Validation result returned.");
+            return false;
+        }
+        catch (NotFoundException e) {
+            logger.error("Certificate with chosen serial number does not exist.");
+            throw e;
+        }
     }
 
     @Override
     public Boolean isValidByCopy(byte[] file) {
+        logger.info("Checking validation by uploaded certificate copy.");
         Boolean isValid;
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -97,8 +105,10 @@ public class CertificateService implements ICertificateService {
             isValid = checkingValidation(certificate.getSerialNumber().toString());
             inputStream.close();
         } catch (CertificateException | IOException e) {
+            logger.error("Error occurred while checking validation of uploaded certificate copy.");
             throw new BadRequestException("Error occurred, please check file type and try again!");
         }
+        logger.info("Validation result returned.");
         return isValid;
     }
 
@@ -112,25 +122,36 @@ public class CertificateService implements ICertificateService {
 
     @Override
     public CertificateDTO invalidate(String serialNumber, String withdrawnReason) {
-        Certificate certificate = certificateRepository.findBySerialNumber(serialNumber)
-                .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
+        try {
+            logger.info("User is trying to revoke a certificate.");
+            Certificate certificate = certificateRepository.findBySerialNumber(serialNumber)
+                    .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loggedUser = userRepository.findByEmail(authentication.getName()).orElse(null);
-        if (loggedUser != certificate.getSubject()) throw new BadRequestException("Only certificate owner can revoke the certificate.");
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User loggedUser = userRepository.findByEmail(authentication.getName()).orElse(null);
+            if (loggedUser != certificate.getSubject())
+                throw new BadRequestException("Only certificate owner can revoke the certificate.");
 
-        if (certificate.isWithdrawn()) throw new BadRequestException(("Certificate is not valid!"));
+            if (certificate.isWithdrawn()) throw new BadRequestException(("Certificate is not valid!"));
 
-        certificate.setWithdrawn(true);
-        certificate.setWithdrawnReason(withdrawnReason);
-        certificateRepository.save(certificate);
-        invalidateChildren(certificate);
-        certificateRepository.flush();
-        certificateRequestRepository.flush();
-        return new CertificateDTO(certificate);
+            certificate.setWithdrawn(true);
+            certificate.setWithdrawnReason(withdrawnReason);
+            certificateRepository.save(certificate);
+            revokeChildren(certificate);
+            certificateRepository.flush();
+            certificateRequestRepository.flush();
+            logger.info("Certificate revoked.");
+            return new CertificateDTO(certificate);
+        }
+        catch (NotFoundException | BadRequestException e) {
+            if (e.getClass().getName().equals("NotFoundException")) logger.error("Certificate does not exist.");
+            else logger.error("Bad request. User is not owner or certificate is not valid.");
+            throw e;
+        }
     }
 
-    private void invalidateChildren(Certificate certificate) {
+    private void revokeChildren(Certificate certificate) {
+        // TODO : should I put here logs, is that too much infos?
         if (!certificate.isWithdrawn()) {
             certificate.setWithdrawn(true);
             certificate.setWithdrawnReason("Issuer is revoked. This is refused by the system.");
@@ -149,7 +170,7 @@ public class CertificateService implements ICertificateService {
 
         List<Certificate> childrenCertificates = certificateRepository.findByIssuerSerialNumber(certificate.getSerialNumber());
         for (Certificate child : childrenCertificates) {
-            invalidateChildren(child);
+            revokeChildren(child);
         }
     }
 

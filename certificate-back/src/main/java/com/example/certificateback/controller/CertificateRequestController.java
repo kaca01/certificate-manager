@@ -37,7 +37,6 @@ public class CertificateRequestController {
     @GetMapping(value = "/issuer", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AllDTO<CertificateRequestDTO>> getRequestsBasedOnIssuer() {
-        logger.info("Requests based on issuer returned.");
         return new ResponseEntity<>(service.getRequestsBasedOnIssuer(), HttpStatus.OK);
     }
 

@@ -86,7 +86,6 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CertificateDTO> invalidateCertificate(@PathVariable String serialNumber, @RequestBody String
                                                                 withdrawnReason) {
-        logger.info("The certificate has been revoked.");
         return new ResponseEntity<>(certificateService.invalidate(serialNumber, withdrawnReason), HttpStatus.OK);
     }
 
@@ -94,7 +93,6 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> downloadCertificate(@PathVariable String serialNumber) {
         ByteArrayResource file = certificateService.downloadCertificate(serialNumber);
-        logger.info("The certificate has been downloaded.");
         return new ResponseEntity<>(file, HttpStatus.OK);
     }
 
@@ -102,7 +100,6 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> downloadPrivateKey(@PathVariable String serialNumber) {
         ByteArrayResource file = certificateService.downloadPrivateKey(serialNumber);
-        logger.info("The key has been downloaded.");
         return new ResponseEntity<>(file, HttpStatus.OK);
     }
 }

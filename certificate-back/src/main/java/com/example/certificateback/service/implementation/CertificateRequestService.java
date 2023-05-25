@@ -87,9 +87,11 @@ public class CertificateRequestService implements ICertificateRequestService {
 
     @Override
     public AllDTO<CertificateRequestDTO> getRequestsBasedOnIssuer() {
+        logger.info("Started getting requests based on issuer");
         User issuer = getLoggedUser();
         List<CertificateRequest> certificateRequests = certificateRequestRepository.findByRequestTypeAndIssuerSubjectId
                 (RequestType.ACTIVE, issuer.getId());
+        logger.info("Requests based on issuer returned.");
         return getRequests(certificateRequests);
     }
 
@@ -107,11 +109,11 @@ public class CertificateRequestService implements ICertificateRequestService {
 
             request.setRequestType(RequestType.ACCEPTED);
             certificateRequestRepository.save(request);
+            logger.info("Request accepted.");
             return certificateGeneratorService.createCertificate(request);
         }
         catch (NotFoundException | NotValidException e) {
-            // TODO : test this
-            if (e.getClass().getName().equals("NotFoundException")) logger.error("Certificate request does not exits.");
+            if (e.getClass().getName().equals("NotFoundException")) logger.error("Certificate request does not exist.");
             else logger.error("Certificate issuer is not valid.");
             throw e;
         }
