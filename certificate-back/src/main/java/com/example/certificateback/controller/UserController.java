@@ -57,7 +57,6 @@ public class UserController {
     public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
         logger.info("User is trying to create new account.");
         UserDTO user = service.register(userDTO);
-        logger.info("Request submitted successfully.");
         return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
 
@@ -79,7 +78,6 @@ public class UserController {
         }
         logger.info("Validating login...");
         service.checkLogin(loginDTO);
-        logger.info("Login validation successful.");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -118,7 +116,6 @@ public class UserController {
     {
         logger.info("Trying to activate account.");
         ErrorDTO message = service.activateUser((long) activationId);
-        logger.info("Account activation successful.");
         return new ResponseEntity<ErrorDTO>(message, HttpStatus.OK);
     }
     

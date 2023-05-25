@@ -75,9 +75,11 @@ public class UserService implements IUserService, UserDetailsService {
 	@Override
 	public UserDTO register(UserDTO registrationDTO) {
 		if (this.userRepository.existsByEmail(registrationDTO.getEmail())) {
+			logger.error("User with that email already exists.");
 			throw new BadRequestException("User with that email already exists!");
 		}
 		if (this.userRepository.existsByPhone(registrationDTO.getPhone())) {
+			logger.error("User with that phone number already exists.");
 			throw new BadRequestException("User with that phone number already exists!");
 		}
 		User user = new User(registrationDTO);
@@ -89,6 +91,7 @@ public class UserService implements IUserService, UserDetailsService {
 		List<Role> roles = new ArrayList<>();
 		roles.add(roleRepository.findById(1L).get());
 		user.setRoles(roles);
+		logger.info("Registration request submitted successfully.");
 		user = userRepository.save(user);
 
 		UserActivation activation = userActivationRepository.save(new UserActivation(user));
@@ -97,9 +100,11 @@ public class UserService implements IUserService, UserDetailsService {
 			try {
 				sendActivationEmail(activation);
 			} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
+				logger.error("Error occurred.");
 				throw new RuntimeException(e);
 			}
 		} else{
+			logger.info("Trying to send activation SMS.");
 			sendActivationSMS(activation);
 		}
 
@@ -114,19 +119,27 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public ErrorDTO activateUser(Long activationId) {
-		UserActivation activation = userActivationRepository.findById(activationId).orElseThrow(
-				() -> new NotFoundException("Activation with entered id does not exist!"));
-		User p = findUserById(activation.getUser().getId());
-		if (new Date().before(new Date(activation.getDate().getTime() + activation.getLife()*1000L))) {
-			p.setEnabled(true);
-			userRepository.save(p);
-			userActivationRepository.delete(activation);
-			return new ErrorDTO("Successful account activation!");
-		} else {
-			userActivationRepository.delete(activation);
-			passwordRepository.delete(p.getPasswords().get(0));
-			userRepository.delete(p);
-			throw new BadRequestException("Activation expired. Register again!");
+		try {
+			UserActivation activation = userActivationRepository.findById(activationId).orElseThrow(
+					() -> new NotFoundException("Activation with entered id does not exist!"));
+			User p = findUserById(activation.getUser().getId());
+			if (new Date().before(new Date(activation.getDate().getTime() + activation.getLife() * 1000L))) {
+				p.setEnabled(true);
+				userRepository.save(p);
+				userActivationRepository.delete(activation);
+				logger.info("Successful account activation.");
+				return new ErrorDTO("Successful account activation!");
+			} else {
+				userActivationRepository.delete(activation);
+				passwordRepository.delete(p.getPasswords().get(0));
+				userRepository.delete(p);
+				throw new BadRequestException("Activation expired. Register again!");
+			}
+		}
+		catch (NotFoundException | BadRequestException e) {
+			if (e.getClass().getName().equals("NotFoundException")) logger.error("Activation with entered id does not exist.");
+			else logger.error("Activation expired.");
+			throw e;
 		}
 	}
 
@@ -229,8 +242,10 @@ public class UserService implements IUserService, UserDetailsService {
 		User user = userRepository.findByEmail(loginDTO.getEmail()).get();
 		LoginVerification loginVerification = loginVerificationRepository.save(new LoginVerification(user));
 		if(loginDTO.getVerification().equals("email")){
+			logger.info("Sending login email...");
 			sendLoginEmail(loginVerification);
 		} else {
+			logger.info("Sending login SMS...");
 			sendLoginSMS(loginVerification);
 		}
 	}
@@ -300,6 +315,7 @@ public class UserService implements IUserService, UserDetailsService {
 			request.setBody(mail.build());
 			sg.api(request);
 		} catch (IOException ex) {
+			logger.error("Error occurred, while sending login email.");
 			System.out.println(ex);
 		}
 	}
