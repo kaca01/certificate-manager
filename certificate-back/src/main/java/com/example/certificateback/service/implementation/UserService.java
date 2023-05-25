@@ -1,5 +1,6 @@
 package com.example.certificateback.service.implementation;
 
+import com.example.certificateback.controller.UserController;
 import com.example.certificateback.domain.*;
 import com.example.certificateback.dto.ErrorDTO;
 import com.example.certificateback.dto.LoginDTO;
@@ -15,6 +16,8 @@ import com.example.certificateback.dto.ResetPasswordDTO;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +54,8 @@ public class UserService implements IUserService, UserDetailsService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 	@Override
 	public User findByEmail(String email) throws UsernameNotFoundException {
 		return userRepository.findByEmail(email).orElseThrow(()
@@ -70,9 +75,11 @@ public class UserService implements IUserService, UserDetailsService {
 	@Override
 	public UserDTO register(UserDTO registrationDTO) {
 		if (this.userRepository.existsByEmail(registrationDTO.getEmail())) {
+			logger.error("User with that email already exists.");
 			throw new BadRequestException("User with that email already exists!");
 		}
 		if (this.userRepository.existsByPhone(registrationDTO.getPhone())) {
+			logger.error("User with that phone number already exists.");
 			throw new BadRequestException("User with that phone number already exists!");
 		}
 		User user = new User(registrationDTO);
@@ -84,6 +91,7 @@ public class UserService implements IUserService, UserDetailsService {
 		List<Role> roles = new ArrayList<>();
 		roles.add(roleRepository.findById(1L).get());
 		user.setRoles(roles);
+		logger.info("Registration request submitted successfully.");
 		user = userRepository.save(user);
 
 		UserActivation activation = userActivationRepository.save(new UserActivation(user));
@@ -92,9 +100,11 @@ public class UserService implements IUserService, UserDetailsService {
 			try {
 				sendActivationEmail(activation);
 			} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
+				logger.error("Error occurred while sending activation email.");
 				throw new RuntimeException(e);
 			}
 		} else{
+			logger.info("Trying to send activation SMS.");
 			sendActivationSMS(activation);
 		}
 
@@ -109,45 +119,67 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public ErrorDTO activateUser(Long activationId) {
-		UserActivation activation = userActivationRepository.findById(activationId).orElseThrow(
-				() -> new NotFoundException("Activation with entered id does not exist!"));
-		User p = findUserById(activation.getUser().getId());
-		if (new Date().before(new Date(activation.getDate().getTime() + activation.getLife()*1000L))) {
-			p.setEnabled(true);
-			userRepository.save(p);
-			userActivationRepository.delete(activation);
-			return new ErrorDTO("Successful account activation!");
-		} else {
-			userActivationRepository.delete(activation);
-			passwordRepository.delete(p.getPasswords().get(0));
-			userRepository.delete(p);
-			throw new BadRequestException("Activation expired. Register again!");
+		try {
+			UserActivation activation = userActivationRepository.findById(activationId).orElseThrow(
+					() -> new NotFoundException("Activation with entered id does not exist!"));
+			User p = findUserById(activation.getUser().getId());
+			if (new Date().before(new Date(activation.getDate().getTime() + activation.getLife() * 1000L))) {
+				p.setEnabled(true);
+				userRepository.save(p);
+				userActivationRepository.delete(activation);
+				logger.info("Successful account activation.");
+				return new ErrorDTO("Successful account activation!");
+			} else {
+				userActivationRepository.delete(activation);
+				passwordRepository.delete(p.getPasswords().get(0));
+				userRepository.delete(p);
+				throw new BadRequestException("Activation expired. Register again!");
+			}
+		}
+		catch (NotFoundException | BadRequestException e) {
+			if (e.getClass().getName().equals("NotFoundException")) logger.error("Activation with entered id does not exist.");
+			else logger.error("Activation expired.");
+			throw e;
 		}
 	}
 
 	@Override
 	public void sendResetEmail(String email) {
-		userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
+		try {
+			userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
 
-		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
+			Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
-		Verification.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2", // this is your verification sid
-						"hristinacina@gmail.com", // recipient email address
-						"email") // this is your channel type
-				.create();
+			Verification.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2", // this is your verification sid
+							"kvucic6@gmail.com", // recipient email address
+							"email") // this is your channel type
+					.create();
+		} catch (NotFoundException e) {
+			logger.error("User does not exist.");
+			throw e;
+		}
+
+		logger.info("Reset email sent successfully.");
 	}
 
 	@Override
 	public void resetEmail(String email, ResetPasswordDTO resetPasswordDTO) {
-		User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
-
+		// TODO : test this
+		User user;
+		try {
+			user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
+		}
+		catch (NotFoundException e) {
+			logger.error("User does not exist.");
+			throw e;
+		}
 		Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
 		this.isPreviousPassword(user, resetPasswordDTO.getNewPassword());
 
 		try {
 			VerificationCheck.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2") // pass verification SID here
-					.setTo("hristinacina@gmail.com")
+					.setTo("kvucic6@gmail.com")
 					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
 					.create();
 
@@ -156,20 +188,28 @@ public class UserService implements IUserService, UserDetailsService {
 			userRepository.save(user);
 
 		} catch (Exception e) {
+			logger.error("Verification via email failed.");
 			throw new BadRequestException("Verification failed.");
 		}
+		logger.info("Reset password email sent successfully.");
 	}
 
 	@Override
 	public void sendSMS(String phone) {
-		userRepository.findByPhone(phone).orElseThrow(() -> new NotFoundException("User does not exist!"));
+		try {
+			userRepository.findByPhone(phone).orElseThrow(() -> new NotFoundException("User does not exist!"));
 
-		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
+			Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
-		Verification.creator("VAe0c3ba1e13e3da10bd89949823f7715a", // this is your verification sid
-						"+381621164208", // recipient phone number
-						"sms") // this is your channel type
-				.create();
+			Verification.creator("VAe0c3ba1e13e3da10bd89949823f7715a", // this is your verification sid
+							"+381621444147", // recipient phone number
+							"sms") // this is your channel type
+					.create();
+		}
+		catch (NotFoundException e) {
+			logger.error("User does not exist.");
+			throw e;
+		}
 	}
 
 	@Override
@@ -191,8 +231,10 @@ public class UserService implements IUserService, UserDetailsService {
 			userRepository.save(user);
 
 		} catch (Exception e) {
+			logger.error("SMS verification failed.");
 			throw new BadRequestException("Verification failed.");
 		}
+		logger.info("Verification successful.");
 	}
 
 	@Override
@@ -207,8 +249,10 @@ public class UserService implements IUserService, UserDetailsService {
 		User user = userRepository.findByEmail(loginDTO.getEmail()).get();
 		LoginVerification loginVerification = loginVerificationRepository.save(new LoginVerification(user));
 		if(loginDTO.getVerification().equals("email")){
+			logger.info("Sending login email...");
 			sendLoginEmail(loginVerification);
 		} else {
+			logger.info("Sending login SMS...");
 			sendLoginSMS(loginVerification);
 		}
 	}
@@ -220,12 +264,15 @@ public class UserService implements IUserService, UserDetailsService {
 
 		if (!new Date().before(new Date(verification.getDate().getTime() + verification.getLife()*1000L))) {
 			loginVerificationRepository.delete(verification);
+			logger.error("Verification time expired.");
 			throw new BadRequestException("Verification time expired. Login again!");
 		}
 		else if (!verification.getCode().equals(loginDTO.getVerification())){
 			loginVerificationRepository.delete(verification);
+			logger.error("The code for login is not correct.");
 			throw new BadRequestException("Code not correct. Login again!");
 		}else{
+			logger.info("Login successful.");
 			loginVerificationRepository.delete(verification);
 		}
 	}
@@ -254,7 +301,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 	private void sendLoginEmail(LoginVerification verification) {
 		Email from = new Email("savic.sv7.2020@uns.ac.rs");
-		Email to = new Email("hristinacina@gmail.com");
+		Email to = new Email("kvucic6@gmail.com");
 		Mail mail = new Mail();
 		// we create an object of our static class feel free to change the class on its own file
 		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
@@ -275,6 +322,7 @@ public class UserService implements IUserService, UserDetailsService {
 			request.setBody(mail.build());
 			sg.api(request);
 		} catch (IOException ex) {
+			logger.error("Error occurred, while sending login email.");
 			System.out.println(ex);
 		}
 	}
@@ -284,7 +332,7 @@ public class UserService implements IUserService, UserDetailsService {
 				-> new NotFoundException("User does not exist!"));
 
 		Email from = new Email("savic.sv7.2020@uns.ac.rs");
-		Email to = new Email("hristinacina@gmail.com");
+		Email to = new Email("kvucic6@gmail.com");
 		Mail mail = new Mail();
 		// we create an object of our static class feel free to change the class on its own file
 		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
@@ -329,8 +377,10 @@ public class UserService implements IUserService, UserDetailsService {
 
 	private void isPreviousPassword(User user, String password) {
 		for (Password p: user.getPasswords()) {
-			if(passwordEncoder.matches(password, p.getPassword()))
+			if(passwordEncoder.matches(password, p.getPassword())) {
+				logger.error("New password is not unique.");
 				throw new BadRequestException("Password must be unique!");
+			}
 		}
 	}
 

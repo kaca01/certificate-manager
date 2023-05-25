@@ -5,6 +5,8 @@ import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.dto.CertificateRequestDTO;
 import com.example.certificateback.dto.ErrorDTO;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +23,9 @@ public class CertificateRequestController {
 
     @Autowired
     ICertificateRequestService service;
+
+    private static final Logger logger = LoggerFactory.getLogger(CertificateRequestController.class);
+
 
     @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('USER')")
@@ -49,6 +54,7 @@ public class CertificateRequestController {
     @PutMapping(value = "/accept/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CertificateDTO> acceptRequest(@PathVariable Long id) {
+        logger.info("User is trying to accept certificate request.");
         CertificateDTO certificate = service.acceptRequest(id);
         return new ResponseEntity<>(certificate, HttpStatus.OK);
     }
@@ -56,6 +62,7 @@ public class CertificateRequestController {
     @PutMapping(value = "/refuse/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CertificateRequestDTO> refuseRequest(@PathVariable Long id, @RequestBody ErrorDTO reason) {
+        logger.info("Certificate request refuse action started.");
         CertificateRequestDTO request = service.refuseRequest(id, reason);
         return new ResponseEntity<>(request, HttpStatus.OK);
     }

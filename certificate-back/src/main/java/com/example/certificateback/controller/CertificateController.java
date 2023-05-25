@@ -5,6 +5,8 @@ import com.example.certificateback.service.interfaces.ICertificateRequestService
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.service.interfaces.ICertificateService;
 import com.example.certificateback.service.interfaces.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -29,10 +31,14 @@ public class CertificateController {
     @Autowired
     ICertificateRequestService certificateRequestService;
 
+    private static final Logger logger = LoggerFactory.getLogger(CertificateController.class);
+
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<AllDTO<CertificateDTO>> getAllCertificates()
     {
+        logger.info("Getting all certificates.");
         List<CertificateDTO> certificatesDTO = certificateService.getAllCertificates();
         AllDTO<CertificateDTO> allMyCertificates = new AllDTO<>(certificatesDTO);
         return new ResponseEntity<>(allMyCertificates, HttpStatus.OK);
@@ -41,6 +47,7 @@ public class CertificateController {
     @GetMapping("/verify/{serialNumber}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Boolean isCertificateValid(@PathVariable String serialNumber) {
+        logger.info("Checking certificate validation by serial number.");
         return certificateService.checkingValidation(serialNumber);
     }
 
