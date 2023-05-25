@@ -30,7 +30,6 @@ public class CertificateRequestController {
     @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<AllDTO<CertificateRequestDTO>> getUserRequests() {
-        logger.info("All certificate requests for user returned.");
         return new ResponseEntity<>(service.getUserRequests(), HttpStatus.OK);
     }
 
@@ -43,7 +42,6 @@ public class CertificateRequestController {
     @GetMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AllDTO<CertificateRequestDTO>> getAllRequests() {
-        logger.info("All certificate requests returned.");
         return new ResponseEntity<>(service.getAllRequests(), HttpStatus.OK);
     }
 
@@ -56,6 +54,7 @@ public class CertificateRequestController {
     @PutMapping(value = "/accept/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CertificateDTO> acceptRequest(@PathVariable Long id) {
+        logger.info("User is trying to accept certificate request.");
         CertificateDTO certificate = service.acceptRequest(id);
         return new ResponseEntity<>(certificate, HttpStatus.OK);
     }

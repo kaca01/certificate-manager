@@ -100,7 +100,7 @@ public class UserService implements IUserService, UserDetailsService {
 			try {
 				sendActivationEmail(activation);
 			} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
-				logger.error("Error occurred.");
+				logger.error("Error occurred while sending activation email.");
 				throw new RuntimeException(e);
 			}
 		} else{
@@ -145,14 +145,21 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public void sendResetEmail(String email) {
-		userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
+		try {
+			userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
 
-		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
+			Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
-		Verification.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2", // this is your verification sid
-						"kvucic6@gmail.com", // recipient email address
-						"email") // this is your channel type
-				.create();
+			Verification.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2", // this is your verification sid
+							"kvucic6@gmail.com", // recipient email address
+							"email") // this is your channel type
+					.create();
+		} catch (NotFoundException e) {
+			logger.error("User does not exist.");
+			throw e;
+		}
+
+		logger.info("Reset email sent successfully.");
 	}
 
 	@Override
@@ -370,8 +377,10 @@ public class UserService implements IUserService, UserDetailsService {
 
 	private void isPreviousPassword(User user, String password) {
 		for (Password p: user.getPasswords()) {
-			if(passwordEncoder.matches(password, p.getPassword()))
+			if(passwordEncoder.matches(password, p.getPassword())) {
+				logger.error("New password is not unique.");
 				throw new BadRequestException("Password must be unique!");
+			}
 		}
 	}
 

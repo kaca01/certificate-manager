@@ -67,8 +67,10 @@ public class CertificateService implements ICertificateService {
                 certificatesDTO.add(new CertificateDTO(c.getValidTo(), c.getValidFrom(), c.getSubject(), c.getCertificateType(),
                                     c.getSerialNumber()));
             }
+            logger.info("Returned all certificates.");
             return certificatesDTO;
         }
+        logger.info("Returned null while getting all certificates.");
         return null;
     }
 
@@ -79,11 +81,11 @@ public class CertificateService implements ICertificateService {
                     .orElseThrow(() -> new NotFoundException("Certificate with that serial number does not exist"));
 
             if (certificate != null) {
-                logger.info("Validation result returned.");
+                logger.info("Validation by serial number result returned.");
                 return certificate.isValid() && !certificate.isWithdrawn();
             }
 
-            logger.info("Validation result returned.");
+            logger.info("Validation by serial number result returned.");
             return false;
         }
         catch (NotFoundException e) {
@@ -108,7 +110,7 @@ public class CertificateService implements ICertificateService {
             logger.error("Error occurred while checking validation of uploaded certificate copy.");
             throw new BadRequestException("Error occurred, please check file type and try again!");
         }
-        logger.info("Validation result returned.");
+        logger.info("Validation by copy result returned.");
         return isValid;
     }
 
@@ -117,6 +119,7 @@ public class CertificateService implements ICertificateService {
         List<CertificateDTO> certificates = getAllCertificates();
         certificates.removeIf(certificate -> Objects.equals(certificate.getCertificateType(), "END"));
         AllDTO<CertificateDTO> certificatesDTO = new AllDTO<>(certificates);
+        logger.info("Issuers returned.");
         return certificatesDTO;
     }
 
@@ -145,7 +148,7 @@ public class CertificateService implements ICertificateService {
         }
         catch (NotFoundException | BadRequestException e) {
             if (e.getClass().getName().equals("NotFoundException")) logger.error("Certificate does not exist.");
-            else logger.error("Bad request. User is not owner or certificate is not valid.");
+            else logger.error("Bad request. User is not owner or the certificate is not valid.");
             throw e;
         }
     }
@@ -158,7 +161,7 @@ public class CertificateService implements ICertificateService {
             certificateRepository.save(certificate);
         }
 
-        // the following lines are refusing all active cert requests with issuer that is withdrawn
+        // the following lines are refusing all active cert requests with issuer that is revoked
         List<CertificateRequest> activeRequests = certificateRequestRepository.
                 findByIssuerAndRequestType(certificate, RequestType.ACTIVE);
 

@@ -28,7 +28,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,13 +74,14 @@ public class CertificateRequestService implements ICertificateRequestService {
     public AllDTO<CertificateRequestDTO> getUserRequests() {
         User user = getLoggedUser();
         List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
-
+        logger.info("Returned all certificates for a user.");
         return getRequests(certificateRequests);
     }
 
     @Override
     public AllDTO<CertificateRequestDTO> getAllRequests() {
         List<CertificateRequest> certificateRequests = certificateRequestRepository.findAll();
+        logger.info("All certificate requests returned.");
         return getRequests(certificateRequests);
     }
 
@@ -100,7 +100,7 @@ public class CertificateRequestService implements ICertificateRequestService {
         try {
             CertificateRequest request = certificateRequestRepository.findById(id).orElseThrow(() ->
                     new NotFoundException("Request does not exist!"));
-            checkForExceptions(request);
+            checkForCreateCertificateExceptions(request);
             // obuhvata i provjeru validacije i withdrawn atributa
             if (request.getCertificateType() != CertificateType.ROOT && !certificateService.checkingValidation(request.getIssuer().getSerialNumber())) {
                 throw new NotValidException("Issuer certificate is not valid! This request cannot be accepted.");
@@ -124,11 +124,12 @@ public class CertificateRequestService implements ICertificateRequestService {
         try {
             CertificateRequest request = certificateRequestRepository.findById(id).orElseThrow(() ->
                     new NotFoundException("Request does not exist!"));
-            checkForExceptions(request);
+            checkForCreateCertificateExceptions(request);
             checkForRequestExceptions(request);
             request.setRequestType(RequestType.REFUSED);
             request.setRefusalReason(reason.getMessage());
             certificateRequestRepository.save(request);
+            logger.info("Certificate request refused successfully.");
             return new CertificateRequestDTO(request);
         } catch (NotFoundException e) {
             logger.error("Certificate request is not found.");
@@ -143,12 +144,12 @@ public class CertificateRequestService implements ICertificateRequestService {
         }
         if (request.getCertificateType() != CertificateType.ROOT && !getLoggedUser().getEmail().equals(request.getIssuer().getSubject().getEmail())
         && !getLoggedUser().getRoles().get(0).getName().equals("ROLE_ADMIN")){
-            logger.error("User that is not issuer of the certificate can't execute this action.");
+            logger.error("User that is not issuer of the certificate can't execute refuse/accept action.");
             throw new WrongUserException("You are not issuer of this certificate!");
         }
     }
 
-    private void checkForExceptions(CertificateRequest request) {
+    private void checkForCreateCertificateExceptions(CertificateRequest request) {
         if (request.getCertificateType() != CertificateType.ROOT) {
             if (request.getIssuer() == null) {
                 logger.error("Issuer not found.");
@@ -191,7 +192,7 @@ public class CertificateRequestService implements ICertificateRequestService {
         request.setRequestType(RequestType.ACTIVE);
         logger.info("Certificate request is active.");
 
-        checkForExceptions(request);
+        checkForCreateCertificateExceptions(request);
         if (request.getDate() == null) request.setDate(new Date());
 
         if (role.getName().equals("ROLE_ADMIN")) {
@@ -214,6 +215,7 @@ public class CertificateRequestService implements ICertificateRequestService {
         }
 
         request = certificateRequestRepository.save(request);
+        logger.info("Certificate request is saved.");
         return new CertificateRequestDTO(request);
     }
 

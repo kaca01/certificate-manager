@@ -41,7 +41,6 @@ public class CertificateController {
         logger.info("Getting all certificates.");
         List<CertificateDTO> certificatesDTO = certificateService.getAllCertificates();
         AllDTO<CertificateDTO> allMyCertificates = new AllDTO<>(certificatesDTO);
-        logger.info("All certificates returned.");
         return new ResponseEntity<>(allMyCertificates, HttpStatus.OK);
     }
 
@@ -71,14 +70,12 @@ public class CertificateController {
             byteArray[i] = (byte) intValue;
         }
 
-        logger.info("Checking certificate validation by copy.");
         return certificateService.isValidByCopy(byteArray);
     }
 
     @GetMapping("/issuers")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<AllDTO<CertificateDTO>> getIssuers() {
-        logger.info("System returned issuers.");
         return new ResponseEntity<>(certificateService.getIssuers(), HttpStatus.OK);
     }
 
