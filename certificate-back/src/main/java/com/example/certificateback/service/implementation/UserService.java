@@ -1,5 +1,6 @@
 package com.example.certificateback.service.implementation;
 
+import com.example.certificateback.controller.UserController;
 import com.example.certificateback.domain.*;
 import com.example.certificateback.dto.ErrorDTO;
 import com.example.certificateback.dto.LoginDTO;
@@ -15,6 +16,8 @@ import com.example.certificateback.dto.ResetPasswordDTO;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,6 +53,8 @@ public class UserService implements IUserService, UserDetailsService {
 	ILoginVerificationRepository loginVerificationRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	@Override
 	public User findByEmail(String email) throws UsernameNotFoundException {
@@ -139,8 +144,15 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public void resetEmail(String email, ResetPasswordDTO resetPasswordDTO) {
-		User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
-
+		// TODO : test this
+		User user;
+		try {
+			user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User does not exist!"));
+		}
+		catch (NotFoundException e) {
+			logger.error("User does not exist.");
+			throw e;
+		}
 		Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
 		this.isPreviousPassword(user, resetPasswordDTO.getNewPassword());
@@ -156,20 +168,28 @@ public class UserService implements IUserService, UserDetailsService {
 			userRepository.save(user);
 
 		} catch (Exception e) {
+			logger.error("Verification via email failed.");
 			throw new BadRequestException("Verification failed.");
 		}
+		logger.info("Reset password email sent successfully.");
 	}
 
 	@Override
 	public void sendSMS(String phone) {
-		userRepository.findByPhone(phone).orElseThrow(() -> new NotFoundException("User does not exist!"));
+		try {
+			userRepository.findByPhone(phone).orElseThrow(() -> new NotFoundException("User does not exist!"));
 
-		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
+			Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
-		Verification.creator("VAe0c3ba1e13e3da10bd89949823f7715a", // this is your verification sid
-						"+381621444147", // recipient phone number
-						"sms") // this is your channel type
-				.create();
+			Verification.creator("VAe0c3ba1e13e3da10bd89949823f7715a", // this is your verification sid
+							"+381621444147", // recipient phone number
+							"sms") // this is your channel type
+					.create();
+		}
+		catch (NotFoundException e) {
+			logger.error("User does not exist.");
+			throw e;
+		}
 	}
 
 	@Override
@@ -191,8 +211,10 @@ public class UserService implements IUserService, UserDetailsService {
 			userRepository.save(user);
 
 		} catch (Exception e) {
+			logger.error("SMS verification failed.");
 			throw new BadRequestException("Verification failed.");
 		}
+		logger.info("Verification successful.");
 	}
 
 	@Override
@@ -220,12 +242,15 @@ public class UserService implements IUserService, UserDetailsService {
 
 		if (!new Date().before(new Date(verification.getDate().getTime() + verification.getLife()*1000L))) {
 			loginVerificationRepository.delete(verification);
+			logger.error("Verification time expired.");
 			throw new BadRequestException("Verification time expired. Login again!");
 		}
 		else if (!verification.getCode().equals(loginDTO.getVerification())){
 			loginVerificationRepository.delete(verification);
+			logger.error("The code for login is not correct.");
 			throw new BadRequestException("Code not correct. Login again!");
 		}else{
+			logger.info("Login successful.");
 			loginVerificationRepository.delete(verification);
 		}
 	}

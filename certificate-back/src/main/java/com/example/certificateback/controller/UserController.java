@@ -98,7 +98,6 @@ public class UserController {
         String access = tokenUtils.generateToken(user.getEmail());
         int expiresIn = tokenUtils.getExpiredIn();
 
-        logger.info("User logged in successfully.");
         return new ResponseEntity<>(new TokenStateDTO(access, expiresIn), HttpStatus.OK);
     }
 
@@ -126,9 +125,8 @@ public class UserController {
     // Reset password of user
     @GetMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> sendResetEmail(@PathVariable String email) throws MessagingException, UnsupportedEncodingException {
-        logger.info("Trying to send code for reset password via mail.");
+        logger.info("Trying to send code for reset password via email.");
         service.sendResetEmail(email);
-        logger.info("Reset password mail sent successfully.");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -152,9 +150,8 @@ public class UserController {
 
     @PutMapping("/{phone}/sendSMS")
     public ResponseEntity<?> checkSMS(@PathVariable String phone, @RequestBody ResetPasswordDTO resetPasswordDTO) {
-        logger.info("Trying to verify code.");
+        logger.info("Trying to verify code via SMS.");
         service.checkSMS(phone, resetPasswordDTO);
-        logger.info("Verification successful.");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

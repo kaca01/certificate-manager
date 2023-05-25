@@ -158,7 +158,7 @@ public class CertificateService implements ICertificateService {
             certificateRepository.save(certificate);
         }
 
-        // the following lines is refusing all active cert requests with issuer that is withdrawn
+        // the following lines are refusing all active cert requests with issuer that is withdrawn
         List<CertificateRequest> activeRequests = certificateRequestRepository.
                 findByIssuerAndRequestType(certificate, RequestType.ACTIVE);
 
@@ -176,31 +176,45 @@ public class CertificateService implements ICertificateService {
 
     @Override
     public ByteArrayResource downloadCertificate(String serialNumber) {
-        certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
-                -> new NotFoundException("Certificate with that serial number does not exist"));
-
-        java.security.cert.Certificate cert = KeyStoreReader.readCertificate(serialNumber);
-
         try {
+            logger.info("User is trying to download certificate.");
+            certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
+                    -> new NotFoundException("Certificate with that serial number does not exist"));
+
+            java.security.cert.Certificate cert = KeyStoreReader.readCertificate(serialNumber);
             assert cert != null;
+            logger.info("Returned certificate data for download.");
             return new ByteArrayResource(cert.getEncoded());
-        } catch (CertificateEncodingException e) {
+        } catch (NotFoundException | CertificateEncodingException e) {
+            if (e.getClass().getName().equals("NotFoundException")) {
+                logger.error("Certificate with chosen serial number does not exist.");
+            }
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public ByteArrayResource downloadPrivateKey(String serialNumber) {
-        Certificate cert = certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
-                -> new NotFoundException("Certificate with that serial number does not exist"));
+        try {
+            logger.info("User is trying to download private key.");
+            Certificate cert = certificateRepository.findBySerialNumber(serialNumber).orElseThrow(()
+                    -> new NotFoundException("Certificate with that serial number does not exist"));
 
-        if( !getLoggedUser().getEmail().equals(cert.getSubject().getEmail())
-                && getLoggedUser().getRoles().get(0).getName().equals("ROLE_USER"))
-            throw  new WrongUserException("You are not owner of this certificate!");
+            if (!getLoggedUser().getEmail().equals(cert.getSubject().getEmail())
+                    && getLoggedUser().getRoles().get(0).getName().equals("ROLE_USER"))
+                throw new WrongUserException("You are not owner of this certificate!");
 
-        PrivateKey pk = KeyStoreReader.readPrivateKey(serialNumber, KeyStoreConstants.ENTRY_PASSWORD);
+            PrivateKey pk = KeyStoreReader.readPrivateKey(serialNumber, KeyStoreConstants.ENTRY_PASSWORD);
 
-        assert pk != null;
-        return new ByteArrayResource(pk.getEncoded());
+            assert pk != null;
+            logger.info("Returned private key data for download.");
+            return new ByteArrayResource(pk.getEncoded());
+        }
+        catch (NotFoundException | WrongUserException e) {
+            if (e.getClass().getName().equals("NotFoundException"))
+                logger.error("Certificate with chosen serial number does not exist.");
+            else logger.error("User is not the owner of the certificate.");
+            throw e;
+        }
     }
 }
