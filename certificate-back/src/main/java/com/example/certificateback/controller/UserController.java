@@ -6,12 +6,14 @@ import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
+import com.example.certificateback.service.implementation.RecaptchaService;
 import com.example.certificateback.service.interfaces.IUserService;
 import com.example.certificateback.util.TokenUtils;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,8 @@ import static com.twilio.example.ValidationExample.AUTH_TOKEN;
 public class UserController {
 
     @Autowired
+    RecaptchaService recaptchaService;
+    @Autowired
     IUserService service;
     @Autowired
     IUserRepository userRepository;
@@ -50,16 +54,24 @@ public class UserController {
     BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO, @RequestHeader("recaptcha") String recaptcha) {
+
+        recaptchaService.checkResponse(recaptcha);
+
         UserDTO user = service.register(userDTO);
         return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
 
     @PostMapping(value = "/checkLogin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> checkLogin(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Void> checkLogin(@RequestBody LoginDTO loginDTO, @RequestHeader("recaptcha") String recaptcha) {
+
+        recaptchaService.checkResponse(recaptcha);
+
         User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new BadRequestException("Wrong username or password!"));
         if(!user.getEmail().equals(loginDTO.getEmail()) || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
             throw new BadRequestException("Wrong username or password!");
+
+        if (!user.isEnabled()) throw new BadRequestException("Wrong username or password!");
 
         // checking password expiring
         Calendar calendar = Calendar.getInstance();
@@ -112,7 +124,9 @@ public class UserController {
     
     // Reset password of user
     @GetMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> sendResetEmail(@PathVariable String email) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity<Void> sendResetEmail(@PathVariable String email, @RequestHeader("recaptcha") String recaptcha)
+            throws MessagingException, UnsupportedEncodingException {
+        recaptchaService.checkResponse(recaptcha);
         service.sendResetEmail(email);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -126,7 +140,8 @@ public class UserController {
     }
 
     @GetMapping(value = "/{phone}/sendSMS")
-    public ResponseEntity<String> sendSMS(@PathVariable String phone){
+    public ResponseEntity<String> sendSMS(@PathVariable String phone, @RequestHeader("recaptcha") String recaptcha){
+        recaptchaService.checkResponse(recaptcha);
         service.sendSMS(phone);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

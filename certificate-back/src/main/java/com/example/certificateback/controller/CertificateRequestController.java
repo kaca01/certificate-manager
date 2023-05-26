@@ -4,6 +4,7 @@ import com.example.certificateback.dto.AllDTO;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.dto.CertificateRequestDTO;
 import com.example.certificateback.dto.ErrorDTO;
+import com.example.certificateback.service.implementation.RecaptchaService;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/certificate-request")
 public class CertificateRequestController {
 
+    @Autowired
+    RecaptchaService recaptchaService;
     @Autowired
     ICertificateRequestService service;
 
@@ -42,7 +45,9 @@ public class CertificateRequestController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<CertificateRequestDTO> create(@RequestBody CertificateRequestDTO certificateRequestDTO) {
+    public ResponseEntity<CertificateRequestDTO> create(@RequestBody CertificateRequestDTO certificateRequestDTO,
+                                                        @RequestHeader("recaptcha") String recaptcha) {
+        recaptchaService.checkResponse(recaptcha);
         return new ResponseEntity<>(service.insert(certificateRequestDTO), HttpStatus.CREATED);
     }
 
