@@ -151,3 +151,139 @@
 2023-05-26 00:55:36.184 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2023-05-26 00:55:36.187 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2023-05-26 00:55:36.192 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2023-06-15 17:51:34.241 [main] INFO  c.e.c.CertificateBackApplication - Starting CertificateBackApplication using Java 1.8.0_281 on DESKTOP-65DUH4R with PID 19552 (C:\Users\User\Documents\FTN\VI semestar\IB\projekat\certificate-manager-web-app\certificate-back\target\classes started by User in C:\Users\User\Documents\FTN\VI semestar\IB\projekat\certificate-manager-web-app\certificate-back)
+2023-06-15 17:51:34.247 [main] INFO  c.e.c.CertificateBackApplication - No active profile set, falling back to 1 default profile: "default"
+2023-06-15 17:51:35.138 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-06-15 17:51:35.241 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 92 ms. Found 7 JPA repository interfaces.
+2023-06-15 17:51:35.956 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8081 (https)
+2023-06-15 17:51:35.964 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["https-jsse-nio-8081"]
+2023-06-15 17:51:35.965 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2023-06-15 17:51:35.965 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.68]
+2023-06-15 17:51:36.172 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-06-15 17:51:36.172 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1859 ms
+2023-06-15 17:51:36.276 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2023-06-15 17:51:37.103 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2023-06-15 17:51:37.239 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-06-15 17:51:37.303 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.12.Final
+2023-06-15 17:51:37.486 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-06-15 17:51:37.582 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-06-15 17:51:38.378 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-06-15 17:51:38.385 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-06-15 17:51:38.988 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-06-15 17:51:39.444 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@6be50b35, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@ce2eaa7, org.springframework.security.web.context.SecurityContextPersistenceFilter@2558f65c, org.springframework.security.web.header.HeaderWriterFilter@2fa879ed, org.springframework.web.filter.CorsFilter@2166c48a, org.springframework.security.web.authentication.logout.LogoutFilter@3de88f64, com.example.certificateback.security.TokenAuthenticationFilter@304744a1, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1a3b1f7e, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@40017e98, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@73385d3f, org.springframework.security.web.session.SessionManagementFilter@11f3400c, org.springframework.security.web.access.ExceptionTranslationFilter@1a01ffff, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1f6c4ae]
+2023-06-15 17:51:39.448 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='api/login', POST]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:51:39.448 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='api/login', POST]
+2023-06-15 17:51:39.448 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='api/user/register', POST]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:51:39.449 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='api/user/register', POST]
+2023-06-15 17:51:39.449 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:51:39.449 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/', GET]
+2023-06-15 17:51:39.449 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/webjars/**', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:51:39.449 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/webjars/**', GET]
+2023-06-15 17:51:39.449 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/*.html', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:51:39.449 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/*.html', GET]
+2023-06-15 17:51:39.449 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='favicon.ico', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:51:39.449 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='favicon.ico', GET]
+2023-06-15 17:51:39.449 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/**/*.html', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:51:39.449 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/**/*.html', GET]
+2023-06-15 17:51:39.450 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/**/*.css', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:51:39.450 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/**/*.css', GET]
+2023-06-15 17:51:39.450 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/**/*.js', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:51:39.450 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/**/*.js', GET]
+2023-06-15 17:51:39.633 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["https-jsse-nio-8081"]
+2023-06-15 17:51:39.684 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8081 (https) with context path ''
+2023-06-15 17:51:39.697 [main] INFO  c.e.c.CertificateBackApplication - Started CertificateBackApplication in 5.963 seconds (JVM running for 7.321)
+2023-06-15 17:53:40.375 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-06-15 17:53:40.443 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2023-06-15 17:53:40.482 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2023-06-15 17:53:47.243 [main] INFO  c.e.c.CertificateBackApplication - Starting CertificateBackApplication using Java 1.8.0_281 on DESKTOP-65DUH4R with PID 17792 (C:\Users\User\Documents\FTN\VI semestar\IB\projekat\certificate-manager-web-app\certificate-back\target\classes started by User in C:\Users\User\Documents\FTN\VI semestar\IB\projekat\certificate-manager-web-app\certificate-back)
+2023-06-15 17:53:47.252 [main] INFO  c.e.c.CertificateBackApplication - No active profile set, falling back to 1 default profile: "default"
+2023-06-15 17:53:48.206 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-06-15 17:53:48.340 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 123 ms. Found 7 JPA repository interfaces.
+2023-06-15 17:53:49.066 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8081 (https)
+2023-06-15 17:53:49.073 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["https-jsse-nio-8081"]
+2023-06-15 17:53:49.073 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2023-06-15 17:53:49.073 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.68]
+2023-06-15 17:53:49.327 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-06-15 17:53:49.328 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2001 ms
+2023-06-15 17:53:49.435 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2023-06-15 17:53:50.261 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2023-06-15 17:53:50.425 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-06-15 17:53:50.527 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.12.Final
+2023-06-15 17:53:50.963 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-06-15 17:53:51.239 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-06-15 17:53:53.952 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-06-15 17:53:53.973 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-06-15 17:53:55.765 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-06-15 17:53:56.459 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2166c48a, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@304744a1, org.springframework.security.web.context.SecurityContextPersistenceFilter@1a3b1f7e, org.springframework.security.web.header.HeaderWriterFilter@3ec082a1, org.springframework.web.filter.CorsFilter@73385d3f, org.springframework.security.web.authentication.logout.LogoutFilter@79b8ecb, com.example.certificateback.security.TokenAuthenticationFilter@6814262d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@40017e98, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@dbc7e0a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7fc1fd31, org.springframework.security.web.session.SessionManagementFilter@2558f65c, org.springframework.security.web.access.ExceptionTranslationFilter@2fa879ed, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@b808af5]
+2023-06-15 17:53:56.466 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='api/login', POST]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:53:56.467 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='api/login', POST]
+2023-06-15 17:53:56.467 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='api/user/register', POST]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:53:56.468 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='api/user/register', POST]
+2023-06-15 17:53:56.468 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:53:56.468 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/', GET]
+2023-06-15 17:53:56.468 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/webjars/**', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:53:56.469 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/webjars/**', GET]
+2023-06-15 17:53:56.469 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/*.html', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:53:56.469 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/*.html', GET]
+2023-06-15 17:53:56.470 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='favicon.ico', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:53:56.470 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='favicon.ico', GET]
+2023-06-15 17:53:56.470 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/**/*.html', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:53:56.470 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/**/*.html', GET]
+2023-06-15 17:53:56.470 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/**/*.css', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:53:56.470 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/**/*.css', GET]
+2023-06-15 17:53:56.470 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/**/*.js', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:53:56.470 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/**/*.js', GET]
+2023-06-15 17:53:56.743 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["https-jsse-nio-8081"]
+2023-06-15 17:53:56.804 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8081 (https) with context path ''
+2023-06-15 17:53:56.818 [main] INFO  c.e.c.CertificateBackApplication - Started CertificateBackApplication in 10.269 seconds (JVM running for 12.237)
+2023-06-15 17:54:09.711 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-06-15 17:54:09.716 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2023-06-15 17:54:09.728 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2023-06-15 17:54:15.763 [main] INFO  c.e.c.CertificateBackApplication - Starting CertificateBackApplication using Java 1.8.0_281 on DESKTOP-65DUH4R with PID 20516 (C:\Users\User\Documents\FTN\VI semestar\IB\projekat\certificate-manager-web-app\certificate-back\target\classes started by User in C:\Users\User\Documents\FTN\VI semestar\IB\projekat\certificate-manager-web-app\certificate-back)
+2023-06-15 17:54:15.769 [main] INFO  c.e.c.CertificateBackApplication - No active profile set, falling back to 1 default profile: "default"
+2023-06-15 17:54:16.673 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-06-15 17:54:16.761 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 80 ms. Found 7 JPA repository interfaces.
+2023-06-15 17:54:17.411 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8081 (https)
+2023-06-15 17:54:17.422 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["https-jsse-nio-8081"]
+2023-06-15 17:54:17.424 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2023-06-15 17:54:17.424 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.68]
+2023-06-15 17:54:17.654 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2023-06-15 17:54:17.654 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1817 ms
+2023-06-15 17:54:17.761 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2023-06-15 17:54:18.691 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2023-06-15 17:54:18.927 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-06-15 17:54:19.032 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.12.Final
+2023-06-15 17:54:19.230 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-06-15 17:54:19.393 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-06-15 17:54:20.265 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-06-15 17:54:20.273 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-06-15 17:54:20.982 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-06-15 17:54:21.532 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5b490d5e, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1f6c4ae, org.springframework.security.web.context.SecurityContextPersistenceFilter@4f6fd101, org.springframework.security.web.header.HeaderWriterFilter@351d93bd, org.springframework.web.filter.CorsFilter@26270b77, org.springframework.security.web.authentication.logout.LogoutFilter@11c3ce6a, com.example.certificateback.security.TokenAuthenticationFilter@b808af5, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@33a71d23, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@208e5b23, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@18b04526, org.springframework.security.web.session.SessionManagementFilter@32d22650, org.springframework.security.web.access.ExceptionTranslationFilter@7b8b07ae, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@495da9a7]
+2023-06-15 17:54:21.536 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='api/login', POST]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:54:21.537 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='api/login', POST]
+2023-06-15 17:54:21.565 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='api/user/register', POST]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:54:21.565 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='api/user/register', POST]
+2023-06-15 17:54:21.566 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:54:21.566 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/', GET]
+2023-06-15 17:54:21.580 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/webjars/**', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:54:21.580 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/webjars/**', GET]
+2023-06-15 17:54:21.580 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/*.html', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:54:21.581 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/*.html', GET]
+2023-06-15 17:54:21.581 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='favicon.ico', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:54:21.581 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='favicon.ico', GET]
+2023-06-15 17:54:21.581 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/**/*.html', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:54:21.596 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/**/*.html', GET]
+2023-06-15 17:54:21.612 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/**/*.css', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:54:21.612 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/**/*.css', GET]
+2023-06-15 17:54:21.612 [main] WARN  o.s.s.c.a.web.builders.WebSecurity - You are asking Spring Security to ignore Ant [pattern='/**/*.js', GET]. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-06-15 17:54:21.613 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will not secure Ant [pattern='/**/*.js', GET]
+2023-06-15 17:54:21.950 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["https-jsse-nio-8081"]
+2023-06-15 17:54:21.998 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8081 (https) with context path ''
+2023-06-15 17:54:22.009 [main] INFO  c.e.c.CertificateBackApplication - Started CertificateBackApplication in 6.868 seconds (JVM running for 8.918)
+2023-06-15 17:55:43.412 [https-jsse-nio-8081-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-06-15 17:55:43.438 [https-jsse-nio-8081-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2023-06-15 17:55:43.439 [https-jsse-nio-8081-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2023-06-15 17:55:44.015 [https-jsse-nio-8081-exec-2] INFO  c.e.c.controller.UserController - Validating login...
+2023-06-15 17:55:44.130 [https-jsse-nio-8081-exec-2] INFO  c.e.c.s.implementation.UserService - Sending login email...
+2023-06-15 17:55:44.899 [https-jsse-nio-8081-exec-4] INFO  c.e.c.controller.UserController - Validating login...
+2023-06-15 17:55:44.972 [https-jsse-nio-8081-exec-4] INFO  c.e.c.s.implementation.UserService - Sending login email...

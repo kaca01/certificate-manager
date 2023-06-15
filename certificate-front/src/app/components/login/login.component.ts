@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
@@ -25,12 +26,21 @@ export class LoginComponent implements OnInit {
 
   radio : String = '';
   code: String = '';
-  constructor(private router : Router, private userService: UserService, private authService: AuthService, private _snackBar: MatSnackBar) {}
+  constructor(private router : Router, private userService: UserService, private authService: AuthService, 
+              private _snackBar: MatSnackBar, private http: HttpClient) {}
 
   ngOnInit(): void { 
     this.authService.logout();
     this.submitted = false;
     this.radio = 'email';
+  }
+
+  loginWithGitHub() {
+    const clientId = 'Iv1.17fb5574a2cb3f37';
+    const redirectUri = 'http://localhost:4200/certificate'; // Your callback URL
+  
+    // Redirect the user to GitHub for authorization
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
   }
 
   login(): void { 

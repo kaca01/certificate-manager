@@ -27,6 +27,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { FileUploadDialogComponent } from './components/certificate/file-upload-dialog/file-upload-dialog.component';
 import { AddReasonDialogComponent } from './components/requests/add-reason-dialog/add-reason-dialog.component';
 import { HistoryComponent } from './components/history/history.component';
+import { CallbackComponent } from './components/callback/callback.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { HistoryComponent } from './components/history/history.component';
     FileUploadDialogComponent,
     AddReasonDialogComponent,
     HistoryComponent,
+    CallbackComponent,
   ],
   imports: [
     FormsModule,
