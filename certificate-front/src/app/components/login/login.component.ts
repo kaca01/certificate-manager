@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
 
   loginWithGitHub() {
     const clientId = 'Iv1.17fb5574a2cb3f37';
-    const redirectUri = 'http://localhost:4200/certificate'; // Your callback URL
+    const redirectUri = 'https://localhost:4200/oauth/callback'; // Your callback URL
   
     // Redirect the user to GitHub for authorization
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
