@@ -20,9 +20,9 @@ export class RegistrationComponent implements OnInit {
     surname: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+')]),
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(8), this.createPasswordStrengthValidator()]),
-    repeatPassword: new FormControl('', [Validators.required]),
+    repeatPassword: new FormControl('', [Validators.required, Validators.minLength(8), this.createPasswordStrengthValidator()]),
     phone: new FormControl('', [Validators.required, Validators.pattern('[- +()0-9]+')]),
-    country: new FormControl('', [Validators.required]),
+    country: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+')]),
   
   }) ;
 
