@@ -109,7 +109,7 @@ export class ResetPasswordComponent {
             },
               (error: HttpErrorResponse) => {
                 console.log(error)
-                this.openSnackBar(error.error['message']);
+                this.openSnackBar("Invalid data");
             })
           }
             
@@ -122,7 +122,7 @@ export class ResetPasswordComponent {
             },
               (error: HttpErrorResponse) => {
                 console.log(error)
-                this.openSnackBar(error.error['message']);
+                this.openSnackBar("Invalid data");
             }) 
           }
       }
