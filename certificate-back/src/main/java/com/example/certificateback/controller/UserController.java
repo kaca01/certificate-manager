@@ -99,6 +99,24 @@ public class UserController {
         return new ResponseEntity<>(new TokenStateDTO(access, expiresIn), HttpStatus.OK);
     }
 
+    @PostMapping(value = "/login/github", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TokenStateDTO> loginWithGithub(@RequestBody LoginDTO loginDTO) {
+        logger.info("User is trying to log in with github.");
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDTO.getEmail(), "123"));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Create tokens for that user
+        User user = (User) authentication.getPrincipal();
+        String access = tokenUtils.generateToken(user.getEmail());
+        int expiresIn = tokenUtils.getExpiredIn();
+
+        return new ResponseEntity<>(new TokenStateDTO(access, expiresIn), HttpStatus.OK);
+    }
+
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AllDTO<UserDTO>> getUsers()
