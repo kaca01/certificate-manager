@@ -23,7 +23,7 @@ public class OAuthController {@Value("${github.clientId}")
 
 
     @PostMapping(value = "/oauth/github")
-    public ResponseEntity<?> exchangeCodeForToken(@RequestBody CodeRequest codeRequest) {
+    public  Mono<String> exchangeCodeForToken(@RequestBody CodeRequest codeRequest) {
         String code = codeRequest.code;
         String redirectUri = "https://localhost:4200/oauth/callback"; // Your callback URL
 
@@ -55,18 +55,12 @@ public class OAuthController {@Value("${github.clientId}")
                 "&redirect_uri=" + redirectUri;
 
         // Make the POST request
-        webClient.post()
+        return webClient.post()
                 .uri(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
-                .bodyToMono(String.class)
-                .subscribe(responseBody -> {
-                    // Handle the response
-                    System.out.println("TRALALA");
-                    System.out.println(responseBody);
-
-                });
+                .bodyToMono(String.class);
 
         // Handle the response and return it to the frontend
 //        System.out.println("RESPONSEEEEEE");

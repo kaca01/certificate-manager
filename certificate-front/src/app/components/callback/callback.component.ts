@@ -14,10 +14,10 @@ export class CallbackComponent implements OnInit {
 ngOnInit() {
   this.route.queryParams.subscribe(params => {
     const code = params['code'];
-
+  
     // Send the authorization code to the backend
     console.log("Stigao ovdje");
-    this.http.post('https://localhost:8081/oauth/github', { code }).subscribe(
+    this.http.post('https://localhost:8081/oauth/github', { code }, { responseType: 'text' }).subscribe(
       response => {
         // Handle success
         console.log("Nije pukao");
@@ -30,7 +30,6 @@ ngOnInit() {
       }
     );
   });
-
 //   this.route.queryParams.subscribe(params0 => {
 //     const code = params0['code'];
 //     let codeRequest : CodeRequest = {} as CodeRequest;
