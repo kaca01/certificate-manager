@@ -48,6 +48,9 @@ export class FileUploadDialogComponent implements OnInit {
 
     if (files && files.length > 0) {
       const file: File = files[0];
+
+      if (!this.validateFile(file)) return;
+
       const reader: FileReader = new FileReader();
       reader.onloadend = () => {
         const fileContent: ArrayBuffer | null = reader.result as ArrayBuffer;
@@ -74,7 +77,31 @@ export class FileUploadDialogComponent implements OnInit {
     }
   }
 
-  openSnackBar(snackMsg : string, duration: number = 2000) : void {
+  validateFile(file:any) : boolean {
+    const maxSizeInBytes = 1024 * 1024; // 1 MB (adjust as needed)
+
+    //extension check
+    const fileName = file.name.toLowerCase();
+    if (fileName.endsWith('.cer') || fileName.endsWith('.crt')) {
+      console.log('Uploaded file has the .cer or .crt extension.');
+    } else {
+      console.log('Uploaded file does not have the .cer or .crt extension.');
+      this.openSnackBar('Uploaded file does not have the .cer or .crt extension.');
+      return false;
+    }
+
+    // Check file size
+    if (file.size <= maxSizeInBytes) {
+      console.log('Uploaded file is within the size limit.');
+      return true;
+    } else {
+      console.log('Uploaded file exceeds the size limit.');
+      this.openSnackBar('Uploaded file exceeds the size limit.');
+      return false;
+    }
+  }
+
+  openSnackBar(snackMsg : string, duration: number = 3000) : void {
     this.snackBar.open(snackMsg, "Dismiss", {
       duration: duration
     });
