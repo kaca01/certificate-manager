@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import axios from 'axios';
+import { User } from 'src/app/domains';
 import { AuthService } from 'src/app/service/auth.service';
 import { UserService } from 'src/app/service/user.service';
 
@@ -55,6 +56,25 @@ ngOnInit() {
       .then(response => {
         const emails: string[] = response.data;
         console.log('Emails:', emails);
+        let user: User = {} as User;
+        user.email = emails[0];
+        this.userService.loginWithGithub(user)
+        .subscribe(data => {
+          localStorage.setItem("jwt", data.accessToken);
+          this.authService.setToken(data.accessToken);
+      
+          console.log('Login success');
+            this.userService.getMyInfo().subscribe((res:any) => {
+              if(this.userService.currentUser != null) {
+                this.router.navigate(['/certificate']);
+              }
+              });
+            },
+        error => {
+          console.log(error);
+          
+        });
+
       })
       .catch(error => {
         console.error('Error:', error);

@@ -46,6 +46,10 @@ export class UserService {
     return this.http.post<any>(environment.apiHost + "api/user/login", user);
   }
 
+  loginWithGithub(user:any) : Observable<any>{
+    return this.http.post<any>(environment.apiHost + "api/user/login/github", user);
+  }
+
   register(user: any, verification: String): Observable<User> {
     user.verification = verification;
     return this.http.post<User>(environment.apiHost + 'api/user/register', user);
