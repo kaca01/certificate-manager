@@ -9,9 +9,8 @@ import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.*;
 import com.example.certificateback.service.interfaces.IUserService;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sendgrid.*;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import com.example.certificateback.dto.ResetPasswordDTO;
+import com.sendgrid.*;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
@@ -29,9 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
-import java.io.IOException;
 
 import static com.twilio.example.ValidationExample.ACCOUNT_SID;
 import static com.twilio.example.ValidationExample.AUTH_TOKEN;
@@ -89,11 +86,7 @@ public class UserService implements IUserService, UserDetailsService {
 		UserActivation activation = userActivationRepository.save(new UserActivation(user));
 
 		if(registrationDTO.getVerification().equals("email")){
-			try {
-				sendActivationEmail(activation);
-			} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
-				throw new RuntimeException(e);
-			}
+			sendActivationEmail(activation);
 		} else{
 			sendActivationSMS(activation);
 		}
@@ -132,7 +125,7 @@ public class UserService implements IUserService, UserDetailsService {
 		Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
 
 		Verification.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2", // this is your verification sid
-						"hristinacina@gmail.com", // recipient email address
+						"anastasijas557@gmail.com", // recipient email address
 						"email") // this is your channel type
 				.create();
 	}
@@ -146,10 +139,13 @@ public class UserService implements IUserService, UserDetailsService {
 		this.isPreviousPassword(user, resetPasswordDTO.getNewPassword());
 
 		try {
-			VerificationCheck.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2") // pass verification SID here
-					.setTo("hristinacina@gmail.com")
+			VerificationCheck verificationCheck = VerificationCheck.creator("VA7bc0fdf60508827d48fd33d1cf64a6e2") // pass verification SID here
+					.setTo("anastasijas557@gmail.com")
 					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
 					.create();
+
+			if(!verificationCheck.getStatus().equals("approved"))
+				throw new BadRequestException("Code is expired or not correct!");
 
 			Password password = passwordRepository.save(new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword())));
 			user.getPasswords().add(password);
@@ -181,10 +177,13 @@ public class UserService implements IUserService, UserDetailsService {
 		this.isPreviousPassword(user, resetPasswordDTO.getNewPassword());
 
 		try {
-			VerificationCheck.creator("VAe0c3ba1e13e3da10bd89949823f7715a") // pass verification SID here
+			VerificationCheck verificationCheck = VerificationCheck.creator("VAe0c3ba1e13e3da10bd89949823f7715a") // pass verification SID here
 					.setTo("+381621164208")
 					.setCode(resetPasswordDTO.getCode()) // pass generated OTP here
 					.create();
+
+			if(!verificationCheck.getStatus().equals("approved"))
+				throw new BadRequestException("Code is expired or not correct!");
 
 			Password password = passwordRepository.save(new Password(passwordEncoder.encode(resetPasswordDTO.getNewPassword())));
 			user.getPasswords().add(password);
@@ -254,7 +253,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 	private void sendLoginEmail(LoginVerification verification) {
 		Email from = new Email("savic.sv7.2020@uns.ac.rs");
-		Email to = new Email("hristinacina@gmail.com");
+		Email to = new Email("anastasijas557@gmail.com");
 		Mail mail = new Mail();
 		// we create an object of our static class feel free to change the class on its own file
 		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
@@ -279,12 +278,12 @@ public class UserService implements IUserService, UserDetailsService {
 		}
 	}
 
-	private void sendActivationEmail(UserActivation activation) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
+	private void sendActivationEmail(UserActivation activation) {
 		User user = userRepository.findByEmail(activation.getUser().getEmail()).orElseThrow(()
 				-> new NotFoundException("User does not exist!"));
 
 		Email from = new Email("savic.sv7.2020@uns.ac.rs");
-		Email to = new Email("hristinacina@gmail.com");
+		Email to = new Email("anastasijas557@gmail.com");
 		Mail mail = new Mail();
 		// we create an object of our static class feel free to change the class on its own file
 		DynamicTemplatePersonalization personalization = new DynamicTemplatePersonalization();
@@ -328,7 +327,13 @@ public class UserService implements IUserService, UserDetailsService {
 	}
 
 	private void isPreviousPassword(User user, String password) {
-		for (Password p: user.getPasswords()) {
+		// check only the last three passwords
+		int numberOfPreviousPasswordsToCheck = 3;
+		int startIndex = Math.max(user.getPasswords().size() - numberOfPreviousPasswordsToCheck, 0);
+		List<Password> previousPasswords = user.getPasswords().subList(startIndex, user.getPasswords().size());
+
+		for (Password p: previousPasswords) {
+			System.out.println(p.getPassword());
 			if(passwordEncoder.matches(password, p.getPassword()))
 				throw new BadRequestException("Password must be unique!");
 		}

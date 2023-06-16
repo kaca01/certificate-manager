@@ -1,7 +1,6 @@
 package com.example.certificateback.controller;
 
 import com.example.certificateback.configuration.ApplicationConstants;
-import com.example.certificateback.domain.LoginVerification;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
@@ -9,11 +8,7 @@ import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.implementation.RecaptchaService;
 import com.example.certificateback.service.interfaces.IUserService;
 import com.example.certificateback.util.TokenUtils;
-import com.twilio.Twilio;
-import com.twilio.rest.verify.v2.service.Verification;
-import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
-import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import static com.twilio.example.ValidationExample.ACCOUNT_SID;
-import static com.twilio.example.ValidationExample.AUTH_TOKEN;
 
 @RestController
 @CrossOrigin(origins = "https://localhost:4200")
@@ -125,7 +115,7 @@ public class UserController {
     // Reset password of user
     @GetMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> sendResetEmail(@PathVariable String email, @RequestHeader("recaptcha") String recaptcha)
-            throws MessagingException, UnsupportedEncodingException {
+    {
         recaptchaService.checkResponse(recaptcha);
         service.sendResetEmail(email);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

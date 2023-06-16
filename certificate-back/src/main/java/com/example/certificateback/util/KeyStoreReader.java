@@ -2,7 +2,6 @@ package com.example.certificateback.util;
 
 import com.example.certificateback.configuration.KeyStoreConstants;
 import com.example.certificateback.domain.ksData.IssuerData;
-import com.sun.deploy.association.utility.AppConstants;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.springframework.stereotype.Service;
