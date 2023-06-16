@@ -1,37 +1,77 @@
 package com.example.certificateback.controller;
 
+import com.example.certificateback.service.implementation.CustomOAuth2UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.http.MediaType;
+import reactor.core.publisher.Mono;
 
 @RestController
 @CrossOrigin(origins = "https://localhost:4200")
 public class OAuthController {@Value("${github.clientId}")
+
 
     private String clientId;
 
     @Value("${github.clientSecret}")
     private String clientSecret;
 
-    @PostMapping(value = "/oauth/github", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @PostMapping(value = "/oauth/github")
     public ResponseEntity<?> exchangeCodeForToken(@RequestBody CodeRequest codeRequest) {
         String code = codeRequest.code;
         String redirectUri = "https://localhost:4200/oauth/callback"; // Your callback URL
 
-        // Exchange the authorization code for an access token
-        RestTemplate restTemplate = new RestTemplate();
+        // Set up the headers and request entity for the POST request
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<String> requestEntity = new HttpEntity<>("", headers);
+
+        // Build the URL and request parameters for the POST request
         String url = "https://github.com/login/oauth/access_token";
-        String params = "client_id=Iv1.17fb5574a2cb3f37&client_secret=8ad063a44d6c6b093cbbbeb5fa1ea6eb3ee03678" +
-                "&code=" + code + "&redirect_uri=" + redirectUri;
-        ResponseEntity<String> response = restTemplate.postForEntity(url, null, String.class, params);
+        String params = "client_id={clientId}&client_secret={clientSecret}&code={code}&redirect_uri={redirectUri}";
+
+        clientId = "d9d88e021cc55fe85e59";
+        clientSecret = "cb3df518dcc8ab4827586b1f37d416acd720608c";
+
+        // Replace placeholders in the params string with actual values
+        params = params.replace("{clientId}", clientId)
+                .replace("{clientSecret}", clientSecret)
+                .replace("{code}", code)
+                .replace("{redirectUri}", redirectUri);
+
+        // Send the POST request to exchange the authorization code for an access token
+        WebClient webClient = WebClient.create();
+
+        // Prepare the request body
+        String requestBody = "client_id=" + clientId +
+                "&client_secret=" + clientSecret +
+                "&code=" + code +
+                "&redirect_uri=" + redirectUri;
+
+        // Make the POST request
+        webClient.post()
+                .uri(url)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .bodyToMono(String.class)
+                .subscribe(responseBody -> {
+                    // Handle the response
+                    System.out.println("TRALALA");
+                    System.out.println(responseBody);
+
+                });
 
         // Handle the response and return it to the frontend
-        return ResponseEntity.ok(response.getBody());
+//        System.out.println("RESPONSEEEEEE");
+//        System.out.println(response.getBody());
+//        return ResponseEntity.ok(requestBody);
     }
 
     static class CodeRequest {

@@ -14,7 +14,8 @@ import { CallbackComponent } from 'src/app/components/callback/callback.componen
 const routes: Routes = [
   { path: 'welcome-page', component: WelcomePageComponent},
   { path: 'login', component: LoginComponent},
-  { path: 'oauth/callback', component: CertificateComponent},
+  { path: 'certificate', component: CertificateComponent},
+  { path: 'oauth/callback', component: CallbackComponent},
   { path: 'registration', component: RegistrationComponent},
   { path: 'requests', component: RequestsComponent},
   { path: 'activation/:id', component: ActivationComponent},

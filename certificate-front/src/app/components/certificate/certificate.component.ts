@@ -7,11 +7,12 @@ import { Certificate } from 'src/app/domains';
 import { CertificateService } from 'src/app/service/certificate.service';
 import { CertificateRequestComponent } from '../certificate-request/certificate-request.component';
 import { UserService } from 'src/app/service/user.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FileUploadDialogComponent } from './file-upload-dialog/file-upload-dialog.component';
 import { WithdrawalReasonComponent } from './withdrawal-reason/withdrawal-reason.component';
 import { AuthService } from 'src/app/service/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'certificate',
@@ -30,10 +31,11 @@ export class CertificateComponent implements OnInit {
   @ViewChild(MatSort) sort!: any;
 
   constructor(private certificateService: CertificateService, private dialog: MatDialog, private snackBar: MatSnackBar, 
-    private authService: AuthService) {}
+    private authService: AuthService, private route: ActivatedRoute, private http: HttpClient, private userService: UserService) {}
 
   ngOnInit(): void {
     this.authService.checkUserSession();
+    console.log(this.userService.currentUser?.email);
     this.certificateService.getAll().subscribe((res) => {
       for(let i = 0; i<res.totalCount; i++) {
         res.results[i]._id = i+1;

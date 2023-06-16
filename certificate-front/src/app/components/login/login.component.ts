@@ -36,11 +36,12 @@ export class LoginComponent implements OnInit {
   }
 
   loginWithGitHub() {
-    const clientId = 'Iv1.17fb5574a2cb3f37';
+    const clientId = 'd9d88e021cc55fe85e59';
     const redirectUri = 'https://localhost:4200/oauth/callback'; // Your callback URL
+    const scope = 'user:email';
   
     // Redirect the user to GitHub for authorization
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
   }
 
   login(): void { 
