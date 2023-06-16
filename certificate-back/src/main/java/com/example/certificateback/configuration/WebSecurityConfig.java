@@ -72,6 +72,7 @@ public class WebSecurityConfig {
                 .antMatchers("/api/user/activate/{activationId}").permitAll()
                 .antMatchers("/api/user/{email}/resetPassword").permitAll()
                 .antMatchers("/api/user/{phone}/sendSMS").permitAll()
+                .antMatchers("/api/user/login/github").permitAll()
 
                 // for every other request the user must be authenticated
                 .anyRequest().authenticated().and()
