@@ -9,9 +9,8 @@ import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.repository.*;
 import com.example.certificateback.service.interfaces.IUserService;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sendgrid.*;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import com.example.certificateback.dto.ResetPasswordDTO;
+import com.sendgrid.*;
 import com.twilio.Twilio;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
@@ -29,9 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
-import java.io.IOException;
 
 import static com.twilio.example.ValidationExample.ACCOUNT_SID;
 import static com.twilio.example.ValidationExample.AUTH_TOKEN;
@@ -89,11 +86,7 @@ public class UserService implements IUserService, UserDetailsService {
 		UserActivation activation = userActivationRepository.save(new UserActivation(user));
 
 		if(registrationDTO.getVerification().equals("email")){
-			try {
-				sendActivationEmail(activation);
-			} catch (MessagingException | UnsupportedEncodingException | javax.mail.MessagingException e) {
-				throw new RuntimeException(e);
-			}
+			sendActivationEmail(activation);
 		} else{
 			sendActivationSMS(activation);
 		}
@@ -279,7 +272,7 @@ public class UserService implements IUserService, UserDetailsService {
 		}
 	}
 
-	private void sendActivationEmail(UserActivation activation) throws MessagingException, UnsupportedEncodingException, javax.mail.MessagingException {
+	private void sendActivationEmail(UserActivation activation) {
 		User user = userRepository.findByEmail(activation.getUser().getEmail()).orElseThrow(()
 				-> new NotFoundException("User does not exist!"));
 

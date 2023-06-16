@@ -1,7 +1,6 @@
 package com.example.certificateback.exception;
 
 import com.example.certificateback.dto.ErrorDTO;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
