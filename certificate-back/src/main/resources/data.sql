@@ -6,17 +6,31 @@ insert into restapi.user (email, name, surname, phone, country, enabled) values
     ('miki@gmail.com', 'Miki', 'Mirić', '+381444123', 'Serbia', true);
 insert into restapi.user (email, name, surname, phone, country, enabled) values
     ('pedja@gmail.com', 'Peđa', 'Simonović', '+38111123', 'Serbia', true);
+insert into restapi.user (email, name, surname, phone, country, enabled) values
+    ('anastasijas557@gmail.com', 'Anastasija', 'Savic', '+381245123', 'Serbia', true);
+insert into restapi.user (email, name, surname, phone, country, enabled) values
+    ('hristinacina@gmail.com', 'Hristina', 'Adamovic', '+381612325345', 'Serbia', true);
+insert into restapi.user (email, name, surname, phone, country, enabled) values
+    ('kvucic6@gmail.com', 'Katarina', 'Vucic', '+381621444147', 'Serbia', true);
 
 insert into restapi.password (password, last_password_reset_date, user_id) values
-    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-01-01T12:33:24.893', 1);
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-06-01T12:33:24.893', 1);
 insert into restapi.password (password, last_password_reset_date, user_id) values
-    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-05-01T12:33:24.893', 2);
+    ('$2a$10$M4McA9VDxCQEP1SHHkMsTOpC5gJKjJVX1N4uDdvgjWMBS3US.xING', '2023-01-02T12:33:24.893', 2);
 insert into restapi.password (password, last_password_reset_date, user_id) values
-    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-05-01T12:33:24.893', 3);
+    ('$2a$10$FavNscKzpYdImGjzGGWg7.VuKrMVQGI6EtCNUoEv4KZ84vrq8BRLK', '2023-01-03T12:33:24.893', 2);
 insert into restapi.password (password, last_password_reset_date, user_id) values
-    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-05-01T12:33:24.893', 4);
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-01-04T12:33:24.893', 2);
 insert into restapi.password (password, last_password_reset_date, user_id) values
-    ('$2a$10$ae1AwhYrCZJwXSTycJPHQ.ObPCAGw75ZNIVVIc8.ENORT8Vl6Zdz6', '2023-03-01T12:33:24.893', 1);
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-01-01T12:33:24.893', 3);
+insert into restapi.password (password, last_password_reset_date, user_id) values
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-01-01T12:33:24.893', 4);
+insert into restapi.password (password, last_password_reset_date, user_id) values
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-06-01T12:33:24.893', 5);
+insert into restapi.password (password, last_password_reset_date, user_id) values
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-06-01T12:33:24.893', 6);
+insert into restapi.password (password, last_password_reset_date, user_id) values
+    ('$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '2023-06-01T12:33:24.893', 7);
 
 insert into restapi.role (name) values ('ROLE_USER');
 insert into restapi.role (name) values ('ROLE_ADMIN');
@@ -25,6 +39,9 @@ insert into restapi.user_role (user_id, role_id) VALUES (1, 1);
 insert into restapi.user_role (user_id, role_id) VALUES (2, 1);
 insert into restapi.user_role (user_id, role_id) VALUES (3, 1);
 insert into restapi.user_role (user_id, role_id) VALUES (4, 2);
+insert into restapi.user_role (user_id, role_id) VALUES (5, 1);
+insert into restapi.user_role (user_id, role_id) VALUES (6, 1);
+insert into restapi.user_role (user_id, role_id) VALUES (7, 1);
 
 insert into restapi.certificate_request (date, status, issuer_id, type, subject_id, refusal_reason) values ('2022-02-18T14:18:24.893', 1, null, 0, 4, '');
 insert into restapi.certificate (type, valid_from, valid_to, subject_id, is_withdrawn, withdrawn_reason, serial_number, issuer_serial_number) values (0, '2023-05-01T11:00:00.000', '2024-05-01T00:00:00.000', 4, false, '', '4604902006381533243', null);
