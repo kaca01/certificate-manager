@@ -125,7 +125,7 @@ public class UserController {
     @GetMapping(value = "/activate/{activationId}")
     public ResponseEntity<ErrorDTO> activateUser(@PathVariable int activationId)
     {
-        logger.info("Trying to activate account.");
+        logger.info("User is trying to activate account.");
         ErrorDTO message = service.activateUser((long) activationId);
         return new ResponseEntity<ErrorDTO>(message, HttpStatus.OK);
     }
@@ -133,7 +133,7 @@ public class UserController {
     // Reset password of user
     @GetMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> sendResetEmail(@PathVariable String email) throws MessagingException, UnsupportedEncodingException {
-        logger.info("Trying to send code for reset password via email.");
+        logger.info("System is trying to send code for reset password via email.");
         service.sendResetEmail(email);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -142,7 +142,7 @@ public class UserController {
     @PutMapping(value = "/{email}/resetPassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> resetPassword(@PathVariable String email, @RequestBody ResetPasswordDTO resetPasswordDTO)
     {
-        logger.info("Trying to send code via mail for password change.");
+        logger.info("System is trying to send code via mail for password change.");
         service.resetEmail(email, resetPasswordDTO);
         logger.info("Code sent successfully.");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

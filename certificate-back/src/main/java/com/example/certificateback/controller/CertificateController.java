@@ -1,6 +1,8 @@
 package com.example.certificateback.controller;
 
+import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.AllDTO;
+import com.example.certificateback.exception.NotFoundException;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
 import com.example.certificateback.dto.CertificateDTO;
 import com.example.certificateback.service.interfaces.ICertificateService;
@@ -13,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +42,8 @@ public class CertificateController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<AllDTO<CertificateDTO>> getAllCertificates()
     {
-        logger.info("Getting all certificates.");
+        Long id = userService.getLoggedUser().getId();
+        logger.info(String.format("User with id %d is getting all certificates.", id));
         List<CertificateDTO> certificatesDTO = certificateService.getAllCertificates();
         AllDTO<CertificateDTO> allMyCertificates = new AllDTO<>(certificatesDTO);
         return new ResponseEntity<>(allMyCertificates, HttpStatus.OK);
@@ -47,7 +52,8 @@ public class CertificateController {
     @GetMapping("/verify/{serialNumber}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Boolean isCertificateValid(@PathVariable String serialNumber) {
-        logger.info("Checking certificate validation by serial number.");
+        Long id = userService.getLoggedUser().getId();
+        logger.info(String.format("User with id %d is checking certificate validation by serial number.", id));
         return certificateService.checkingValidation(serialNumber);
     }
 

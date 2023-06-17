@@ -5,6 +5,9 @@ import com.example.certificateback.dto.ErrorDTO;
 import com.example.certificateback.dto.LoginDTO;
 import com.example.certificateback.dto.ResetPasswordDTO;
 import com.example.certificateback.dto.UserDTO;
+import com.example.certificateback.exception.NotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
@@ -21,4 +24,5 @@ public interface IUserService {
     void checkSMS(String phone, ResetPasswordDTO resetPasswordDTO);
     void checkLogin(LoginDTO loginDTO);
     void confirmLogin(LoginDTO loginDTO);
+    User getLoggedUser();
 }

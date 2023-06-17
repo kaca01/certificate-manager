@@ -20,6 +20,7 @@ import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.ICertificateGeneratorService;
 import com.example.certificateback.service.interfaces.ICertificateRequestService;
 import com.example.certificateback.service.interfaces.ICertificateService;
+import com.example.certificateback.service.interfaces.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,13 @@ public class CertificateRequestService implements ICertificateRequestService {
 
     @Autowired
     private ICertificateRequestRepository certificateRequestRepository;
+
     @Autowired
     private ICertificateGeneratorService certificateGeneratorService;
+
+    @Autowired
+    private IUserService userService;
+
     @Autowired
     private ICertificateService certificateService;
 
@@ -74,24 +80,27 @@ public class CertificateRequestService implements ICertificateRequestService {
     public AllDTO<CertificateRequestDTO> getUserRequests() {
         User user = getLoggedUser();
         List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
-        logger.info("Returned all certificates for a user.");
+        Long id = userService.getLoggedUser().getId();
+        logger.info(String.format("Returned all certificates for a user with id %d.", id));
         return getRequests(certificateRequests);
     }
 
     @Override
     public AllDTO<CertificateRequestDTO> getAllRequests() {
         List<CertificateRequest> certificateRequests = certificateRequestRepository.findAll();
-        logger.info("All certificate requests returned.");
+        Long id = userService.getLoggedUser().getId();
+        logger.info(String.format("All certificate requests returned to a user with id %d.", id));
         return getRequests(certificateRequests);
     }
 
     @Override
     public AllDTO<CertificateRequestDTO> getRequestsBasedOnIssuer() {
-        logger.info("Started getting requests based on issuer");
+        Long id = userService.getLoggedUser().getId();
+        logger.info(String.format("Started getting requests based on issuer to a user with id %d.", id));
         User issuer = getLoggedUser();
         List<CertificateRequest> certificateRequests = certificateRequestRepository.findByRequestTypeAndIssuerSubjectId
                 (RequestType.ACTIVE, issuer.getId());
-        logger.info("Requests based on issuer returned.");
+        logger.info(String.format("Requests based on issuer returned to a user with id %d.", id));
         return getRequests(certificateRequests);
     }
 
@@ -109,7 +118,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 
             request.setRequestType(RequestType.ACCEPTED);
             certificateRequestRepository.save(request);
-            logger.info("Request accepted.");
+            logger.info(String.format("Request accepted by user with id %d.", id));
             return certificateGeneratorService.createCertificate(request);
         }
         catch (NotFoundException | NotValidException e) {
@@ -129,7 +138,7 @@ public class CertificateRequestService implements ICertificateRequestService {
             request.setRequestType(RequestType.REFUSED);
             request.setRefusalReason(reason.getMessage());
             certificateRequestRepository.save(request);
-            logger.info("Certificate request refused successfully.");
+            logger.info(String.format("Certificate request refused successfully by user with id %d.", id));
             return new CertificateRequestDTO(request);
         } catch (NotFoundException e) {
             logger.error("Certificate request is not found.");
@@ -170,7 +179,8 @@ public class CertificateRequestService implements ICertificateRequestService {
 
     @Override
     public CertificateRequestDTO insert(CertificateRequestDTO certificateRequestDTO) {
-        logger.info("Started creating new certificate request.");
+        Long id = userService.getLoggedUser().getId();
+        logger.info(String.format("User with id %d started creating new certificate request.", id));
         User user = getLoggedUser();
         Role role = user.getRoles().get(0);
         CertificateRequest request = new CertificateRequest(certificateRequestDTO);
@@ -196,14 +206,14 @@ public class CertificateRequestService implements ICertificateRequestService {
         if (request.getDate() == null) request.setDate(new Date());
 
         if (role.getName().equals("ROLE_ADMIN")) {
-            logger.info("Certificate request is accepted.");
+            logger.info(String.format("Certificate request is accepted by user with id %d.", id));
             request = certificateRequestRepository.save(request);
             acceptRequest(request.getId());
             request.setRequestType(RequestType.ACCEPTED);
         }
 
         else if (request.getCertificateType() == CertificateType.ROOT) {
-            logger.error("User can't ask for the root certificate.");
+            logger.error(String.format("User with id %d can't ask for the root certificate.", id));
             throw new BadRequestException("User can't ask for the root certificate!");
         }
 

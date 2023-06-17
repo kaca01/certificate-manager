@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -382,6 +384,15 @@ public class UserService implements IUserService, UserDetailsService {
 				throw new BadRequestException("Password must be unique!");
 			}
 		}
+	}
+
+	public User getLoggedUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+		User user = userRepository.findByEmail(email).orElse(null);
+		if (user == null) throw new NotFoundException("User not found!");
+		//List<CertificateRequest> certificateRequests = certificateRequestRepository.findBySubjectId(user.getId());
+		return user;
 	}
 
 	// This class handles the dynamic data for the template
