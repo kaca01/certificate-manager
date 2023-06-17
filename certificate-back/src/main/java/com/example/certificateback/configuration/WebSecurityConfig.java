@@ -66,11 +66,13 @@ public class WebSecurityConfig {
         http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
         http.authorizeRequests()
                 .antMatchers("/api/user/checkLogin").permitAll()
-            .antMatchers("/api/user/login").permitAll()
-			.antMatchers("/api/user/register").permitAll()
-            .antMatchers("/api/user/activate/{activationId}").permitAll()
-            .antMatchers("/api/user/{email}/resetPassword").permitAll()
-            .antMatchers("/api/user/{phone}/sendSMS").permitAll()
+                .antMatchers("/api/user/login").permitAll()
+                .antMatchers("/oauth/github").permitAll()
+			    .antMatchers("/api/user/register").permitAll()
+                .antMatchers("/api/user/activate/{activationId}").permitAll()
+                .antMatchers("/api/user/{email}/resetPassword").permitAll()
+                .antMatchers("/api/user/{phone}/sendSMS").permitAll()
+                .antMatchers("/api/user/login/github").permitAll()
 
                 // for every other request the user must be authenticated
                 .anyRequest().authenticated().and()

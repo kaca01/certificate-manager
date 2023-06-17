@@ -8,17 +8,20 @@ import { RequestsComponent } from 'src/app/components/requests/requests.componen
 import { ActivationComponent } from 'src/app/components/registration/activation/activation/activation.component';
 import { ResetPasswordComponent } from 'src/app/components/reset-password/reset-password.component';
 import { HistoryComponent } from 'src/app/components/history/history.component';
+import { CallbackComponent } from 'src/app/components/callback/callback.component';
 
 
 const routes: Routes = [
   { path: 'welcome-page', component: WelcomePageComponent},
   { path: 'login', component: LoginComponent},
   { path: 'certificate', component: CertificateComponent},
+  { path: 'oauth/callback', component: CallbackComponent},
   { path: 'registration', component: RegistrationComponent},
   { path: 'requests', component: RequestsComponent},
   { path: 'activation/:id', component: ActivationComponent},
   { path: 'reset-password', component: ResetPasswordComponent},
   { path: 'history', component: HistoryComponent},
+
   { path: '', redirectTo: '/welcome-page', pathMatch: 'full' },
   { path: '**', component: WelcomePageComponent },
 ]

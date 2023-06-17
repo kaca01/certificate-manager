@@ -125,6 +125,11 @@ form {
     width: 100%;
 }
 
+.github-btn {
+    margin-bottom: 30px;
+    width: 100%;
+}
+
 .error {
     width: 100%;
     color: red;

@@ -50,6 +50,8 @@
                 <mat-radio-button value="phone" class="radio" (change)="radioChange($event)">Phone number</mat-radio-button>
             </mat-radio-group>
           <button mat-raised-button color="blue" type="submit" class="login-btn">Login</button>
+          <button mat-raised-button (click)="loginWithGitHub()" class="github-btn">Login with GitHub</button>
+
         </form>
   
       </mat-card-content>
@@ -73,5 +75,6 @@
           <button mat-raised-button class="reg-btn" id="verify" (click)="confirmLogin()">CONFIRM</button>
         </mat-card-content>
   </mat-card>
+
     
   </div>

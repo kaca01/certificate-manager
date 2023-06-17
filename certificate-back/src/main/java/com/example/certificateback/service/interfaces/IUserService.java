@@ -19,8 +19,6 @@ public interface IUserService {
     void resetEmail(String email, ResetPasswordDTO resetPasswordDTO);
     void sendSMS(String phone);
     void checkSMS(String phone, ResetPasswordDTO resetPasswordDTO);
-
     void checkLogin(LoginDTO loginDTO);
-
     void confirmLogin(LoginDTO loginDTO);
 }
