@@ -42,11 +42,14 @@ export class UserService {
   }
 
   login(user:any, code: String) : Observable<any>{
+    console.log(user)
     user.verification = code;
     return this.http.post<any>(environment.apiHost + "api/user/login", user);
   }
 
-  loginWithGithub(user:any) : Observable<any>{
+  loginWithGithub(email:string) : Observable<any>{
+    let user = {"email": email, "password":"123"}
+    console.log("github")
     return this.http.post<any>(environment.apiHost + "api/user/login/github", user);
   }
 

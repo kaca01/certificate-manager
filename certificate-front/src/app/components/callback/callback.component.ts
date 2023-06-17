@@ -54,11 +54,13 @@ ngOnInit() {
       }
     })
       .then(response => {
-        const emails: string[] = response.data;
+        const emails: any[] = response.data;
         console.log('Emails:', emails);
         let user: User = {} as User;
-        user.email = emails[0];
-        this.userService.loginWithGithub(user)
+        user.email = emails[0].email;
+        console.log("usao")
+        console.log("nesto")
+        this.userService.loginWithGithub(user.email)
         .subscribe(data => {
           localStorage.setItem("jwt", data.accessToken);
           this.authService.setToken(data.accessToken);

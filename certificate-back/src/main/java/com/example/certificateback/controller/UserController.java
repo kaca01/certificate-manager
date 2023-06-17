@@ -1,16 +1,12 @@
 package com.example.certificateback.controller;
 
 import com.example.certificateback.configuration.ApplicationConstants;
-import com.example.certificateback.domain.LoginVerification;
 import com.example.certificateback.domain.User;
 import com.example.certificateback.dto.*;
 import com.example.certificateback.exception.BadRequestException;
 import com.example.certificateback.repository.IUserRepository;
 import com.example.certificateback.service.interfaces.IUserService;
 import com.example.certificateback.util.TokenUtils;
-import com.twilio.Twilio;
-import com.twilio.rest.verify.v2.service.Verification;
-import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +27,6 @@ import java.security.Principal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import static com.twilio.example.ValidationExample.ACCOUNT_SID;
-import static com.twilio.example.ValidationExample.AUTH_TOKEN;
 
 @RestController
 @CrossOrigin(origins = "https://localhost:4200")
