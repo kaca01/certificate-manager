@@ -42,10 +42,12 @@ public class CertificateRequest {
 
     public CertificateRequest(CertificateRequestDTO dto) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-        try {
-            this.setDate(formatter.parse(dto.getDate()));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
+        if (dto.getDate() != null) {
+            try {
+                this.setDate(formatter.parse(dto.getDate()));
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
         }
         this.requestType = RequestType.valueOf(dto.getRequestType());
         this.certificateType = CertificateType.valueOf(dto.getCertificateType());

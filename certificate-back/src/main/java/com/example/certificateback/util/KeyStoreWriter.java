@@ -1,13 +1,8 @@
 package com.example.certificateback.util;
 
 import com.example.certificateback.configuration.KeyStoreConstants;
-import com.example.certificateback.repository.IUserRepository;
-import jdk.nashorn.internal.runtime.GlobalConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

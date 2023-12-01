@@ -53,7 +53,7 @@ public class Certificate {
         this.isWithdrawn = false;
         this.validFrom = xCertificate.getNotBefore();
         this.validTo = xCertificate.getNotAfter();
-        this.issuerSerialNumber = request.getIssuer().getSerialNumber();
+        if (request.getIssuer() != null) this.issuerSerialNumber = request.getIssuer().getSerialNumber();
     }
 
     public boolean isValid() {

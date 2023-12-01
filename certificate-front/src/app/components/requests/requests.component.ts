@@ -9,6 +9,7 @@ import { UserService } from 'src/app/service/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { AddReasonDialogComponent } from './add-reason-dialog/add-reason-dialog.component';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-requests',
@@ -29,12 +30,11 @@ export class RequestsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private router: Router, private requestService: RequestService, private userService: UserService, private _snackBar: MatSnackBar, private dialog: MatDialog) { }
+  constructor(private requestService: RequestService, private userService: UserService, private _snackBar: MatSnackBar, 
+    private dialog: MatDialog,  private authService: AuthService) { }
 
   ngOnInit(): void {
-    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
-      this.router.navigate(['/welcome-page']);
-
+    this.authService.checkUserSession();
     this.requestService.getRequestsBasedOnIssuer().subscribe((res) => {
       for(let i = 0; i<res.totalCount; i++) {
         res.results[i]._tableId = i+1;

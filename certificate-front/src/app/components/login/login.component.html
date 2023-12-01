@@ -1,7 +1,7 @@
 <div class="background">
     <img src="../../assets/images/close.png" id="bg-close-img" class="close" [routerLink]="['/welcome-page']"/>
   
-    <mat-card>
+    <mat-card *ngIf="!submitted">
       <mat-card-content>
 
         <div id="card-header">
@@ -23,7 +23,7 @@
             <mat-form-field class="full-width" appearance="outline">
               <mat-label>Email</mat-label>
               <input
-                formControlName="email" matInput required />
+                formControlName="email" matInput required maxlength="40"/>
               <mat-error *ngIf="!loginForm.controls['email'].valid"></mat-error>
             </mat-form-field>
           </div>
@@ -35,7 +35,7 @@
             <mat-form-field class="full-width" appearance="outline">
               <mat-label>Password</mat-label>
               <input formControlName="password" 
-                matInput [type]=" hide ? 'password' : 'text'" required />
+                matInput [type]=" hide ? 'password' : 'text'" required maxlength="40"/>
 
               <button  mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide Password'"
                 [attr.aria-pressed]="hide" type="button">
@@ -44,11 +44,34 @@
               <mat-error *ngIf="!loginForm.controls['password'].valid"></mat-error>
             </mat-form-field>      
           </div>
-          
+          <p>Choose an option to verify your account:</p>
+            <mat-radio-group aria-label="Select an option">
+                <mat-radio-button value="email" checked="true" class="radio" (change)="radioChange($event)">Email</mat-radio-button>
+                <mat-radio-button value="phone" class="radio" (change)="radioChange($event)">Phone number</mat-radio-button>
+            </mat-radio-group>
           <button mat-raised-button color="blue" type="submit" class="login-btn">Login</button>
         </form>
   
       </mat-card-content>
     </mat-card>
+
+    <!--email verification-->
+    <mat-card *ngIf="submitted" id="verification">
+      <mat-card-content>
+          <div id="verificationHeader">
+            Verify your identity!
+          </div>    
+    
+          <div class="email-input">
+              <p>A verification code has been sent to your {{radio}}</p>
+              <mat-form-field class="full-width" appearance="outline">
+                  <mat-label>Code</mat-label>
+                  <input type="text" name="verificationCode" matInput #inputCode [(ngModel)]="code" maxlength="6" placeholder="Ex. 941305" required>
+                  <mat-hint align="end">{{inputCode.value.length}}/6</mat-hint>
+              </mat-form-field>
+          </div>
+          <button mat-raised-button class="reg-btn" id="verify" (click)="confirmLogin()">CONFIRM</button>
+        </mat-card-content>
+  </mat-card>
     
   </div>

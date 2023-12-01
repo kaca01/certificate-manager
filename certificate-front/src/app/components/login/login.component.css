@@ -115,6 +115,10 @@ form {
     cursor: pointer;
 }
 
+.radio{
+    margin-left: 70px;
+}
+
 .login-btn {
     margin-top: 35px;
     margin-bottom: 50px;
@@ -124,4 +128,24 @@ form {
 .error {
     width: 100%;
     color: red;
+}
+
+
+#verificationHeader{
+    padding-top: 10px;
+    margin-bottom: 20px;
+    font-size: 3em;
+    line-height: normal;
+    height: fit-content;
+}
+
+#verification{
+    margin-top: 10%;
+}
+
+  
+#verify {
+    margin-top: 35px;
+    margin-bottom: 15px;
+    width: 100%;
 }

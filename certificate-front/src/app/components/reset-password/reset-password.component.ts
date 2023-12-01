@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { HttpErrorResponse } from "@angular/common/http";
-import { AbstractControl, AbstractControlOptions, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router'; 
 import { ResetPassword } from 'src/app/domains';
 import { UserService } from 'src/app/service/user.service';
 import { AuthService } from 'src/app/service/auth.service';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
 
 @Component({
   selector: 'reset-password',
@@ -33,8 +34,13 @@ export class ResetPasswordComponent {
   resetPassword = {} as ResetPassword;
   email: string = "";
 
-  constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router,
-     private authService: AuthService) { }
+  expiredPassword: boolean = false;
+
+  constructor(private userService: UserService, private _snackBar: MatSnackBar, private router: Router, 
+    private authService: AuthService, private recaptchaV3Service: ReCaptchaV3Service) {
+    this.expiredPassword = userService.isExpiredPassword();
+    this.authService.logout();
+  }
 
   first() : boolean {
     if(this.resetPasswordForm.get('newPassword')!.value !== this.resetPasswordForm.get('firstRepetedPassword')!.value) 
@@ -60,29 +66,26 @@ export class ResetPasswordComponent {
   }
 
   sendCode() : void {
+    const phoneRegex = new RegExp('[- +()0-9]+');
+    const emailRegex = new RegExp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
     if(this.emailForm.controls['email'].value != '') {
       this.email = this.emailForm.controls['email']?.value!;
-      if(this.email.includes('@')) {
-        console.log("prvooooooo")
-        this.userService.sendEmail(this.email).subscribe((res:any) => {
-          this.openSnackBar("A verification code has been sent to your email!");
-          this.checkEmail();
-        },
-          (error: HttpErrorResponse) => {
-            this.openSnackBar(error.error);
-        })
-      }
+      if(!emailRegex.test(this.email) && !phoneRegex.test(this.email))
+        this.openSnackBar("Invalid email/phone format");
       else {
-        console.log("drugooooooooooo")
-        this.userService.sendSMS(this.email).subscribe((res:any) => {
-          this.openSnackBar("A verification code has been sent to your mobile!");
+        this.recaptchaV3Service.execute('importantAction')
+        .subscribe((token: string) => {
+          console.log(`Token generated`);
+          if(emailRegex.test(this.email)) 
+          this.userService.sendEmail(this.email, token).subscribe()
+          else 
+            this.userService.sendSMS(this.email, token).subscribe()
+          this.openSnackBar("A verification code has been sent!");
           this.checkEmail();
-        },
-          (error: HttpErrorResponse) => {
-            this.openSnackBar(error.error);
-        })
-      }
-    }
+        });
+      }   
+    }      
   }
 
   doResetPassword() : void {
@@ -98,7 +101,6 @@ export class ResetPasswordComponent {
 
           console.log(this.email)
           if(this.email.includes('@')) {
-            console.log('proslo prvo')
             this.userService.resetPasswordViaEmail(this.email, this.resetPassword).subscribe(
               () => {
               this.openSnackBar("Successfully reset password!");
@@ -107,12 +109,11 @@ export class ResetPasswordComponent {
             },
               (error: HttpErrorResponse) => {
                 console.log(error)
-                this.openSnackBar(error.error['message']);
+                this.openSnackBar("Invalid data");
             })
           }
             
           else {
-            console.log('proslo drugo')
             this.userService.resetPasswordViaSMS(this.email, this.resetPassword).subscribe(
               () => {
               this.openSnackBar("Successfully reset password!");
@@ -121,7 +122,7 @@ export class ResetPasswordComponent {
             },
               (error: HttpErrorResponse) => {
                 console.log(error)
-                this.openSnackBar(error.error['message']);
+                this.openSnackBar("Invalid data");
             }) 
           }
       }

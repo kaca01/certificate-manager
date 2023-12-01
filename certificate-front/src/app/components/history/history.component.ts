@@ -4,6 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CertificateRequest } from 'src/app/domains';
+import { AuthService } from 'src/app/service/auth.service';
 import { RequestService } from 'src/app/service/request.service';
 import { UserService } from 'src/app/service/user.service';
 
@@ -15,7 +16,7 @@ import { UserService } from 'src/app/service/user.service';
 export class HistoryComponent implements OnInit {
 
   selectedRowIndex : number = -1;
-  displayedColumns: string[] = ['issuer', 'subject', 'type', 'status'];
+  displayedColumns: string[] = ['issuer', 'date', 'subject', 'type', 'status'];
   dataSource!: MatTableDataSource<CertificateRequest>;
   valueFromCreateComponent = '';
 
@@ -27,12 +28,11 @@ export class HistoryComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: any;
   @ViewChild(MatSort) sort!: any;
 
-  constructor(private router: Router, private requestService: RequestService, private userService: UserService) { }
+  constructor(private router: Router, private requestService: RequestService, private userService: UserService,
+      private authService: AuthService) { }
 
   ngOnInit(): void {
-    if (this.userService.currentUser == undefined || this.userService.currentUser == null)
-    this.router.navigate(['/welcome-page']);
-
+    this.authService.checkUserSession();
     this.whoIsUser();
 
     if(this.user === "user") {
@@ -57,6 +57,8 @@ export class HistoryComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       });
+    } else{
+      this.router.navigate(["welcome-page"]);
     }
   }
 

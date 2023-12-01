@@ -22,6 +22,10 @@ export class WithdrawalReasonComponent implements OnInit {
   }
 
   withdraw() : void {
+    if (this.reason.trim() === "") {
+      this.openSnackBar("Please input revocation reason!");
+      return;
+    }
     this.service.invalidate(this.certificate.serialNumber, this.reason).subscribe(
       (res) => {
       this.openSnackBar("Withdrawal successfull!");    

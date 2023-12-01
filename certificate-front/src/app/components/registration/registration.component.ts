@@ -3,7 +3,9 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn,
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { User } from 'src/app/domains';
+import { AuthService } from 'src/app/service/auth.service';
 import { UserService } from 'src/app/service/user.service';
 
 @Component({
@@ -18,9 +20,9 @@ export class RegistrationComponent implements OnInit {
     surname: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+')]),
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(8), this.createPasswordStrengthValidator()]),
-    repeatPassword: new FormControl('', [Validators.required]),
+    repeatPassword: new FormControl('', [Validators.required, Validators.minLength(8), this.createPasswordStrengthValidator()]),
     phone: new FormControl('', [Validators.required, Validators.pattern('[- +()0-9]+')]),
-    country: new FormControl('', [Validators.required]),
+    country: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z][a-zA-Z ]+')]),
   
   }) ;
 
@@ -29,9 +31,11 @@ export class RegistrationComponent implements OnInit {
   notification!: DisplayMessage;
   radio : String = '';
 
-  constructor(private router: Router, private service: UserService, private _snackBar: MatSnackBar) {}
+  constructor(private router: Router, private service: UserService, private _snackBar: MatSnackBar, 
+     private authService: AuthService, private recaptchaV3Service: ReCaptchaV3Service) {}
 
   ngOnInit(): void {
+    this.authService.checkUserSession();
   }
 
   reg() {
@@ -44,15 +48,20 @@ export class RegistrationComponent implements OnInit {
         this.openSnackBar("Must select an option for account verification!");
         return;
       }
-      this.service.register(this.registrationForm.value, this.radio)
-      .subscribe((res: User) => {
-        console.log(res);
-        this.notification = {msgType: 'activation', msgBody: 'Please go to your ' + this.radio + ' to activate your account!'};
-      },
-      (error) => {                 
-        this.handleErrors(error);
-        }
-      );
+
+      this.recaptchaV3Service.execute('importantAction')
+      .subscribe((token: string) => {
+        console.log(`Token generated`);
+        this.service.register(this.registrationForm.value, this.radio, token)
+        .subscribe((res: User) => {
+          console.log(res);
+          this.notification = {msgType: 'activation', msgBody: 'Please go to your ' + this.radio + ' to activate your account!'};
+        },
+        (error) => {                 
+          this.handleErrors(error);
+          }
+        );
+      });
     }
     else this.openSnackBar("Missing data!");
   }

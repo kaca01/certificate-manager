@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// A DTO for login
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDTO {
-
-    private String email;
-    private String password;
-    private String verification;
-
+public class RecaptchaResponse {
+    private Boolean success;
+    private String challenge_ts;
+    private String hostname;
+    private Double score;
+    private String action;
 }

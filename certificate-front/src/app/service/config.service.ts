@@ -7,7 +7,7 @@ export class ConfigService {
 
   constructor() {}
 
-  private _api_url = 'http://localhost:8081/api';
+  private _api_url = 'https://localhost:8081/api';
 
   private _login_url = this._api_url + '/user/login';
 

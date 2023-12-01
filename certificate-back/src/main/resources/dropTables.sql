@@ -1,0 +1,9 @@
+drop table restapi.certificate_request;
+drop table restapi.certificate;
+drop table restapi.password;
+drop table restapi.reset_password;
+drop table restapi.user_activation;
+drop table restapi.user_role;
+drop table restapi.login_verification;
+drop table restapi.role;
+drop table restapi.user;

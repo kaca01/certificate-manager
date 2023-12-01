@@ -20,26 +20,26 @@
 
             <mat-form-field appearance="outline" class="advanced_width">
                 <mat-label>Name</mat-label>
-                <input matInput type="text" name="name" formControlName="name" />
+                <input matInput type="text" name="name" formControlName="name" maxlength="40"/>
                 <mat-error *ngIf="!registrationForm.controls['name'].valid"></mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="advanced_width">
                 <mat-label>Last name</mat-label>
-                <input matInput type="text" name="surname" formControlName="surname" />
+                <input matInput type="text" name="surname" formControlName="surname" maxlength="40"/>
                 <mat-error *ngIf="!registrationForm.controls['surname'].valid"></mat-error>
             </mat-form-field>
             
             <mat-form-field appearance="outline" class="advanced_width">
                 <mat-label>Email address</mat-label>
-                <input matInput type="email" name="email" formControlName="email" />
+                <input matInput type="email" name="email" formControlName="email" maxlength="40"/>
                 <mat-error *ngIf="!registrationForm.controls['email'].valid"></mat-error>
             </mat-form-field>
 
             <p *ngIf="!registrationForm.controls['password'].valid && registrationForm.controls['password'].value != ''" class="error">Password must contain at least 8 characters, symbol, number, uppercase and lowercase</p>
             <mat-form-field appearance="outline" class="advanced_width">
                 <mat-label>Password</mat-label>
-                <input name="password" formControlName="password" matInput [type]=" hide ? 'password' : 'text'" required />
+                <input name="password" formControlName="password" matInput [type]=" hide ? 'password' : 'text'" required maxlength="40"/>
                 <button  mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide Password'"
                         [attr.aria-pressed]="hide" type="button">
                 <mat-icon>
@@ -51,7 +51,7 @@
 
             <mat-form-field appearance="outline" class="advanced_width">
                 <mat-label>Repeat password</mat-label>
-                <input name="repeatPassword" formControlName="repeatPassword" matInput [type]=" hideAgain ? 'password' : 'text'" required />
+                <input name="repeatPassword" formControlName="repeatPassword" matInput [type]=" hideAgain ? 'password' : 'text'" required maxlength="40"/>
                 <button  mat-icon-button matSuffix (click)="hideAgain = !hideAgain" [attr.aria-label]="'Hide Password'"
                         [attr.aria-pressed]="hideAgain" type="button">
                 <mat-icon>
@@ -63,13 +63,13 @@
 
             <mat-form-field appearance="outline" class="advanced_width">
                 <mat-label>Phone</mat-label>
-                <input matInput type="tel" name="phone" formControlName="phone" />
+                <input matInput type="tel" name="phone" formControlName="phone" maxlength="40"/>
                 <mat-error *ngIf="!registrationForm.controls['phone'].valid"></mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="advanced_width">
                 <mat-label>Country</mat-label>
-                <input matInput type="text" name="country" formControlName="country" />
+                <input matInput type="text" name="country" formControlName="country" maxlength="40"/>
                 <mat-error *ngIf="!registrationForm.controls['country'].valid"></mat-error>
             </mat-form-field >
             <p>Choose an option to verify your account:</p>

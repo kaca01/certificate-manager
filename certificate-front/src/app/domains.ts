@@ -12,7 +12,8 @@ export interface User {
     country: string,
     password: string,
     email: string,
-    roles: Role[]
+    roles: Role[],
+    verification: String;
 }
 
 export interface ResetPassword {  

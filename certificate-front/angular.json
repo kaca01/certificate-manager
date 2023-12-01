@@ -63,6 +63,14 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "ssl": true,
+            "sslCert": "src/app/certificate/server.crt",
+            "sslKey": "src/app/certificate/server.key",
+            "host": "localhost",
+            "port": 4200,
+            "publicHost": "localhost:4200"
+          },
           "configurations": {
             "production": {
               "browserTarget": "certificate-front:build:production"
